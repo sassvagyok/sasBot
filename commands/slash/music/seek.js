@@ -1,0 +1,45 @@
+const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+
+const moment = require("moment");
+require("moment-duration-format");
+
+module.exports = {
+    name: "seek",
+    description: "Tekerés a zenében",
+    info: "Megadott másodperchez való ugrás a jelenleg lejátszott zenében. (Szükséges hangcsatornához való csatlakozás)",
+    dm_permission: false,
+    vc_check: true,
+    options: [
+        {
+            name: "másodperc",
+            description: "Ugrás ehhez a másodperchez",
+            type: ApplicationCommandOptionType.Number,
+            required: true,
+            minValue: 0
+        }
+    ],
+    run: async (client, interaction) => {
+
+        const mp = interaction.options.getNumber("másodperc");
+        
+        let guildQueue = client.distube.getQueue(interaction);
+        if (!guildQueue || guildQueue.songs.length === 0) return interaction.reply({ content: "A lejátszási sor üres!", flags: MessageFlags.Ephemeral });
+
+        const previousTime = guildQueue.currentTime;
+
+        await guildQueue.seek(mp);
+
+        let duration = moment.duration(mp, "seconds");
+        let formattedDuration = duration.format("hh:mm:ss", {
+            trim: ""
+        });
+
+        if (duration.hours() === 0) formattedDuration = formattedDuration.replace(/^00:/, "");
+
+        const seekContainer = new ContainerBuilder()
+        .setAccentColor(0x9327de)
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${previousTime > guildQueue.currentTime ? "⏪" : "⏩"} Lejátszás innen: \`${formattedDuration}\``));
+        
+        interaction.reply({ components: [seekContainer], flags: MessageFlags.IsComponentsV2 });
+    }
+}

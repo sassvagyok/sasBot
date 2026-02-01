@@ -1,0 +1,35 @@
+const { Schema, model } = require('mongoose');
+
+module.exports = model('saspont', new Schema({
+    Users: [
+        {
+            UserID: String,
+            Username: String,
+            Balance: { type: Number, default: 5 },
+            History: {
+                type: [
+                    {
+                        Value: Number,
+                        Origin: String,
+                        Guild: String,
+                        Date: String
+                    }
+                ],
+                default: []
+            },
+            Casino: {
+                Crash: {
+                    Wins: { type: Number, default: 0 },
+                    Losses: { type: Number, default: 0 },
+                    MaxMult: { type: Number, default: null },
+                    MaxWin: { type: Number, default: null },
+                },
+                Coinflip: {
+                    Wins: { type: Number, default: 0 },
+                    Losses: { type: Number, default: 0 },
+                    MaxWin: { type: Number, default: null }
+                }
+            }
+        }
+    ]
+}));

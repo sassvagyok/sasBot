@@ -1,0 +1,53 @@
+const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+
+module.exports = {
+    name: "8ball",
+    description: "Bízd rám a sorsod",
+    info: "Ha nem vagy biztos egy kérdésben, most megerősítést nyerhetsz.",
+    options: [
+        {
+            name: "kérdés",
+            description: "Mire keresed a választ?",
+            type: ApplicationCommandOptionType.String,
+            required: true,
+            maxLength: 1500
+        }
+    ],
+    run: async (client, interaction) => {
+
+        let question = interaction.options.getString("kérdés");
+        question.endsWith("?") ? "" : question += "?";
+
+        const replies = [
+            "Biztosan",
+            "Kétségtelenül",
+            "Kétség nélkül",
+            "Egyértelműen",
+            "Számíthatsz rá",
+            "Ahogy én látom, igen",
+            "Valószínűleg",
+            "Jók a kilátások",
+            "Igen",
+            "A jelek szerint igen",
+            "Homályos válasz, próbáld újra",
+            "Kérdezz meg később",
+            "Jobb, ha nem tudod meg",
+            "Most nem tudom megmondani",
+            "Koncentrálj, és kérdezz újra",
+            "Ne számíts rá",
+            "Nem",
+            "Forrásaim szerint nem",
+            "Nem jók a kilátások",
+            "Erősen kétséges"
+        ];
+
+        const finalReply = Math.floor(Math.random() * replies.length);
+
+        const ballContainer = new ContainerBuilder()
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${interaction.user.displayName}: \`${question}\``))
+        .addSeparatorComponents(new SeparatorBuilder())
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### 🔮 ${replies[finalReply]} 🔮`));
+
+        interaction.reply({ components: [ballContainer], flags: [MessageFlags.IsComponentsV2] });
+    }
+}
