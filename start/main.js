@@ -1,3 +1,3 @@
 const client = require("../index.js");
 
-client.login(process.env.testToken);
+client.login(process.env.mainToken);
