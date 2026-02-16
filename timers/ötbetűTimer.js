@@ -1,11 +1,10 @@
-const ötbetűSchema = require("../models/ötbetűModel.js")
-const allWords = require("../data/words.json");
+import ötbetűSchema from "../models/ötbetűModel.js";
+import allWords from "../data/words.json" with { type: "json" };
+import cron from "node-cron";
+import moment from "moment";
+import "moment-timezone";
 
-const cron = require("node-cron");
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = async () => {
+export default async () => {
     const updateWord = async () => {
         const filteredWords = allWords.filter(x => x.length === 5 && x[0].toUpperCase() !== x[0]);
 

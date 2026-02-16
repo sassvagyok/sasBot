@@ -1,9 +1,8 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import moment from "moment";
+import "moment-duration-format";
 
-const moment = require("moment");
-require("moment-duration-format");
-
-module.exports = {
+export default {
     name: "seek",
     description: "Tekerés a zenében",
     info: "Megadott másodperchez való ugrás a jelenleg lejátszott zenében. (Szükséges hangcsatornához való csatlakozás)",

@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType } = require("discord.js")
+import { ApplicationCommandOptionType } from "discord.js";
 
-module.exports = {
+export default {
     name: "replace",
     description: "Karakterek kicserélése egy szövegben",
     info: "Karakterek kicserélése egy másikra a megadott szövegben. Szóköz: \\s",

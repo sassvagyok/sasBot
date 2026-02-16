@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, MessageFlags } = require("discord.js");
-const allWords = require("../../../data/words.json");
+import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
+import allWords from "../../../data/words.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "szókeresés",
     description: "Szavak keresése",
     info: "Magyar szavak keresése néhány kezdőbetű megadásával.",

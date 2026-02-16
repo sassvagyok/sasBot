@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('command-stats', new Schema({
+export default model('command-stats', new Schema({
     Slash: [
         {
             Name: String,

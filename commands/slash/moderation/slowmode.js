@@ -1,11 +1,9 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder  } = require("discord.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
+import moment from "moment";
+import "moment-timezone";
 
-const modsettingSchema = require("../../../models/modsettingModel.js");
-
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = {
+export default {
     name: "slowmode",
     description: "Lassított mód kezelése",
     info: "Lassított mód kezelése a jelenlegi vagy megadott csatornán.\n`Szükséges jogosultság: Csatornák kezelése`",

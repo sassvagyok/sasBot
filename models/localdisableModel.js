@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('command-disable', new Schema({
+export default model('command-disable', new Schema({
     Guild: String,
     Commands: [String]
 }));

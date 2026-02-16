@@ -1,6 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder } = require("discord.js");
+import { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "avatár",
     description: "Profilképek megjelenítése",
     info: "Saját, vagy megadott tag profilképének megjelenítése kiválasztható formátumban és felbontásban.",

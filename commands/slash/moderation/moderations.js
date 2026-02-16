@@ -1,8 +1,7 @@
-const { PermissionFlagsBits, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { PermissionFlagsBits, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import moderationSchema from "../../../models/moderationlogModel.js";
 
-const moderationSchema = require("../../../models/moderationlogModel.js");
-
-module.exports = {
+export default {
     name: "moderations",
     description: "Múltbéli moderációk megtekintése",
     info: "Múltbéli moderációk keresése sorszám alapján, vagy adott tag moderációinak sorszámának megjelenítése.\n`Szükséges jogosultság: Tagok felfüggesztése`",

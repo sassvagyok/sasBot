@@ -1,6 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder } = require("discord.js");
+import { ActionRowBuilder, ButtonBuilder, ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "Avatár",
     type: ApplicationCommandType.User,
     dm_permission: false,

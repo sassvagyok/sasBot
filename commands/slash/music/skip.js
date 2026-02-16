@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "skip",
     description: "Zenék átugrása",
     info: "Ugrás a következő zenére, vagy megadott számú zene átugrása. (Szükséges hangcsatornához való csatlakozás)",

@@ -1,11 +1,10 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } = require("discord.js");
-const moment = require("moment");
-require("moment-duration-format");
-require("moment-timezone");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } from "discord.js";
+import moment from "moment";
+import "moment-duration-format";
+import "moment-timezone";
+import saspontSchema from "../../../models/saspontModel.js";
 
-const saspontSchema = require("../../../models/saspontModel.js");
-
-module.exports = {
+export default {
     name: "userinfo",
     description: "Információk tagokról",
     info: "Profilkép, banner, rangok, csatlakozás ideje és egyéb információk megjelenítése tagokról.",

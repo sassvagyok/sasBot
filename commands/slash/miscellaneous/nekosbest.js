@@ -1,8 +1,8 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } = require("discord.js");
-const { fetchRandom } = require("nekos-best.js");
-const allNeko = require("../../../data/nekosbest.json");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } from "discord.js";
+import { fetchRandom } from "nekos-best.js";
+import allNeko from "../../../data/nekosbest.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "nekosbest",
     description: "Képek és gifek a Nekos.best API-ból",
     info: "Nekos.best API segítségével kategória kiválasztása után anime gifek/képek küldése.",

@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBuilder, MessageFlags } = require("discord.js");
-const farewellSchema = require("../../../models/farewellModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBuilder, MessageFlags } from "discord.js";
+import farewellSchema from "../../../models/farewellModel.js";
 
-module.exports = {
+export default {
     name: "farewell",
     description: "Búcsúüzenet kezelése",
     info: "Egyedi búcsúüzenet beállítása, törlése vagy megtekintése, ami a tagok kilépésekor a megadott csatornában lesz megjelenítve.\n`Szükséges jogosultság: Adminisztrátor`",

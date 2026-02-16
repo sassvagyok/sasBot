@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, ButtonBuilder, ActionRowBuilder, SeparatorBuilder } = require("discord.js");
-const permissionSchema = require("../../../models/permissionModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, ButtonBuilder, ActionRowBuilder, SeparatorBuilder } from "discord.js";
+import permissionSchema from "../../../models/permissionModel.js";
 
-module.exports = {
+export default {
     name: "permissions",
     description: "Parancsok használatának ranghoz kötése",
     info: "Parancsok egyedi ranghoz való kötése az alapértelmezett jogosultság helyett (max. 5 rang) (kivéve Konfigurációs és Információs parancsok).\n`Szükséges jogosultság: Adminisztrátor`",

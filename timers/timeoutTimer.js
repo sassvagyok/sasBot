@@ -1,13 +1,11 @@
-const { PermissionFlagsBits, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, MessageFlags } = require("discord.js");
+import { PermissionFlagsBits, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, MessageFlags } from "discord.js";
+import timeoutSchema from "../models/timeoutModel.js";
+import logChannelSchema from "../models/logchannelModel.js";
+import modsettingSchema from "../models/modsettingModel.js";
+import moment from "moment";
+import "moment-timezone";
 
-const timeoutSchema = require("../models/timeoutModel.js");
-const logChannelSchema = require("../models/logchannelModel.js");
-const modsettingSchema = require("../models/modsettingModel.js");
-
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = async (client) => {
+export default async (client) => {
     setInterval(async () => {
         timeoutSchema.find().then(async (data) => {
             if (!data && !data.length) return;

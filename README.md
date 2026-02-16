@@ -13,16 +13,22 @@
 - FFMPEG
 
 ## Konfiguráció
-1. Hozz létre a gyökérmappába egy `.env` fájlt:
+1. Hozz létre a gyökérmappába egy `.env` fájlt és töltsd ki a saját adataiddal:
 ```
-mainToken=FŐ_DISCORD_TOKEN
-testToken=TESZ_DISCORD_TOKEN
-mongooseConnectionString=MONGOOSE_CONNECTION
-devServerId=PRIVÁT_SZERVER
-errorChannelId=CSATORNA_A_SZERVEREN_A_HIBÁKHOZ
-feedbackChannelId=CSATORNA_A_SZERVEREN_A_VISSZAJELZÉSEKHEZ
+mainToken=[Fő Discord token]
+testToken=[Másodlagos Discord token, ha tesztelnél (elhagyható)]
+mongooseConnectionString=[Mongoose connection string, adatbázist használó funkciókhoz]
+devServerId=[Szerver, ahová a bot logol]
+errorChannelId=[Csatorna a devServer-en, ahová a hibaüzenetek érkezzenek]
+feedbackChannelId=[Csatorna a devServer-en, ahová a visszajelzések érkezzenek]
 ```
-2. Futtasd az alábbi parancsot:
+2. (Opcionális) data/config.json módosítása
+```json
+{
+    "status": "/help" #A bot státusz üzenete
+}
+```
+3. Futtasd az alábbi parancsot:
 ```
 npm install
 ```
@@ -36,3 +42,6 @@ npm start
 ```
 npm run dev
 ```
+
+## Dokumentáció
+- A parancsok leírása és műküdése elérhető itt: https://sassvagyok.github.io/sasBot-docs/

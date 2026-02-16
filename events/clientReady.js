@@ -1,21 +1,20 @@
-const client = require("../index.js");
-const mongoose = require("mongoose");
-const fs = require("fs");
-const moment = require("moment");
-require("moment-timezone");
-const { version } = require("../package.json");
-
-const commandStatisticsSchema = require("../models/commandStatisticsModel.js");
-const banTimer = require("../timers/banTimer.js");
-const lockdownTimer = require("../timers/lockdownTimer.js");
-const timeoutTimer = require("../timers/timeoutTimer.js");
-const ötbetűTimer = require("../timers/ötbetűTimer.js");
+import client from "../index.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import moment from "moment";
+import"moment-timezone";
+import packageJson from "../package.json" with { type: "json" };
+import commandStatisticsSchema from "../models/commandStatisticsModel.js";
+import banTimer from "../timers/banTimer.js";
+import lockdownTimer from "../timers/lockdownTimer.js";
+import timeoutTimer from "../timers/timeoutTimer.js";
+import ötbetűTimer from "../timers/ötbetűTimer.js";
 
 const currentTime = () => moment().tz("Europe/Budapest").format("HH:mm:ss");
 
 const startup = async () => {
     client.on("ready", () =>
-        console.log(`[${currentTime()}] ${client.user.username}@${version} beindult (${client.guilds.cache.size})`)
+        console.log(`[${currentTime()}] ${client.user.username}@${packageJson.version} beindult (${client.guilds.cache.size})`)
     );
 }
 

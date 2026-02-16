@@ -1,11 +1,10 @@
-const { ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } = require("discord.js");
-const moment = require("moment");
-require("moment-duration-format");
-require("moment-timezone");
+import { ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } from "discord.js";
+import moment from "moment";
+import "moment-duration-format";
+import "moment-timezone";
+import saspontSchema from "../../models/saspontModel.js";
 
-const saspontSchema = require("../../models/saspontModel.js");
-
-module.exports = {
+export default {
     name: "Userinfo",
     type: ApplicationCommandType.User,
     dm_permission: false,

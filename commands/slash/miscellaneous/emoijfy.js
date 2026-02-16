@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags } = require("discord.js")
+import { ApplicationCommandOptionType } from "discord.js";
 
-module.exports = {
+export default {
     name : "emojify",
     description : "Emoji-szöveg készítése",
     info: "Választott szöveg emoji-szöveggé alakítása.",

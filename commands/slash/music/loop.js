@@ -1,6 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "loop",
     description: "Ismétlési mód állítása",
     info: "Ismétlés beállítása a jelenlegi zenére, lejátszási sorra vagy kikapcsolása. (Szükséges hangcsatornához való csatlakozás)",

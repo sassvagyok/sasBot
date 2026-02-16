@@ -1,6 +1,6 @@
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
+import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "feedback",
     description: "Visszajelzés küldése",
     info: "Hibák, észrevételek és javaslatok megosztása sasBot-tal kapcsolatban.",

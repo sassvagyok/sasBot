@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('saveroles', new Schema({
+export default model('saveroles', new Schema({
     Guild: String,
     Users: [
         {

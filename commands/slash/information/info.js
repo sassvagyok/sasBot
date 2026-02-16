@@ -1,7 +1,7 @@
-const { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
-const { version } = require("../../../package.json");
+import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import packageJson from "../../../package.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "info",
     description: "Főbb információk sasBot-ról",
     info: "Rövid leírás sasBot-ról és elérhetőségek megjelenítése.",
@@ -31,7 +31,7 @@ module.exports = {
 
         const infoContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasBot ${version}\nsasBot egy nyílt forráskódú, rendszeresen fejlesztett bot Moderálással, Zenelejátszással és szerver Konfigurálással, amit akár te is futtathatsz.`))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasBot ${packageJson.version}\nsasBot egy nyílt forráskódú, rendszeresen fejlesztett bot Moderálással, Zenelejátszással és szerver Konfigurálással, amit akár te is futtathatsz.`))
         .addSeparatorComponents(new SeparatorBuilder())
         .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Felhasznált projektek\n[CatFact.ninja](https://catfact.ninja/), [deepl-node](https://www.npmjs.com/package/deepl-node), [DisTube](https://www.npmjs.com/package/distube), [DivergenceMeter](https://github.com/FrancescoCaracciolo/DivergenceMeter), [figlet](https://www.npmjs.com/package/figlet), [genius-lyrics](https://www.npmjs.com/package/genius-lyrics), [nekos-best.js](https://www.npmjs.com/package/nekos-best.js), [nekosia.js](https://www.npmjs.com/package/nekosia.js), [The Cat API](https://thecatapi.com/)"))
         .addActionRowComponents(row);

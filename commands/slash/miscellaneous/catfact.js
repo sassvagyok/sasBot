@@ -1,7 +1,7 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder } = require("discord.js");
-const fetch = require("node-fetch");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder } from "discord.js";
+import fetch from "node-fetch";
 
-module.exports = {
+export default {
     name: "catfact",
     description: "Random macska érdekesség",
     info: "Egy random érdekesség a macskákról.",

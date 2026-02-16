@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "resume",
     description: "Lejátszás folytatása",
     info: "Megállított zene lejátszásának folytatása. (Szükséges hangcsatornához való csatlakozás)",

@@ -1,13 +1,11 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import timeoutSchema from "../../../models/timeoutModel.js";
+import logChannelSchema from "../../../models/logchannelModel.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
+import moment from "moment";
+import "moment-timezone";
 
-const timeoutSchema = require("../../../models/timeoutModel.js");
-const logChannelSchema = require("../../../models/logchannelModel.js");
-const modsettingSchema = require("../../../models/modsettingModel.js");
-
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = {
+export default {
     name: "removetimeout",
     description: "Tagok felfüggesztéseinek megszűntetése",
     info: "Felfüggesztett tag felfüggesztésének megszűntetése, megadható indokkal.\n`Szükséges jogosultság: Tagok felfüggesztése`",

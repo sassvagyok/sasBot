@@ -1,10 +1,9 @@
-const { MessageFlags, ApplicationCommandOptionType, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } from "discord.js";
+import moment  from "moment";
+import "moment-duration-format";
+import "moment-timezone";
 
-const moment = require("moment");
-require("moment-duration-format");
-require("moment-timezone");
-
-module.exports = {
+export default {
     name: "serverinfo",
     description: "Információk a szerverről",
     info: "Tagok és csatornák száma, emojik, rangok, és egyéb információk megjelenítése a szerverről.",

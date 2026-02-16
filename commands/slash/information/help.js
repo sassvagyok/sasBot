@@ -1,13 +1,11 @@
-const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder } = require("discord.js");
+import { EmbedBuilder, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder } from "discord.js";
+import fs from "fs";
+import path from "path";
+import fetch from "node-fetch";
+import customCommandSchema from "../../../models/customcommandModel.js";
+import disabledCommandSchema from "../../../models/localdisableModel.js";
 
-const fs = require("fs");
-const path = require("path");
-const fetch = require("node-fetch");
-
-const customCommandSchema = require("../../../models/customcommandModel.js");
-const disabledCommandSchema = require("../../../models/localdisableModel.js");
-
-module.exports = {
+export default {
     name: "help",
     description: "Az összes parancs kijelzése vagy egy parancs részletes leírása",
     info: "Minden elérhető és egyedi parancs kijelzése, vagy egy parancs bővebb ismertetése.",

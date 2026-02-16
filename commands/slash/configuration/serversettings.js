@@ -1,14 +1,13 @@
-const { PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import autoRoleSchema from "../../../models/autoroleModel.js";
+import djRoleSchema from "../../../models/djroleModel.js";
+import farewellSchema from "../../../models/farewellModel.js";
+import membercounterSchema from "../../../models/membercounterModel.js";
+import saverolesSchema from "../../../models/saveroleModel.js";
+import welcomeSchema from "../../../models/welcomeModel.js";
+import musicChannelSchema from "../../../models/musicchannelModel.js";
 
-const autoRoleSchema = require("../../../models/autoroleModel.js");
-const djRoleSchema = require("../../../models/djroleModel.js");
-const farewellSchema = require("../../../models/farewellModel.js");
-const membercounterSchema = require("../../../models/membercounterModel.js");
-const saverolesSchema = require("../../../models/saveroleModel.js");
-const welcomeSchema = require("../../../models/welcomeModel.js");
-const musicChannelSchema = require("../../../models/musicchannelModel.js");
-
-module.exports = {
+export default {
     name: "serversettings",
     description: "A szerver konfigurációja",
     info: "A szerveren beállított sasBot-konfigurációk listája.\n`Szükséges jogosultság: Adminisztrátor`",

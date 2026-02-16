@@ -1,3 +1,3 @@
-const client = require("../index.js");
+import client from "../index.js";
 
 client.login(process.env.mainToken);

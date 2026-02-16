@@ -1,11 +1,10 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
-const { version } = require("../../../package.json");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import packageJson from "../../../package.json" with { type: "json" };
+import fetch from "node-fetch";
+import moment from "moment";
+import "moment-duration-format";
 
-const fetch = require("node-fetch");
-const moment = require("moment");
-require("moment-duration-format");
-
-module.exports = {
+export default {
     name: "status",
     description: "Technikai információk sasBot-ról",
     info: "Aktuális verzió, válaszidő, uptime és szerverek számának kijelzése.",
@@ -21,7 +20,7 @@ module.exports = {
 
         const statusContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- 🛠️ Verzió: \`${version}\`\n- 💢 Válaszidő: \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n- ⌛ Uptime: \`${duration}\`\n- 🔌 Szerverek: \`${client.guilds.cache.size}\`\n- 🧶 Divergencia: \`${fetchedDivergence.divergence.toString().substring(0, 8)}\``));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- 🛠️ Verzió: \`${packageJson.version}\`\n- 💢 Válaszidő: \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n- ⌛ Uptime: \`${duration}\`\n- 🔌 Szerverek: \`${client.guilds.cache.size}\`\n- 🧶 Divergencia: \`${fetchedDivergence.divergence.toString().substring(0, 8)}\``));
 
         interaction.editReply({ components: [statusContainer], flags: MessageFlags.IsComponentsV2 });
     }

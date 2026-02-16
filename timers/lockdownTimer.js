@@ -1,12 +1,10 @@
-const { PermissionFlagsBits, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, MessageFlags } = require("discord.js");
+import { PermissionFlagsBits, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, MessageFlags } from "discord.js";
+import lockdownSchema from "../models/lockdownModel.js";
+import logChannelSchema from "../models/logchannelModel.js";
+import moment from "moment";
+import "moment-timezone";
 
-const lockdownSchema = require("../models/lockdownModel.js");
-const logChannelSchema = require("../models/logchannelModel.js");
-
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = async (client) => {
+export default async (client) => {
     setInterval(async () => {
         lockdownSchema.find().then(async (data) => {
             if (!data && !data.length) return;

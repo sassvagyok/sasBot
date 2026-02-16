@@ -1,6 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder} = require("discord.js");
+import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder} from "discord.js";
 
-module.exports = {
+export default {
     name: "queue",
     description: "Lejátszási sor megjelenítése",
     info: "A lejátszási sorban lévő zenék megjelenítése. (Szükséges lehet hangcsatornához való csatlakozás)",

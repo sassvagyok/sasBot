@@ -1,8 +1,7 @@
-const { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
-
-const config = require("./data/config.json");
-const commandHandler = require("./handler/commandHandler.js");
-require("dotenv").config();
+import { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import config from "./data/config.json" with { type: "json" };
+import commandHandler from "./handler/commandHandler.js";
+import "dotenv/config";
 
 const client = new Client({
     presence: {
@@ -26,7 +25,7 @@ const client = new Client({
     ]
 });
 
-module.exports = client;
+export default client;
 
 process.on("unhandledRejection", error => {
 	console.error("Unhandled promise rejection:", error);

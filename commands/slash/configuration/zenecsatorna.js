@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags } = require("discord.js");
-const musicChannelSchema = require("../../../models/musicchannelModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags } from "discord.js";
+import musicChannelSchema from "../../../models/musicchannelModel.js";
 
-module.exports = {
+export default {
     name: "zenecsatorna",
     description: "Zene-csatorna kezelése",
     info: "Csatorna kezelése, ahol használható a zenelejátszás a szerveren (alapértelmezetten mindenhol).\n`Szükséges permission: Adminisztrátor`",

@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags } = require("discord.js");
-const membercounterSchema = require("../../../models/membercounterModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags } from "discord.js";
+import membercounterSchema from "../../../models/membercounterModel.js";
 
-module.exports = {
+export default {
     name: "membercounter",
     description: "Tagokat számláló csatorna kezelése",
     info: "Tagokat számláló csatorna létrehozása, beállított csatorna átnevezése, vagy törlése.\n`Szükséges jogosultság: Adminisztrátor`",

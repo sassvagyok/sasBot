@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "filter",
     description: "Filterek hozzáadása a zenéhez",
     info: "Választható hangfilterek hozzáadása a zenékhez. (Szükséges hangcsatornához való csatlakozás)",

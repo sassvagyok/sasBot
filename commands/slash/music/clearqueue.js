@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "clearqueue",
     description: "Lejátszási sor törlése",
     info: "Soron következő összes zene törlése a lejátszási sorból. (Szükséges hangcsatornához való csatlakozás)",

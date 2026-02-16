@@ -1,6 +1,6 @@
-const { AttachmentBuilder, PermissionFlagsBits, MessageFlags } = require("discord.js");
+import { AttachmentBuilder, PermissionFlagsBits, MessageFlags } from "discord.js";
 
-module.exports = {
+export default {
     name: "sadstory",
     description: "Szomorú történet (?)",
     info: "Sírni emberi dolog, bár a történet mégsem olyan szomorú?",

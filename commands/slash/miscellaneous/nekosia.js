@@ -1,8 +1,8 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } = require("discord.js");
-const { NekosiaAPI } = require("nekosia.js");
-const allNekosia = require("../../../data/nekosia.json");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } from "discord.js";
+import { NekosiaAPI } from "nekosia.js";
+import allNekosia from "../../../data/nekosia.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "nekosia",
     description: "Képek a Nekosia API-ból",
     info: "Anime képek keresése kategória vagy címkék megadásával.\n`Néhány címke csak NSFW csatornában használható.`",

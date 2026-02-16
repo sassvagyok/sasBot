@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "shuffle",
     description: "Lejátszási sor megkeverése",
     info: "A lejátszási sorban lévő zenék lejátszási sorrendjének megkeverése. (Szükséges hangcsatornához való csatlakozás)",

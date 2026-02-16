@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = mongoose.model('custom-commands', new mongoose.Schema({
+export default model('custom-commands', new Schema({
     Guild: String,
     Command: String,
     Response: String

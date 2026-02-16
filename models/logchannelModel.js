@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('modlog', new Schema({
+export default model('modlog', new Schema({
     Guild: String,
     Channel: String
 }));

@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBuilder, MessageFlags } = require("discord.js");
-const welcomeSchema = require("../../../models/welcomeModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBuilder, MessageFlags } from "discord.js";
+import welcomeSchema from "../../../models/welcomeModel.js";
 
-module.exports = {
+export default {
     name: "welcome",
     description: "Üdvözlő üzenet kezelése",
     info: "Egyedi üdvözlő üzenet beállítása, törlése vagy megtekintése, ami a tagok csatlakozásakor a megadott csatornában lesz megjelenítve.\n`Szükséges jogosultság: Adminisztrátor`",

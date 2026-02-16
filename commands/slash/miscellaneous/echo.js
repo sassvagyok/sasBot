@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits, MessageFlags } = require("discord.js");
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits, MessageFlags } from "discord.js";
 
-module.exports = {
+export default {
     name: "echo",
     description: "Bármit mondhatsz a nevemben",
     info: "Választott szöveg elküldése sasBot által (opcionálisan kiválasztható csatorna).",

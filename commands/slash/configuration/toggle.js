@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, flatten } = require("discord.js");
-const disabledCommandSchema = require("../../../models/localdisableModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import disabledCommandSchema from "../../../models/localdisableModel.js";
 
-module.exports = {
+export default {
     name: "toggle",
     description: "Parancsok ki- és bekapcsolása",
     info: "sasBot parancsainak ki- és bekapcsolása (kivéve Konfigurációs és Információs parancsok), vagy kikapcsolt parancsok megjelenítése.\n`Szükséges jogosultság: Adminisztrátor`",

@@ -1,7 +1,7 @@
-const { PermissionFlagsBits, MessageFlags, ApplicationCommandOptionType } = require("discord.js");
-const saverolesSchema = require("../../../models/saveroleModel.js");
+import { PermissionFlagsBits, ApplicationCommandOptionType } from "discord.js";
+import saverolesSchema from "../../../models/saveroleModel.js";
 
-module.exports = {
+export default {
     name: "saveroles",
     description: "Tagok rangjainak megjegyzése",
     info: "Tagok rangjainak megjegyzése kilépéskor, amiket visszalépéskor visszakapnak.\n`Szükséges jogosultság: Adminisztrátor`",

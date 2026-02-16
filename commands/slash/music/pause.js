@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "pause",
     description: "Lejátszás megállítása",
     info: "Jelenleg lejátszott zene megállítása a lejátszási sor törlése nélkül. (Szükséges hangcsatornához való csatlakozás)",

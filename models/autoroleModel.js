@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('autorole', new Schema({
+export default model('autorole', new Schema({
     Guild: String,
     Roles: [String]
 }));

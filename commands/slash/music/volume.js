@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "volume",
     description: "Hangerő állítása",
     info: "Zene hangerejének változtatása maximum 500-ig (alapértelmezett: 50). (Szükséges hangcsatornához való csatlakozás)",

@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('ötbetű-v3', new Schema({
+export default model('ötbetű-v3', new Schema({
     Date: String,
     Word: String,
     Users: [

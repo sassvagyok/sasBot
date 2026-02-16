@@ -1,6 +1,6 @@
-const { MessageFlags, SectionBuilder, ThumbnailBuilder, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, SectionBuilder, ThumbnailBuilder, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "most",
     description: "Információk a jelenlegi zenéről",
     info: "Különböző információk a jelenleg lejátszott zenéről.",

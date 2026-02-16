@@ -1,12 +1,10 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import logChannelSchema from "../../../models/logchannelModel.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
+import moment from "moment";
+import "moment-timezone";
 
-const logChannelSchema = require("../../../models/logchannelModel.js");
-const modsettingSchema = require("../../../models/modsettingModel.js");
-
-const moment = require("moment");
-require("moment-timezone");
-
-module.exports = {
+export default {
     name: "clear",
     description: "Üzenetek törlése",
     info: "Megadott számú üzenet törlése a jelenlegi vagy megadott csatornában (max. 100).\n`Szükséges jogosultság: Üzenetek kezelése`",

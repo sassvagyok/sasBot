@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags } = require("discord.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags } from "discord.js";
 
-module.exports = {
+export default {
     name: "play",
     description: "Zenék indítása",
     info: "Zene nevének, linkjének vagy lejátszási lista linkjének beírása után megadott zene lejátszása, több száz oldalról. (Szükséges hangcsatornához való csatlakozás)",

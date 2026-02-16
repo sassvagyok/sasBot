@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits } = require("discord.js");
-const { registerFont, createCanvas } = require("canvas");
+import { ApplicationCommandOptionType, PermissionFlagsBits } from "discord.js";
+import { registerFont, createCanvas }  from "canvas";
 
-module.exports = {
+export default {
     name: "randomszám",
     description: "Véletlenszerű szám választása",
     info: "Intervallum megadása után véletlenszerű szám választása az értékek között.",

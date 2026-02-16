@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js")
-const customCommandSchema = require("../../../models/customcommandModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import customCommandSchema from "../../../models/customcommandModel.js";
 
-module.exports = {
+export default {
     name: "customcommand",
     description: "Egyedi parancsok kezelése",
     info: "Egyedi parancsok hozzáadása (maximum 50), szerkesztése, törlése és megjelenítése.\n`Szükséges jogosultság: Adminisztrátor*`",

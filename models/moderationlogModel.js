@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('moderations', new Schema({
+export default model('moderations', new Schema({
     Guild: String,
     User: String,
     Count: Number,

@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js")
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "kőpapírolló",
     description: "Kő-Papír-Olló",
     info: "Hagyományos kő-papír-olló sasBot ellen.",

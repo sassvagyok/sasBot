@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "autoplay",
     description: "Automatikus lejátszás állítása",
     info: "Automatikus lejátszás kezelése a lejátszási sorban lévő zenék alapján. (Szükséges hangcsatornához való csatlakozás)",

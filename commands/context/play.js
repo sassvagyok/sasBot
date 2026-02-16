@@ -1,6 +1,6 @@
-const { ApplicationCommandType, PermissionFlagsBits, MessageFlags } = require("discord.js");
+import { ApplicationCommandType, PermissionFlagsBits, MessageFlags } from "discord.js";
 
-module.exports = {
+export default {
     name: "Play",
     type: ApplicationCommandType.Message,
     dm_permission: false,

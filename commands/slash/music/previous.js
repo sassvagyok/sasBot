@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "previous",
     description: "Előző zenék lejátszása",
     info: "Előző zene lejátszása, vagy visszalépés megadott számú zenével. (Szükséges hangcsatornához való csatlakozás)",

@@ -1,12 +1,11 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
-const moment = require("moment");
-require("moment-timezone");
-const allWords = require("../../../data/words.json");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import moment from "moment";
+import "moment-timezone";
+import allWords from "../../../data/words.json" with { type: "json" };
+import ötbetűSchema from "../../../models/ötbetűModel.js";
+import saspontSchema from "../../../models/saspontModel.js";
 
-const ötbetűSchema = require("../../../models/ötbetűModel.js");
-const saspontSchema = require("../../../models/saspontModel.js");
-
-module.exports = {
+export default {
     name: "ötbetű",
     description: "Találd ki a szót!",
     info: "Találd ki a naponta változó 5 betűs szót legfeljebb 6 próbából.",

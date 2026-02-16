@@ -1,6 +1,6 @@
-const saspontSchema = require("../models/saspontModel.js");
+import saspontSchema from "../models/saspontModel.js";
 
-module.exports = async (user) => {
+export default async (user) => {
     let saspontData = await saspontSchema.findOne();
 
     if (!saspontData) {

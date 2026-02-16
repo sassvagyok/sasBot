@@ -1,15 +1,14 @@
-const { PermissionFlagsBits, InteractionType, EmbedBuilder, PermissionsBitField, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
-const client = require("../index");
-const saspont = require("./saspontCreate.js");
-const globallyDisabled = require("../data/disabledCommands.json");
-
-const commandStatisticsSchema = require("../models/commandStatisticsModel.js");
-const customCommandSchema = require("../models/customcommandModel.js");
-const disabledCommandSchema = require("../models/localdisableModel.js");
-const djRoleSchema = require("../models/djroleModel.js");
-const musicChannelSchema = require("../models/musicchannelModel.js");
-const permissionSchema = require("../models/permissionModel.js");
-const modsettingSchema = require("../models/modsettingModel.js");
+import { PermissionFlagsBits, InteractionType, EmbedBuilder, PermissionsBitField, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import client from "../index.js";
+import saspont from "./saspontCreate.js";
+import globallyDisabled from "../data/disabledCommands.json" with { type: "json" };
+import commandStatisticsSchema from "../models/commandStatisticsModel.js";
+import customCommandSchema from "../models/customcommandModel.js";
+import disabledCommandSchema from "../models/localdisableModel.js";
+import djRoleSchema from "../models/djroleModel.js";
+import musicChannelSchema from "../models/musicchannelModel.js";
+import permissionSchema from "../models/permissionModel.js";
+import modsettingSchema from "../models/modsettingModel.js";
 
 // Hibakezelés
 const createError = async (i, e) => {

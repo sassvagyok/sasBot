@@ -1,6 +1,6 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, AttachmentBuilder } = require("discord.js");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, AttachmentBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "coinflip",
     description: "Fej vagy írás",
     info: "Virtuális pénzérme feldobása, azaz fej vagy írás.",

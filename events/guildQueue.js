@@ -1,13 +1,10 @@
-const { MessageFlags, ContainerBuilder, TextDisplayBuilder, SectionBuilder, ThumbnailBuilder } = require("discord.js")
-const client = require("../index");
-
-const { DisTube, isVoiceChannelEmpty } = require("distube");
-const { YouTubePlugin } = require("@distube/youtube");
-const { SoundCloudPlugin } = require("@distube/soundcloud");
-const { SpotifyPlugin } = require("@distube/spotify");
-const { YtDlpPlugin } = require("@distube/yt-dlp");
-
-const fs = require("fs");
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder, SectionBuilder, ThumbnailBuilder } from "discord.js";
+import client from "../index.js";
+import { DisTube, isVoiceChannelEmpty } from "distube";
+import { YouTubePlugin } from "@distube/youtube";
+import { SoundCloudPlugin } from "@distube/soundcloud";
+import { SpotifyPlugin } from "@distube/spotify";
+import { YtDlpPlugin } from "@distube/yt-dlp";
 
 const distube = new DisTube(client, {
     plugins: [

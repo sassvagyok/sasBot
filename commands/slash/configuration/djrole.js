@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags } = require("discord.js");
-const djRoleSchema = require("../../../models/djroleModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags } from "discord.js";
+import djRoleSchema from "../../../models/djroleModel.js";
 
-module.exports = {
+export default {
     name: "djrole",
     description: "DJ rang kezelése",
     info: "DJ rang beállítása, kikapcsolása vagy beállított megnézése, amivel kezelhető a zenelejátszás.\n`Szükséges jogosultság: Adminisztrátor`",

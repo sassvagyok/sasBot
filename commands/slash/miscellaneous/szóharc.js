@@ -1,12 +1,11 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
-const moment = require("moment");
-require("moment-timezone");
-const allWords = require("../../../data/words.json");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import moment from "moment";
+import "moment-timezone";
+import allWords from "../../../data/words.json" with { type: "json" };
+import ötbetűSchema from "../../../models/ötbetűModel.js";
+import saspontSchema from "../../../models/saspontModel.js";
 
-const ötbetűSchema = require("../../../models/ötbetűModel.js");
-const saspontSchema = require("../../../models/saspontModel.js");
-
-module.exports = {
+export default {
     name: "szóharc",
     description: "Epikus szóharc",
     info: "Állítsd csatába legerősebb szavadat, és derüljön ki, kinek erősebb a szava!",

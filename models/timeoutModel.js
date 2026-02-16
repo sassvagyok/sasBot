@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('timeout', new Schema({
+export default model('timeout', new Schema({
     Guild: String,
     Channel: String,
     User: String,

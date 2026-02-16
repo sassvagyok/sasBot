@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('saspont', new Schema({
+export default model('saspont', new Schema({
     Users: [
         {
             UserID: String,

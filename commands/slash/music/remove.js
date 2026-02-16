@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType, MessageFlags, SectionBuilder, ThumbnailBuilder, ContainerBuilder, TextDisplayBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, SectionBuilder, ThumbnailBuilder, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
-module.exports = {
+export default {
     name: "remove",
     description: "Törlés a lejátszási sorból",
     info: "Zene sorszámának beírása után annak törlése a lejátszási sorból. (Szükséges hangcsatornához való csatlakozás)",

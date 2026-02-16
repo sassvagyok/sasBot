@@ -1,15 +1,13 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import lockdownSchema from "../../../models/lockdownModel.js";
+import logChannelSchema from "../../../models/logchannelModel.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
+import ms from "ms";
+import moment from "moment";
+import "moment-duration-format";
+import "moment-timezone";
 
-const lockdownSchema = require("../../../models/lockdownModel.js");
-const logChannelSchema = require("../../../models/logchannelModel.js");
-const modsettingSchema = require("../../../models/modsettingModel.js");
-
-const ms = require("ms");
-const moment = require("moment");
-require("moment-duration-format");
-require("moment-timezone");
-
-module.exports = {
+export default {
     name: "lockdown",
     description: "Csatornák lezárása",
     info: "Jelenlegi vagy megadott csatorna lezárása, akár megadott időre.\n`Szükséges jogosultság: Csatornák kezelése`",

@@ -1,12 +1,11 @@
-const { PermissionFlagsBits, EmbedBuilder, ChannelType, ContainerBuilder, TextDisplayBuilder, MessageFlags, ButtonBuilder, ActionRowBuilder, SeparatorBuilder } = require("discord.js");
-const client = require("../index.js");
-
-const autoRoleSchema = require("../models/autoroleModel.js");
-const welcomeSchema = require("../models/welcomeModel.js");
-const farewellSchema = require("../models/farewellModel.js");
-const saverolesSchema = require("../models/saveroleModel.js");
-const modsettingSchema = require("../models/modsettingModel.js");
-const membercounterSchema = require("../models/membercounterModel.js");
+import { PermissionFlagsBits, EmbedBuilder, ChannelType, ContainerBuilder, TextDisplayBuilder, MessageFlags, ButtonBuilder, ActionRowBuilder, SeparatorBuilder } from "discord.js";
+import client from "../index.js";
+import autoRoleSchema from "../models/autoroleModel.js";
+import welcomeSchema from "../models/welcomeModel.js";
+import farewellSchema from "../models/farewellModel.js";
+import saverolesSchema from "../models/saveroleModel.js";
+import modsettingSchema from "../models/modsettingModel.js";
+import membercounterSchema from "../models/membercounterModel.js";
 
 const updateMembercounter = async (guildMember) => {
     const membercounterData = await membercounterSchema.findOne({ Guild: guildMember.guild.id });

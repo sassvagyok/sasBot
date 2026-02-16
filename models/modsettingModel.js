@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
+import { Schema, model } from "mongoose";
 
-module.exports = model('modsetting-v2', new Schema({
+export default model('modsetting-v2', new Schema({
     Guild: String,
     DM: Boolean,
     Log: Boolean,

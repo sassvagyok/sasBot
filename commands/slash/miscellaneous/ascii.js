@@ -1,8 +1,8 @@
-const { ApplicationCommandOptionType, MessageFlags } = require("discord.js");
-const figlet = require("figlet");
-const fonts = require("../../../data/ascii.json");
+import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
+import figlet from "figlet";
+import fonts from "../../../data/ascii.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "ascii",
     description: "ASCII-kép készítése szövegből",
     info: "Beírt szöveg ASCII-képpé alakítása, opcionálisan betűtípus választással: https://pastebin.com/AVsvB8Ju.",

@@ -1,8 +1,8 @@
-const { PermissionFlagsBits, MessageFlags, ApplicationCommandOptionType, ChannelType, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
-const modsettingSchema = require("../../../models/modsettingModel.js");
-const logChannelSchema = require("../../../models/logchannelModel.js");
+import { PermissionFlagsBits, MessageFlags, ApplicationCommandOptionType, ChannelType, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
+import logChannelSchema from "../../../models/logchannelModel.js";
 
-module.exports = {
+export default {
     name: "modconfig",
     description: "sasBot által végzett moderációk beállításai",
     info: "sasBot által végzett moderációk viselkedéseinek konfigurálása (üzenetküldés a csatornába, moderációk mentése, privát üzenetküldés), log-csatorna kezelése és beállítások megjelenítése.\n`Szükséges jogosultság: Adminisztrátor`",

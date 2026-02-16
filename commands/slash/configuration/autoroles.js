@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } = require("discord.js")
-const autoRoleSchema = require("../../../models/autoroleModel.js");
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import autoRoleSchema from "../../../models/autoroleModel.js";
 
-module.exports = {
+export default {
     name: "autoroles",
     description: "Automatikus rangok kezelése",
     info: "Rangok kezelése, amiket az újonnan csatlakozott tagok automatikusan megkapnak.\n`Szükséges jogosultság: Adminisztrátor`",

@@ -1,8 +1,8 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
-const { version } = require("../../../package.json");
-const log = require("../../../data/changelog.json");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import packageJson from "../../../package.json" with { type: "json" };
+import log from"../../../data/changelog.json" with { type: "json" };
 
-module.exports = {
+export default {
     name: "changelog",
     description: "A legutóbbi vagy kiválasztott frissítés változáslistája",
     info: "A jelenlegi vagy kiválasztott sasBot verzió részletes változáslistája.",
@@ -15,9 +15,10 @@ module.exports = {
         } 
     ],
     run: async (client, interaction) => {
+        
+        const version = packageJson.version;
 
         let selectedVersion = interaction.options.getString("verzió") || log[log.length - 1].version;
-
         let selectedChangelog = log.find(x => x.version == selectedVersion);
 
         if (!selectedChangelog) return interaction.reply({ content: `A megadott verzió nem létezik! (1.0.0 - ${log[log.length - 1].version})`, flags: MessageFlags.Ephemeral });

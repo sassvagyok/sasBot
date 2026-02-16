@@ -1,9 +1,7 @@
-const { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ButtonBuilder, SeparatorBuilder } = require("discord.js");
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ButtonBuilder, SeparatorBuilder } from "discord.js";
+import Genius from "genius-lyrics";
 
-const Genius = require("genius-lyrics");
-const Client = new Genius.Client();
-
-module.exports = {
+export default {
     name: "lyrics",
     description: "Zenék szövegeinek kiírása",
     info: "Jelenleg lejátszott vagy megadott zene szövegének megjelenítése.",
@@ -18,6 +16,7 @@ module.exports = {
     ],
     run: async (client, interaction) => {
 
+        const Client = new Genius.Client();
         let guildQueue;
         const zene = interaction.options.getString("cím");
 

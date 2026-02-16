@@ -1,8 +1,7 @@
-const { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } = require("discord.js");
+import { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import moderationSchema from "../../../models/moderationlogModel.js";
 
-const moderationSchema = require("../../../models/moderationlogModel.js");
-
-module.exports = {
+export default {
     name: "kicks",
     description: "Tagok kirúgási előzményei",
     info: "Megadott tag sasBot általi kirúgásai.\n`Szükséges jogosultság: Tagok kirúgása`",
