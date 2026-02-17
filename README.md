@@ -50,4 +50,4 @@ npm run dev
 }
 ```
 ## Dokumentáció
-- A parancsok leírása és műküdése elérhető itt: https://sassvagyok.github.io/sasBot-docs/
+- A parancsok leírása és működése elérhető itt: https://sassvagyok.github.io/sasBot-docs/
