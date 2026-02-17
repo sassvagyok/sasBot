@@ -12,23 +12,18 @@
 - MongoDB
 - FFMPEG
 
-## Konfiguráció
+## Első konfiguráció
 1. Hozz létre a gyökérmappába egy `.env` fájlt és töltsd ki a saját adataiddal:
 ```
 mainToken=[Fő Discord token]
 testToken=[Másodlagos Discord token, ha tesztelnél (elhagyható)]
 mongooseConnectionString=[Mongoose connection string, adatbázist használó funkciókhoz]
+geniusToken=[Genius lyrics API key, enélkül a zeneszöveg lekérdezés megbízhathatlanul működhet]
 devServerId=[Szerver, ahová a bot logol]
 errorChannelId=[Csatorna a devServer-en, ahová a hibaüzenetek érkezzenek]
 feedbackChannelId=[Csatorna a devServer-en, ahová a visszajelzések érkezzenek]
 ```
-2. (Opcionális) data/config.json módosítása
-```json
-{
-    "status": "/help" #A bot státusz üzenete
-}
-```
-3. Futtasd az alábbi parancsot:
+2. Futtasd az alábbi parancsot:
 ```
 npm install
 ```
@@ -43,5 +38,16 @@ npm start
 npm run dev
 ```
 
+## További konfiguráció
+- A `data/config.json` módosításával az alábbi funkciók konfigurálhatóak:
+  - `status`: a bot státusz üzenete
+  - `globallyDisabledCommands`: globálisan kikapcsolt parancsok listája
+- Példa:
+```json
+{
+    "status": "/help",
+    "globallyDisabledCommands": ["nekosia", "ötbetű"]
+}
+```
 ## Dokumentáció
 - A parancsok leírása és műküdése elérhető itt: https://sassvagyok.github.io/sasBot-docs/

@@ -1,7 +1,7 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder } from "discord.js";
 import fs from "fs";
 import path from "path";
-import fetch from "node-fetch";
+import { fileURLToPath } from "url";
 import customCommandSchema from "../../../models/customcommandModel.js";
 import disabledCommandSchema from "../../../models/localdisableModel.js";
 
@@ -31,18 +31,19 @@ export default {
         }
     ],
     run: async (client, interaction) => {
+
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
         
         const subCommand = interaction.options.getSubcommand();
         const parancs = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
 
-        let customCommandData, disabledCommandData, fetchDisabled, fetchedDisabledJson, helpEmbed;
+        let customCommandData, disabledCommandData, fetchDisabled, globallyDisabled, helpEmbed;
 
         if (interaction.channel.type !== 1) {
             customCommandData = await customCommandSchema.find({ Guild: interaction.guild.id, Command: parancs });
+            globallyDisabled = client.config.globallyDisabledCommands;
             disabledCommandData = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
-
-            fetchDisabled = await fetch("https://raw.githubusercontent.com/sassvagyok/sasBot-data/main/disabledCommands.json");
-            fetchedDisabledJson = await fetchDisabled.json();
         };
 
         const emojis = {
@@ -132,7 +133,7 @@ export default {
                     }
                 }
 
-                if (command.dm_permission === false || (disabledCommandData && disabledCommandData.Commands.includes(command.name)) || (fetchedDisabledJson && fetchedDisabledJson.includes(command.name))) {
+                if (command.dm_permission === false || (disabledCommandData && disabledCommandData.Commands.includes(command.name)) || (globallyDisabled && globallyDisabled.includes(command.name))) {
                     helpContainer.addSeparatorComponents(new SeparatorBuilder().setDivider(false));
                 }
 
@@ -146,7 +147,7 @@ export default {
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent("-# 🚫 Kikapcsolva ezen a szerveren!"));
                 }
 
-                if (fetchedDisabledJson && fetchedDisabledJson.includes(command.name)) {
+                if (globallyDisabled && globallyDisabled.includes(command.name)) {
                     helpContainer
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent("-# ❗ Jelenleg nem elérhető!"));
                 }
@@ -168,8 +169,8 @@ export default {
             const categories = directories.map((dir) => {
                 const getCommands = client.commands.filter((cmd) => cmd.directory === dir).map(cmd => {
                     return {
-                        name: disabledCommandData && disabledCommandData.Commands.includes(cmd.name) || fetchedDisabledJson && fetchedDisabledJson.includes(cmd.name) ? "**~~" + cmd.name.charAt(0).toUpperCase() + cmd.name.slice(1) + "~~**" : cmd.name.charAt(0).toUpperCase() + cmd.name.slice(1),
-                        description: disabledCommandData && disabledCommandData.Commands.includes(cmd.name) || fetchedDisabledJson && fetchedDisabledJson.includes(cmd.name) ? "~~" + cmd.description + "~~" : cmd.description || "Nincs leírás"
+                        name: disabledCommandData && disabledCommandData.Commands.includes(cmd.name) || globallyDisabled && globallyDisabled.includes(cmd.name) ? "**~~" + cmd.name.charAt(0).toUpperCase() + cmd.name.slice(1) + "~~**" : cmd.name.charAt(0).toUpperCase() + cmd.name.slice(1),
+                        description: disabledCommandData && disabledCommandData.Commands.includes(cmd.name) || globallyDisabled && globallyDisabled.includes(cmd.name) ? "~~" + cmd.description + "~~" : cmd.description || "Nincs leírás"
                     }
                 });
     

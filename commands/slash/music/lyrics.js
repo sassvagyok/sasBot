@@ -16,7 +16,7 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const Client = new Genius.Client();
+        const Client = new Genius.Client(process.env.geniusToken);
         let guildQueue;
         const zene = interaction.options.getString("cím");
 

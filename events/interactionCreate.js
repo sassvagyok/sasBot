@@ -90,9 +90,10 @@ client.on("interactionCreate", async (interaction) => {
 
             interaction.member = interaction.guild ? interaction.guild.members.cache.get(interaction.user.id) : client.users.cache.find(user => user.id === interaction.user.id);
 
-            // Kikapcsolt parancsok kezelése
+            // Globálisan és lokálisan kikapcsolt parancsok kezelése
+            const globallyDisabled = client.config.globallyDisabledCommands;
             if (globallyDisabled && globallyDisabled.includes(cmd.name)) return interaction.reply({ content: "Ez a parancs jelenleg nem elérhető!", flags: MessageFlags.Ephemeral });
-            if (locallyDisabled && locallyDisabled.Commands.includes(cmd.name)) return interaction.reply({ content: "Ez a parancs ki van kapcsolva ezen a szerveren!", flags: MessageFlags.Ephemeral });
+            if (locallyDisabled && locallyDisabled.Commands.includes(cmd.name)) return interaction.reply({ content: "Ez a parancs nem elérhető ezen a szerveren!", flags: MessageFlags.Ephemeral });
 
             // Felhasználó permission kezelése
             if (permissionData) {
@@ -217,8 +218,11 @@ client.on("interactionCreate", async (interaction) => {
     // Context menü kezelés
     if (interaction.isContextMenuCommand()) {
         const command = client.contextMenuCommands.get(interaction.commandName);
+
+        // Globálisan és lokálisan kikapcsolt parancsok kezelése
+        const globallyDisabled = client.config.globallyDisabledCommands;
         if (globallyDisabled && globallyDisabled.includes(command.name)) return interaction.reply({ content: "Ez a parancs jelenleg nem elérhető!", flags: MessageFlags.Ephemeral });
-        if (locallyDisabled && locallyDisabled.Commands.includes(command.name)) return interaction.reply({ content: "Ez a parancs ki van kapcsolva a szerveren!", flags: MessageFlags.Ephemeral });
+        if (locallyDisabled && locallyDisabled.Commands.includes(command.name)) return interaction.reply({ content: "Ez a parancs nem elérhető ezen a szerveren!", flags: MessageFlags.Ephemeral });
 
         // Djrole, Zenecsatorna kezelése
         if (interaction.commandName === "Play") {
