@@ -1,7 +1,12 @@
 [
     {
         "version": "1.0.0",
-        "date": "2026. 02. 01.",
+        "date": 1769904000,
         "changelog": "🔹**Rendszerszintű**\n- sasBot mostantól nyílt forráskódú!\n- Új verziószámozás\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Catfact`: mostantól angolul\n\n🤖 **Információs-parancsok**\n-# Változás:\n- `Changelog`: mostantól nincsenek alverziók, pontos verziószámot kell megadni"
+    },
+    {
+        "version": "1.2.0",
+        "date": 1771459200,
+        "changelog": "🤖 **Információs-parancsok**\n-# Változás:\n- `Changelog`:\n    - mostantól nem lehet verziót választani\n   - nem minden frissítésénél jelenik meg új változáslista, csak a fontosabbaknál\n- `Feedback`: a tárgynak és leírásnak mostantól maximum hossza van (200/1000 karakter)"
     }
 ]

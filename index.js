@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
-import config from "./data/config.json" with { type: "json" };
+import config from "./config.json" with { type: "json" };
 import commandHandler from "./handler/commandHandler.js";
 import "dotenv/config";
 

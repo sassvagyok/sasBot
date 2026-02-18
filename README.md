@@ -39,7 +39,7 @@ npm run dev
 ```
 
 ## További konfiguráció
-- A `data/config.json` módosításával az alábbi funkciók konfigurálhatóak:
+- A `config.json` módosításával az alábbi funkciók konfigurálhatóak:
   - `status`: a bot státusz üzenete
   - `globallyDisabledCommands`: globálisan kikapcsolt parancsok listája
 - Példa:

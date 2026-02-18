@@ -11,16 +11,18 @@ export default {
         .setTitle("Visszajelzés küldése");
 
         const subject = new TextInputBuilder()
-        .setCustomId("type")
-        .setLabel("Tárgy")
+        .setCustomId("title")
+        .setLabel("Tárgy (max. 200 karakter)")
         .setStyle(TextInputStyle.Short)
-        .setRequired(true);
+        .setRequired(true)
+        .setMaxLength(200);
 
         const content = new TextInputBuilder()
         .setCustomId("desc")
-        .setLabel("Leírás")
+        .setLabel("Leírás (max. 1000 karakter)")
         .setStyle(TextInputStyle.Paragraph)
-        .setRequired(true);
+        .setRequired(true)
+        .setMaxLength(1000);
 
         const subjectActionRow = new ActionRowBuilder().addComponents(subject);
 		const contentActionRow = new ActionRowBuilder().addComponents(content);

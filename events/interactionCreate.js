@@ -1,4 +1,4 @@
-import { PermissionFlagsBits, InteractionType, EmbedBuilder, PermissionsBitField, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import { PermissionFlagsBits, InteractionType, EmbedBuilder, PermissionsBitField, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 import client from "../index.js";
 import saspont from "./saspontCreate.js";
 import commandStatisticsSchema from "../models/commandStatisticsModel.js";
@@ -196,21 +196,21 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.type == InteractionType.ModalSubmit) {
         if (interaction.customId === "fb") {
             await interaction.reply({ content: "Visszajelzés elküldve! Köszönöm!", flags: MessageFlags.Ephemeral });
-            const tárgy = interaction.fields.getTextInputValue("type");
-            const leírás = interaction.fields.getTextInputValue("desc");
+            const feedbackTitle = interaction.fields.getTextInputValue("title");
+            const feedbackContent = interaction.fields.getTextInputValue("desc");
         
             const guild = client.guilds.cache.get(process.env.devServerId);
             if (!guild) return;
             const channel = guild.channels.cache.get(process.env.feedbackChannelId);
             if (!channel) return;
-        
-            const feedbackEmbed = new EmbedBuilder()
-            .setColor("#1D88EC")
-            .setTitle(tárgy)
-            .setDescription(leírás)
-            .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
 
-            channel.send({ embeds: [feedbackEmbed] });
+            const feedbackContainer = new ContainerBuilder()
+            .setAccentColor(0x1d88ec)
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Visszajelzés: \`${interaction.user.username}\``))
+            .addSeparatorComponents(new SeparatorBuilder())
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`**Tárgy**\n${feedbackTitle}\n**Leírás**\n${feedbackContent}`));
+
+            channel.send({ components: [feedbackContainer], flags: MessageFlags.IsComponentsV2 });
         }
     }
 
