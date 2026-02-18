@@ -1,7 +1,6 @@
 import { PermissionFlagsBits, InteractionType, EmbedBuilder, PermissionsBitField, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 import client from "../index.js";
 import saspont from "./saspontCreate.js";
-import globallyDisabled from "../data/disabledCommands.json" with { type: "json" };
 import commandStatisticsSchema from "../models/commandStatisticsModel.js";
 import customCommandSchema from "../models/customcommandModel.js";
 import disabledCommandSchema from "../models/localdisableModel.js";
