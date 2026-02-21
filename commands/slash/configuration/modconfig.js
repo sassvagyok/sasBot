@@ -89,35 +89,30 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        let sendsetting, logsetting, dmsetting, logchannel;
+        const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
+        const logChannelData  = await logChannelSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
         const subCommandGroup = interaction.options.getSubcommandGroup();
 
-        const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
-        const logChannelData  = await logChannelSchema.findOne({ Guild: interaction.guild.id });
-
-        if (!modsettingData) return interaction.reply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
+        if (!modsettingData) return interaction.reply({ content: "Hiba történt! Gyors megoldás: rúgd ki és hívd vissza a botot!", flags: MessageFlags.Ephemeral });
 
         if (subCommandGroup === "konfigurálás") {
             if (subCommand === "küldés") {
-                sendsetting = interaction.options.getBoolean("bekapcsolás");
-
+                const sendsetting = interaction.options.getBoolean("bekapcsolás");
                 await modsettingSchema.findOneAndUpdate({ Guild: interaction.guild.id, Send: sendsetting });
     
                 interaction.reply({ content: sendsetting ? "Üzenetküldés bekapcsolva" : "Üzenetküldés kikapcsolva" });
             }
     
             if (subCommand === "mentés") {
-                logsetting = interaction.options.getBoolean("bekapcsolás");
-
+                const logsetting = interaction.options.getBoolean("bekapcsolás");
                 await modsettingSchema.findOneAndUpdate({ Guild: interaction.guild.id, Log: logsetting });
     
                 interaction.reply({ content: logsetting ? "Mentés bekapcsolva" : "Mentés kikapcsolva" });
             }
     
             if (subCommand === "dm") {
-                dmsetting = interaction.options.getBoolean("bekapcsolás");
-
+                const dmsetting = interaction.options.getBoolean("bekapcsolás");
                 await modsettingSchema.findOneAndUpdate({ Guild: interaction.guild.id, DM: dmsetting });
     
                 interaction.reply({ content: dmsetting ? "Privát üzenetküldés bekapcsolva" : "Privát üzenetküldés kikapcsolva" });
@@ -126,14 +121,15 @@ export default {
 
         if (subCommandGroup === "logcsatorna") {
             if (subCommand === "beállítás") {
-                logchannel = interaction.options.getChannel("csatorna");
+                const logchannel = interaction.options.getChannel("csatorna");
 
                 if (logChannelData) await logChannelSchema.findOneAndUpdate({ Guild: interaction.guild.id, Channel: logchannel.id });
                 else {
-                    new logChannelSchema({
+                    const newData = new logChannelSchema({
                         Guild: interaction.guild.id,
                         Channel: logchannel.id
-                    }).save();
+                    });
+                    await newData.save();
                 }
     
                 interaction.reply({ content: `Új log-csatorna: ${logchannel}` });

@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import customCommandSchema from "../../../models/customcommandModel.js";
 import disabledCommandSchema from "../../../models/localdisableModel.js";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
     name: "help",
@@ -31,17 +33,13 @@ export default {
         }
     ],
     run: async (client, interaction) => {
-
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
         
         const subCommand = interaction.options.getSubcommand();
-        const parancs = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
-
-        let customCommandData, disabledCommandData, fetchDisabled, globallyDisabled, helpEmbed;
+        const command = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
+        let customCommandData, disabledCommandData, globallyDisabled;
 
         if (interaction.channel.type !== 1) {
-            customCommandData = await customCommandSchema.find({ Guild: interaction.guild.id, Command: parancs });
+            customCommandData = await customCommandSchema.find({ Guild: interaction.guild.id, Command: command });
             globallyDisabled = client.config.globallyDisabledCommands;
             disabledCommandData = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
         };
@@ -62,7 +60,7 @@ export default {
             configuration: "Konfiguráció"
         }
 
-        const command = client.commands.get(parancs);
+        const builtInCommand = client.commands.get(command);
 
         if (subCommand === "részletes") {
             if (customCommandData && customCommandData?.length > 0) {
@@ -75,25 +73,25 @@ export default {
                 .addTextDisplayComponents(new TextDisplayBuilder().setContent(`"${customCommandData.map(cmd => cmd.Response).toString().substring(0, 1000)}"`));
 
                 return interaction.reply({ components: [helpContainer], flags: MessageFlags.IsComponentsV2 });
-            } else if (command) {
+            } else if (builtInCommand) {
                 const docsButton = new ButtonBuilder()
                 .setStyle("Link")
-                .setURL(`https://sassvagyok.github.io/sasBot-docs/commands/${command.name}`)
+                .setURL(`https://sassvagyok.github.io/sasBot-docs/commands/${builtInCommand.name}`)
                 .setLabel("Dokumentáció");
 
                 const headerSection = new SectionBuilder()
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${parancs.charAt(0).toUpperCase() + parancs.slice(1)}\n${dirs[command.directory]}`))
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${command.charAt(0).toUpperCase() + command.slice(1)}\n${dirs[builtInCommand.directory]}`))
                 .setButtonAccessory(docsButton);
         
                 const helpContainer = new ContainerBuilder()
                 .setAccentColor(0x1d88ec)
                 .addSectionComponents(headerSection)
                 .addSeparatorComponents(new SeparatorBuilder())
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(command.info));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(builtInCommand.info));
 
-                if (command.options) {
-                    const onlySubCommands = command.options.filter(x => x.type === 1 || x.type === 2);
-                    const notSubCommandsAsString = command.options.filter(x => x.type !== 1 && x.type !== 2).map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join(" ");
+                if (builtInCommand.options) {
+                    const onlySubCommands = builtInCommand.options.filter(x => x.type === 1 || x.type === 2);
+                    const notSubCommandsAsString = builtInCommand.options.filter(x => x.type !== 1 && x.type !== 2).map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join(" ");
                     let subCommands = [];
                     const subCommandsWithGroups = [];
 
@@ -133,21 +131,21 @@ export default {
                     }
                 }
 
-                if (command.dm_permission === false || (disabledCommandData && disabledCommandData.Commands.includes(command.name)) || (globallyDisabled && globallyDisabled.includes(command.name))) {
+                if (builtInCommand.dm_permission === false || (disabledCommandData && disabledCommandData.Commands.includes(builtInCommand.name)) || (globallyDisabled && globallyDisabled.includes(builtInCommand.name))) {
                     helpContainer.addSeparatorComponents(new SeparatorBuilder().setDivider(false));
                 }
 
-                if (command.dm_permission === false) {
+                if (builtInCommand.dm_permission === false) {
                     helpContainer
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent("-# 📵 Nem elérhető privát üzenetben!"));
                 }
 
-                if (disabledCommandData && disabledCommandData.Commands.includes(command.name)) {
+                if (disabledCommandData && disabledCommandData.Commands.includes(builtInCommand.name)) {
                     helpContainer
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent("-# 🚫 Kikapcsolva ezen a szerveren!"));
                 }
 
-                if (globallyDisabled && globallyDisabled.includes(command.name)) {
+                if (globallyDisabled && globallyDisabled.includes(builtInCommand.name)) {
                     helpContainer
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent("-# ❗ Jelenleg nem elérhető!"));
                 }
@@ -180,7 +178,7 @@ export default {
                 }
             });
     
-            helpEmbed = new EmbedBuilder()
+            const helpEmbed = new EmbedBuilder()
             .setDescription("Válassz kategóriát!")
             .setColor("1D88EC");
     

@@ -34,30 +34,29 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const subCommand = interaction.options.getSubcommand();
-        const rang = interaction.options.getRole("rang");
-
         const djRoleData = await djRoleSchema.findOne({ Guild: interaction.guild.id });
+        const subCommand = interaction.options.getSubcommand();
+        const djRole = interaction.options.getRole("rang");
 
         if (subCommand === "beállított") {
             if (djRoleData) {
-                const setRang = interaction.guild.roles.cache.get(djRoleData.Role);
+                const currentDjRole = interaction.guild.roles.cache.get(djRoleData.Role);
 
-                interaction.reply({ content: `Beállított DJ rang: ${setRang}` });
+                interaction.reply({ content: `Beállított DJ rang: ${currentDjRole}` });
             } else interaction.reply({ content: "Nincs DJ rang beállítva!", flags: MessageFlags.Ephemeral });
         }
 
         if (subCommand === "beállítás") {
-            if (djRoleData) await djRoleSchema.findOneAndUpdate({ Guild: interaction.guild.id}, { Role: rang.id });
+            if (djRoleData) await djRoleSchema.findOneAndUpdate({ Guild: interaction.guild.id}, { Role: djRole.id });
             else {
                 const newData = new djRoleSchema({
                     Guild: interaction.guild.id,
-                    Role: rang.id
+                    Role: djRole.id
                 });
                 await newData.save();
             }
 
-            interaction.reply({ content: `${rang} beállítva DJ rangként` });
+            interaction.reply({ content: `${djRole} beállítva DJ rangként` });
         }
 
         if (subCommand === "kikapcsolás") {

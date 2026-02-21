@@ -49,49 +49,49 @@ export default {
 
         const autoRoleData = await autoRoleSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
+        const autoRole = interaction.options.getRole("rang");
+        const autoRoleName = autoRole?.name;
+        const autoRoleId = autoRole?.id;
 
         if (subCommand === "hozzáadás") {
-            const finalRole = interaction.options.getRole("rang");
-
             if (autoRoleData) {
-                if (autoRoleData.Roles.includes(finalRole.id)) {
-                    return interaction.reply({ content: `\`${finalRole.name}\` már hozzá van adva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
+                if (autoRoleData.Roles.includes(autoRoleId)) {
+                    return interaction.reply({ content: `\`${autoRoleName}\` már hozzá van adva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
                 } else {
-                    autoRoleData.Roles.push(finalRole.id);
+                    autoRoleData.Roles.push(autoRoleId);
                     await autoRoleData.save();
 
-                    interaction.reply({ content: `\`${finalRole.name}\` hozzáadva az automatikus rangokhoz` });
+                    interaction.reply({ content: `\`${autoRoleName}\` hozzáadva az automatikus rangokhoz` });
                 }
             } else {
-                new autoRoleSchema({
+                const newData = new autoRoleSchema({
                     Guild: interaction.guild.id,
-                    Roles: [finalRole.id]
-                }).save();
+                    Roles: [autoRoleId]
+                });
+                await newData.save();
 
-                interaction.reply({ content: `\`${finalRole.name}\` hozzáadva az automatikus rangokhoz` });
+                interaction.reply({ content: `\`${autoRoleName}\` hozzáadva az automatikus rangokhoz` });
             }
         }
 
         if (subCommand === "eltávolítás") {
-            const finalRole = interaction.options.getRole("rang");
-
             if (autoRoleData) {
-                if (autoRoleData.Roles.includes(finalRole.id)) {
-                    const index = autoRoleData.Roles.indexOf(finalRole.id);
+                if (autoRoleData.Roles.includes(autoRoleId)) {
+                    const index = autoRoleData.Roles.indexOf(autoRoleId);
 
                     if (index > -1) {
                         autoRoleData.Roles.splice(index, 1);
                         await autoRoleData.save();
 
-                        interaction.reply({ content: `\`${finalRole.name}\` eltávolítva az automatikus rangokból` });
+                        interaction.reply({ content: `\`${autoRoleName}\` eltávolítva az automatikus rangokból` });
 
                         if (autoRoleData.Roles.length === 0) await autoRoleSchema.deleteOne({ Guild: interaction.guild.id });
                     }
                 } else {
-                    interaction.reply({ content: `\`${finalRole.name}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
+                    interaction.reply({ content: `\`${autoRoleName}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
                 }
             } else {
-                interaction.reply({ content: `\`${finalRole.name}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
+                interaction.reply({ content: `\`${autoRoleName}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
             }
         }
 
@@ -126,7 +126,7 @@ export default {
                             formattedRoles += " ";
                         }
                     }
-                } else formattedRoles = "Nincs egy sem!";
+                } else formattedRoles = "Nincs egy automatikus rang sem hozzáadva!";
 
                 const autorolesContainer = new ContainerBuilder()
                 .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Automatikus rangok (${roles.length}):`))

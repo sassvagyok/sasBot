@@ -30,26 +30,25 @@ export default {
     ],
     run: async (client, interaction) => {
 
+        const membercounterData = await membercounterSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
-        const name = interaction.options.getString("név");
+        const channelName = interaction.options.getString("név");
+        const members = interaction.guild.memberCount;
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({ content: "Nincs jogom ehhez: `Manage Channels`!", flags: MessageFlags.Ephemeral });
-
-        const members = interaction.guild.memberCount;
-        const membercounterData = await membercounterSchema.findOne({ Guild: interaction.guild.id });
 
         if (subCommand === "beállítás") {
             if (membercounterData && interaction.guild.channels.cache.get(membercounterData.Channel)) {
                 if (!interaction.guild.channels.cache.get(membercounterData.Channel).permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ManageChannels)) return interaction.reply({ content: "Nincs jogom ehhez: `Manage Channels`!", flags: MessageFlags.Ephemeral });
-                interaction.guild.channels.cache.get(membercounterData.Channel).setName(`${name}: ${members}`);
+                interaction.guild.channels.cache.get(membercounterData.Channel).setName(`${channelName}: ${members}`);
     
-                await membercounterSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Name: name });
+                await membercounterSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Name: channelName });
                 interaction.reply({ content: "Tagszámláló csatorna átnevezve" });
             } else {
                 if (membercounterData) await membercounterSchema.findOneAndDelete({ Guild: interaction.guild.id });
     
                 const channel = await interaction.guild.channels.create({
-                    name: `${name}: ${members}`,
+                    name: `${channelName}: ${members}`,
                     type: ChannelType.GuildVoice,
                     permissionOverwrites: [
                         {
@@ -63,12 +62,13 @@ export default {
                     ]
                 });
     
-                new membercounterSchema({
+                const newData = new membercounterSchema({
                     Guild: interaction.guild.id,
                     Channel: channel.id,
                     Member: members,
-                    Name: name
-                }).save();
+                    Name: channelName
+                });
+                await newData.save();
     
                 interaction.reply({ content: `Tagszámláló csatorna létrehozva (${channel})` });
             }

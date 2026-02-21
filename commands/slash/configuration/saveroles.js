@@ -21,15 +21,15 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const subCommand = interaction.options.getSubcommand();
-
         const saveroleData = await saverolesSchema.findOne({ Guild: interaction.guild.id });
+        const subCommand = interaction.options.getSubcommand();
 
         if (subCommand === "átállítás") {
             if (!saveroleData) {
-                new saverolesSchema({
+                const newData = new saverolesSchema({
                     Guild: interaction.guild.id
-                }).save();
+                });
+                await newData.save();
     
                 interaction.reply({ content: "Rangok megjegyzése bekapcsolva" });
             } else {

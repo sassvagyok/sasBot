@@ -89,7 +89,7 @@ export default {
     run: async (client, interaction) => {
 
         const farewellData = await farewellSchema.findOne({ Guild: interaction.guild.id });
-        
+        const subCommand = interaction.options.getSubcommand();
         const channel = interaction.options.getChannel("csatorna");
         const description = interaction.options.getString("leírás");
         const title = interaction.options.getString("cím");
@@ -98,8 +98,6 @@ export default {
         const color = interaction.options.getString("szín");
         const icon = interaction.options.getBoolean("ikon");
         const timestamp = interaction.options.getBoolean("timestamp");
-
-        const subCommand = interaction.options.getSubcommand();
 
         const createEmbed = (description, title, header, thumbnail, color, icon, timestamp) => {
             const replacedDescription = description?.replace("[tag]", interaction.user.username);
@@ -138,7 +136,7 @@ export default {
 
                 interaction.reply({ content: `Új búcsúüzenet beállítva ide: ${channel}:\n`, embeds: [createEmbed(description, title, header, thumbnail, color, icon, timestamp)] });
             } else {
-                new farewellSchema({
+                const newData = new farewellSchema({
                     Guild: interaction.guild.id,
                     Channel: channel.id,
                     Description: description,
@@ -148,7 +146,8 @@ export default {
                     Thumbnail: thumbnail,
                     Icon: icon,
                     Timestamp: timestamp
-                }).save();
+                });
+                await newData.save();
 
                 interaction.reply({ content: `Búcsúüzenet módosítva itt: ${channel}:\n`, embeds: [createEmbed(description, title, header, thumbnail, color, icon, timestamp)] });
             }

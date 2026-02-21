@@ -8,19 +8,16 @@ export default {
     info: "A legutóbbi felhasználókat érintő változások.",
     run: async (client, interaction) => {
         
-        const version = packageJson.version;
-        let selectedChangelog = log[log.length - 1];
-
-        const date = new Date(selectedChangelog.date * 1000);
-        const formatted = date.toLocaleDateString('hu-HU');
+        const currentVersion = packageJson.version;
+        const currentChangelog = log[log.length - 1];
 
         const changelogContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${selectedChangelog.version} | \`${formatted}\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${currentChangelog.version} | <t:${currentChangelog.date}:D>`))
         .addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(selectedChangelog.changelog))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(currentChangelog.changelog))
         .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# Aktuális: ${version}`));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# Aktuális: ${currentVersion}`));
 
         interaction.reply({ components: [changelogContainer], flags: MessageFlags.IsComponentsV2 });
     }

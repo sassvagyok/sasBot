@@ -35,22 +35,21 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const subCommand = interaction.options.getSubcommand();
-        const csatorna = interaction.options.getChannel("csatorna");
-
         const musicChannelData = await musicChannelSchema.findOne({ Guild: interaction.guild.id });
+        const subCommand = interaction.options.getSubcommand();
+        const musicChannel = interaction.options.getChannel("csatorna");
 
         if (subCommand === "beállítás") {
-            if (musicChannelData) await musicChannelSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Channel: csatorna.id });
+            if (musicChannelData) await musicChannelSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Channel: musicChannel.id });
             else {
                 const newData = new musicChannelSchema({
                     Guild: interaction.guild.id,
-                    Channel: csatorna.id
+                    Channel: musicChannel.id
                 });
                 await newData.save();
             }
 
-            interaction.reply({ content: `Új zene-csatorna: ${csatorna}` });
+            interaction.reply({ content: `Új zene-csatorna: ${musicChannel}` });
         }
 
         if (subCommand === "kikapcsolás") {

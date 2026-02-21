@@ -17,7 +17,7 @@ export default {
         .setURL("https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands")
         .setLabel("Meghívás");
 
-        const supportButton = new ButtonBuilder()
+        const supportServerButton = new ButtonBuilder()
         .setStyle("Link")
         .setURL("https://discord.gg/s8XtzBasQF")
         .setLabel("Szerver");
@@ -27,7 +27,7 @@ export default {
         .setURL("https://sassvagyok.github.io/sasBot-docs/")
         .setLabel("Dokumentáció");
 
-        const row = new ActionRowBuilder().addComponents(gitButton, inviteButton, supportButton, docsButton);
+        const row = new ActionRowBuilder().addComponents(gitButton, inviteButton, supportServerButton, docsButton);
 
         const infoContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)

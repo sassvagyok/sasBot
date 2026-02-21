@@ -30,57 +30,55 @@ export default {
     ],
     run: async (client, interaction) => {
 
+        const disabledCommandData = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
-        const parancs = interaction.options.getString("parancs");
-
-        const locallyDisabled = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
+        const builtInCommandName = interaction.options.getString("parancs").toLowerCase().split(" ")[0];
         
         if (subCommand === "átállítás") {
-            const name = parancs.toLowerCase().split(" ")[0];
-            const command = client.commands.get(name);
-            const filteredCmds = client.commands.filter(x => x.directory == "information" || x.directory == "configuration").map(x => x.name);
+            const builtInCommand = client.commands.get(builtInCommandName);
+            const filteredCommands = client.commands.filter(x => x.directory === "information" || x.directory === "configuration").map(x => x.builtInCommandName);
 
-            if (!command) return interaction.reply({ content: "Nincs ilyen parancs!", flags: MessageFlags.Ephemeral });
-            if (filteredCmds.includes(name)) return interaction.reply({ content: "Konfiguráció és Információ kategóriájú parancsok nem kikapcsolhatóak!", flags: MessageFlags.Ephemeral });
+            if (!builtInCommand) return interaction.reply({ content: "Nincs ilyen parancs!", flags: MessageFlags.Ephemeral });
+            if (filteredCommands.includes(builtInCommandName)) return interaction.reply({ content: "Konfiguráció és Információ kategóriájú parancsok nem kikapcsolhatóak!", flags: MessageFlags.Ephemeral });
         
-            if (command.name === name) {
-                if (!locallyDisabled) {
+            if (builtInCommand.name === builtInCommandName) {
+                if (!disabledCommandData) {
                     const newData = new disabledCommandSchema({
                         Guild: interaction.guild.id,
-                        Commands: [name]
+                        Commands: [builtInCommandName]
                     });
                     await newData.save();
 
-                    interaction.reply({ content: `\`${name}\` parancs kikapcsolva` });
+                    interaction.reply({ content: `\`${builtInCommandName}\` parancs kikapcsolva` });
                 } else {
-                    if (locallyDisabled.Commands.includes(name)) {
-                        const index = locallyDisabled.Commands.indexOf(name);
+                    if (disabledCommandData.Commands.includes(builtInCommandName)) {
+                        const commandIndex = disabledCommandData.Commands.indexOf(builtInCommandName);
 
-                        if (index > -1) {
-                            locallyDisabled.Commands.splice(index, 1);
-                            await locallyDisabled.save();
+                        if (commandIndex > -1) {
+                            disabledCommandData.Commands.splice(commandIndex, 1);
+                            await disabledCommandData.save();
 
-                            if (locallyDisabled.Commands.length === 0) await disabledCommandSchema.deleteOne({ Guild: interaction.guild.id });
-                            interaction.reply({ content: `\`${name}\` parancs bekapcsolva` });
+                            if (disabledCommandData.Commands.length === 0) await disabledCommandSchema.deleteOne({ Guild: interaction.guild.id });
+                            interaction.reply({ content: `\`${builtInCommandName}\` parancs bekapcsolva` });
                         }
                     } else {
-                        locallyDisabled.Commands.push(name);
-                        await locallyDisabled.save();
+                        disabledCommandData.Commands.push(builtInCommandName);
+                        await disabledCommandData.save();
 
-                        if (locallyDisabled.Commands.length === 0) await disabledCommandSchema.deleteOne({ Guild: interaction.guild.id });
+                        if (disabledCommandData.Commands.length === 0) await disabledCommandSchema.deleteOne({ Guild: interaction.guild.id });
                     }
 
-                    interaction.reply({ content: `\`${name}\` parancs kikapcsolva` });
+                    interaction.reply({ content: `\`${builtInCommandName}\` parancs kikapcsolva` });
                 }
             }
         }
 
         if (subCommand === "kikapcsoltak") {
-            if (!locallyDisabled) return interaction.reply({ content: "Nincsenek a szerveren kikapcsolt parancsok!", flags: MessageFlags.Ephemeral });
+            if (!disabledCommandData) return interaction.reply({ content: "Nincsenek a szerveren kikapcsolt parancsok!", flags: MessageFlags.Ephemeral });
             
             const toggleContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kikapcsolt parancsok (${locallyDisabled.Commands.length}):`))
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`\`\`\`${locallyDisabled.Commands.join(", ").length > 1990 ? locallyDisabled.Commands.join(", ").substring(0, 1990) + "..." : locallyDisabled.Commands.join(", ")}\`\`\``));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kikapcsolt parancsok (${disabledCommandData.Commands.length}):`))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`\`\`\`${disabledCommandData.Commands.join(", ").length > 1990 ? disabledCommandData.Commands.join(", ").substring(0, 1990) + "..." : disabledCommandData.Commands.join(", ")}\`\`\``));
 
             interaction.reply({ components: [toggleContainer], flags: MessageFlags.IsComponentsV2 });
         }

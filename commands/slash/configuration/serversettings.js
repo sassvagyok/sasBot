@@ -23,7 +23,6 @@ export default {
         const saveroleData = await saverolesSchema.findOne({ Guild: interaction.guild.id });
         const welcomeData  = await welcomeSchema.findOne({ Guild: interaction.guild.id });
         const musicChannelData = await musicChannelSchema.findOne({ Guild: interaction.guild.id });
-
         const djRole = interaction.guild.roles.cache.get(djRoleData?.Role);
 
         const serversettingsContainer = new ContainerBuilder()

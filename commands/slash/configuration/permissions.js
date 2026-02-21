@@ -50,44 +50,44 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const subCommand = interaction.options.getSubcommand();
-        const name = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
-        const rang = interaction.options.getRole("rang");
-
         const permissionData  = await permissionSchema.findOne({ Guild: interaction.guild.id });
+        const subCommand = interaction.options.getSubcommand();
+        const builtInCommandName = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
+        const permissionRole = interaction.options.getRole("rang");
 
         if (subCommand === "átállítás") {
-            const command = client.commands.get(name);
-            const filteredCmds = client.commands.filter(x => x.directory == "information" || x.directory == "configuration").map(x => x.name);
+            const builtInCommand = client.commands.get(builtInCommandName);
+            const filteredCmds = client.commands.filter(x => x.directory == "information" || x.directory == "configuration").map(x => x.builtInCommandName);
 
-            if (!command) return interaction.reply({ content: "Nincs ilyen parancs!", flags: MessageFlags.Ephemeral });
-            if (filteredCmds.includes(name)) return interaction.reply({ content: "Konfiguráció és Információ kategóriájú parancsokat nem köthetsz ranghoz!", flags: MessageFlags.Ephemeral });
+            if (!builtInCommand) return interaction.reply({ content: "Nincs ilyen parancs!", flags: MessageFlags.Ephemeral });
+            if (filteredCmds.includes(builtInCommandName)) return interaction.reply({ content: "Konfiguráció és Információ kategóriájú parancsokat nem köthetsz ranghoz!", flags: MessageFlags.Ephemeral });
 
             if (!permissionData) {
                 const newData = new permissionSchema({
                     Guild: interaction.guild.id,
                     Commands: [
                         {
-                            Name: name,
-                            Roles: [rang.id]
+                            Name: builtInCommandName,
+                            Roles: [permissionRole.id]
                         }
                     ]
                 });
                 await newData.save();
 
-                interaction.reply({ content: `\`${name}\` mostantól \`${rang.name}\` ranggal használható` });
+                interaction.reply({ content: `\`${builtInCommandName}\` mostantól \`${permissionRole.name}\` ranggal használható` });
             } else {
                 const cmdIndex = permissionData.Commands.findIndex(x => {
-                    return x.Name === name;
+                    return x.Name === builtInCommandName;
                 });
+
                 if (cmdIndex > -1) {
-                    if (permissionData.Commands[cmdIndex].Roles.includes(rang.id)) {
-                        const roleIndex = permissionData.Commands[cmdIndex].Roles.indexOf(rang.id);
+                    if (permissionData.Commands[cmdIndex].Roles.includes(permissionRole.id)) {
+                        const roleIndex = permissionData.Commands[cmdIndex].Roles.indexOf(permissionRole.id);
 
                         permissionData.Commands[cmdIndex].Roles.splice(roleIndex, 1);
                         await permissionData.save();
 
-                        interaction.reply({ content: `\`${name}\` mostantól használható \`${rang.name}\` rang nélkül is` });
+                        interaction.reply({ content: `\`${builtInCommandName}\` mostantól használható \`${permissionRole.name}\` rang nélkül is` });
 
                         if (permissionData.Commands[cmdIndex].Roles.length == 0) {
                             permissionData.Commands.splice(cmdIndex, 1);
@@ -98,35 +98,35 @@ export default {
                     } else {
                         if (permissionData.Commands[cmdIndex].Roles.length === 5) return interaction.reply({ content: "Egy parancshoz csak 5 rangot köthetsz!", flags: MessageFlags.Ephemeral });
 
-                        permissionData.Commands[cmdIndex].Roles.push(rang.id);
+                        permissionData.Commands[cmdIndex].Roles.push(permissionRole.id);
                         await permissionData.save();
 
-                        return interaction.reply({ content: `\`${name}\` mostantól \`${rang.name}\` ranggal is használható` });
+                        return interaction.reply({ content: `\`${builtInCommandName}\` mostantól \`${permissionRole.name}\` ranggal is használható` });
                     }
                 } else {
-                    permissionData.Commands.push({ Name: name, Roles: [rang.id] });
+                    permissionData.Commands.push({ Name: builtInCommandName, Roles: [permissionRole.id] });
                     await permissionData.save();
 
-                    interaction.reply({ content: `\`${name}\` mostantól \`${rang.name}\` ranggal használható` });
+                    interaction.reply({ content: `\`${builtInCommandName}\` mostantól \`${permissionRole.name}\` ranggal használható` });
                 }
             }
         }
 
         if (subCommand === "visszaállítás") {
-            if (!permissionData) interaction.reply({ content: `\`${name}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
+            if (!permissionData) interaction.reply({ content: `\`${builtInCommandName}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
             else {
                 const cmdIndex = permissionData.Commands.findIndex(x => {
-                    return x.Name === name;
+                    return x.Name === builtInCommandName;
                 });
 
                 if (cmdIndex > -1) {
                     permissionData.Commands.splice(cmdIndex, 1);
                     await permissionData.save();
 
-                    interaction.reply({ content: `\`${name}\` mostantól az alap jogosultságokkal használható!` });
+                    interaction.reply({ content: `\`${builtInCommandName}\` mostantól az alap jogosultságokkal használható!` });
 
                     if (permissionData.Commands.length === 0) await permissionSchema.deleteOne({ Guild: interaction.guild.id });
-                } else interaction.reply({ content: `\`${name}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
+                } else interaction.reply({ content: `\`${builtInCommandName}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
             }
         }
 
