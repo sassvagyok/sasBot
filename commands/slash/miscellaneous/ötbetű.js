@@ -122,9 +122,11 @@ export default {
             }
 
             if (hasWon) {
-                saspontUser.Balance += 100 * (7 - player.Tries);
+                const earnedPoints = 200 * (7 - player.Tries);
+
+                saspontUser.Balance += earnedPoints;
                 saspontUser.History.push({
-                    Value: 100 * (7 - player.Tries),
+                    Value: earnedPoints,
                     Origin: "Ötbetű",
                     Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
                     Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD HH:mm")
@@ -139,7 +141,7 @@ export default {
 
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(100 * (7 - player.Tries))} sasPont`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(earnedPoints)} sasPont`));
 
                 player.Guessed = true;
                 player.Stats.Wins += 1;

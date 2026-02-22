@@ -109,8 +109,9 @@ export default {
 
         const createLeaderboard = (users) => {
             const sortedUsers = users.sort(sortFunction);
+            const medals = ["🥇", "🥈", "🥉"];
 
-            sortedUsers.forEach((x, i, arr) => arr[i] = `${i+1}. **${x.Username}:** \`${format.format(x.Balance)} sP\``);
+            sortedUsers.forEach((x, i, arr) => arr[i] = `${medals[i] ?? `${i+1}.`} **${x.Username}:** \`${format.format(x.Balance)} sP\``);
             sortedUsers.length = Math.min(10, sortedUsers.length);
     
             const leaderContainer = new ContainerBuilder()

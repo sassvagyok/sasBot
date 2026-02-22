@@ -11,7 +11,12 @@
     },
     {
         "version": "1.3.0",
-        "date": 1771459200,
+        "date": 1771777671,
         "changelog": "🎵 **Zene-parancsok**\n-# Változás:\n- `Remove`: zene helyett sorszám paraméter\n- `Skip`: zenék helyett darab paraméter\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Ötbetű`: mostantól csak annyiszor jelez egy betűt ahányszor az benne van a kitalálandó szóban\n- `Saspont adatok`: opció, hogy ne jelenjen meg a felhasználó a globális ranglistán"
+    },
+    {
+        "version": "1.3.1",
+        "date": 1771782934,
+        "changelog": "**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Ötbetű`: mostantól kétszer annyi sasPontot ad\n- `Saspont ranglista`: mostantól az első 3 helyezettet medállal jelzi"
     }
 ]
