@@ -38,17 +38,17 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const subCommand = interaction.options.getSubcommand();
-        const szo = interaction.options.getString("szó");
         const ötbetűData = await ötbetűSchema.findOne();
-        let player = ötbetűData.Users.find(x => x.UserID == interaction.user.id);
         const saspontData = await saspontSchema.findOne();
+        const subCommand = interaction.options.getSubcommand();
+        const guess = interaction.options.getString("szó");
+        let player = ötbetűData.Users.find(x => x.UserID == interaction.user.id);
         let saspontUser = saspontData.Users.find(x => x.UserID == interaction.user.id);
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
 
         if (subCommand === "játék") {
-            if (!allWords.includes(szo) || szo.length < 5) return interaction.reply({ content: "Egy létező, 5 betűs szót adj meg!", flags: MessageFlags.Ephemeral });
+            if (!allWords.includes(guess) || guess.length < 5) return interaction.reply({ content: "Egy létező, 5 betűs szót adj meg!", flags: MessageFlags.Ephemeral });
 
             if (!player) {
                 const new_player = {
@@ -69,9 +69,7 @@ export default {
                 await ötbetűData.save();
                 player = ötbetűData.Users.find(x => x.UserID === interaction.user.id);
             } else {
-                if (player.Tries >= 6) {
-                    return interaction.reply({ content: "Ma már játszottál! Új szó éjfélkor!", flags: MessageFlags.Ephemeral });
-                }
+                if (player.Tries >= 6) return interaction.reply({ content: "Ma már játszottál! Új szó éjfélkor!", flags: MessageFlags.Ephemeral });
 
                 player.Tries += 1;
 
@@ -80,18 +78,25 @@ export default {
                 await ötbetűData.save();
             }
 
+            const charCountOfWord = {};
+            for (const char of ötbetűData.Word) {
+                charCountOfWord[char] = (charCountOfWord[char] || 0) + 1;
+            }
+
             let results = "";
             for (let i = 0; i < 5; i++) {
-                if (szo[i] == ötbetűData.Word[i]) {
+                if (guess[i] == ötbetűData.Word[i]) {
                     results += "🟩";
-                } else if (ötbetűData.Word.includes(szo[i])) {
+                    charCountOfWord[guess[i]] -= 1;
+                } else if (ötbetűData.Word.includes(guess[i]) && charCountOfWord[guess[i]] > 0) {
                     results += "🟧";
+                    charCountOfWord[guess[i]] -= 1;
                 } else {
                     results += "⬛"
                 }
             }
 
-            const nyert = szo === ötbetűData.Word ? true : false;
+            const hasWon = guess === ötbetűData.Word;
 
             if (player.Sequence) player.Sequence += "\n" + [...results].join("  ");
             else player.Sequence = [...results].join("  ");
@@ -106,9 +111,9 @@ export default {
                 otbetuContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(line));
             });
 
-            otbetuContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${szo.split("").map(char => `\`${char}\``).join("\t")}`));
+            otbetuContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${guess.split("").map(char => `\`${char}\``).join("\t")}`));
 
-            if (player.Tries === 6 && !nyert) {
+            if (player.Tries === 6 && !hasWon) {
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
                 .addTextDisplayComponents(new TextDisplayBuilder().setContent(`A nap szava: \`${ötbetűData.Word}\``))
@@ -116,7 +121,7 @@ export default {
                 .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +0 sasPont`));
             }
 
-            if (nyert) {
+            if (hasWon) {
                 saspontUser.Balance += 100 * (7 - player.Tries);
                 saspontUser.History.push({
                     Value: 100 * (7 - player.Tries),
