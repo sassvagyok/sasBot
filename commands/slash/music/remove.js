@@ -8,7 +8,7 @@ export default {
     vc_check: true,
     options: [
         {
-            name: "zene",
+            name: "sorszám",
             description: "Zene sorszáma a lejátszási sorban",
             type: ApplicationCommandOptionType.Number,
             required: true,
@@ -17,16 +17,16 @@ export default {
     ],
     run: async (client, interaction, args) => {
 
-        const zene = interaction.options.getNumber("zene");
+        const songIndex = interaction.options.getNumber("sorszám");
         
         let guildQueue = client.distube.getQueue(interaction);
         if (!guildQueue || guildQueue.songs.length === 0) return interaction.reply({ content: "A lejátszási sor üres!", flags: MessageFlags.Ephemeral });
 
-        if (zene > guildQueue.songs.length) return interaction.reply({ content: `A lejátszási sorban lévő zenék száma: \`${guildQueue.songs.length - 1}\``, flags: MessageFlags.Ephemeral });
+        if (songIndex > guildQueue.songs.length) return interaction.reply({ content: `A lejátszási sorban lévő zenék száma: \`${guildQueue.songs.length - 1}\``, flags: MessageFlags.Ephemeral });
 
-        const song = guildQueue.songs[zene];
+        const song = guildQueue.songs[songIndex];
         
-        guildQueue.songs.splice(zene, 1);
+        guildQueue.songs.splice(songIndex, 1);
 
         const songThumbnailComponent = new ThumbnailBuilder({
             media: { url: song.thumbnail }

@@ -18,9 +18,7 @@ const distube = new DisTube(client, {
 
 client.distube = distube;
 
-// Eventek
 client.distube
-
 // Hibakezelés
 .on("error", async (e, queue, song) => {
     console.error(e);

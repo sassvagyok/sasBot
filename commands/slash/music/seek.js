@@ -19,16 +19,16 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const mp = interaction.options.getNumber("másodperc");
+        const seconds = interaction.options.getNumber("másodperc");
         
         let guildQueue = client.distube.getQueue(interaction);
         if (!guildQueue || guildQueue.songs.length === 0) return interaction.reply({ content: "A lejátszási sor üres!", flags: MessageFlags.Ephemeral });
 
         const previousTime = guildQueue.currentTime;
 
-        await guildQueue.seek(mp);
+        await guildQueue.seek(seconds);
 
-        let duration = moment.duration(mp, "seconds");
+        let duration = moment.duration(seconds, "seconds");
         let formattedDuration = duration.format("hh:mm:ss", {
             trim: ""
         });

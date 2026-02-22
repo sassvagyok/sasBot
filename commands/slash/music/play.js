@@ -16,7 +16,7 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const zene = interaction.options.getString("zene");
+        const song = interaction.options.getString("zene");
 
         if (!interaction.member.voice.channel) return interaction.reply({ content: "Lépj be egy hangcsatornába!", flags: MessageFlags.Ephemeral });
 
@@ -31,7 +31,7 @@ export default {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         try {
-            await client.distube.play(interaction.member.voice.channel, zene, {
+            await client.distube.play(interaction.member.voice.channel, song, {
                 voiceChannel: interaction.member.voice.channel,
                 textChannel: interaction.channel,
                 member: interaction.member

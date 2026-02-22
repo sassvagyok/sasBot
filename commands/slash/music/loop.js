@@ -33,11 +33,11 @@ export default {
         let guildQueue = client.distube.getQueue(interaction);
         if (!guildQueue || guildQueue.songs.length === 0) return interaction.reply({ content: "A lejátszási sor üres!", flags: MessageFlags.Ephemeral });
 
-        const loop = interaction.options.getString("mód");
+        const loopMode = interaction.options.getString("mód");
 
-        if (loop === "be") guildQueue.setRepeatMode(1);
-        if (loop === "ki") guildQueue.setRepeatMode(0);
-        if (loop === "queue") guildQueue.setRepeatMode(2);
+        if (loopMode === "be") guildQueue.setRepeatMode(1);
+        if (loopMode === "ki") guildQueue.setRepeatMode(0);
+        if (loopMode === "queue") guildQueue.setRepeatMode(2);
 
         const offButton = new ButtonBuilder()
         .setStyle(guildQueue.repeatMode === 0 ? "Primary" : "Secondary")

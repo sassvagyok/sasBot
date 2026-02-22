@@ -18,17 +18,17 @@ export default {
 
         const Client = new Genius.Client(process.env.geniusToken);
         let guildQueue;
-        const zene = interaction.options.getString("cím");
+        const title = interaction.options.getString("cím");
 
         if (interaction.channel.type === 1) {
-            if (!zene) return interaction.reply({ content: "Adj meg egy zenecímet!", flags: MessageFlags.Ephemeral });
+            if (!title) return interaction.reply({ content: "Adj meg egy zenecímet!", flags: MessageFlags.Ephemeral });
         } else guildQueue = client.distube.getQueue(interaction);
 
         await interaction.deferReply({ flags: MessageFlags.IsComponentsV2 });
 
         let searches;
-        if (zene) searches = await Client.songs.search(zene);
-        if (!zene && guildQueue) searches = await Client.songs.search(guildQueue.songs[0].name);
+        if (title) searches = await Client.songs.search(title);
+        if (!title && guildQueue) searches = await Client.songs.search(guildQueue.songs[0].name);
 
         if (searches.length === 0) return interaction.editReply({ content: "A megadott zene nem található!", flags: MessageFlags.Ephemeral });
 

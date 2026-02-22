@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder} from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, ButtonStyle, } from "discord.js";
 
 export default {
     name: "queue",
@@ -45,13 +45,13 @@ export default {
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`\`\`\`${formattedSongs[0]}\`\`\``));
 
             const prevButton = new ButtonBuilder()
-            .setStyle("Primary")
+            .setStyle(ButtonStyle.Primary)
             .setCustomId("prev")
             .setLabel("⬅️")
             .setDisabled(true);
 
             const nextButton = new ButtonBuilder()
-            .setStyle("Primary")
+            .setStyle(ButtonStyle.Primary)
             .setCustomId("next")
             .setLabel("➡️");
             

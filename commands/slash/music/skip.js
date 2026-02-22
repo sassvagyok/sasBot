@@ -8,7 +8,7 @@ export default {
     vc_check: true,
     options: [
         {
-            name: "zenék",
+            name: "darab",
             description: "Ennyi zene átugrása (üres: 1)",
             type: ApplicationCommandOptionType.Number,
             required: false,
@@ -20,7 +20,7 @@ export default {
         let guildQueue = client.distube.getQueue(interaction);
         if (!guildQueue || guildQueue.songs.length === 0) return interaction.reply({ content: "A lejátszási sor üres!", flags: MessageFlags.Ephemeral });
 
-        const numberOfSongs = interaction.options.getNumber("zenék");
+        const numberOfSongs = interaction.options.getNumber("darab");
 
         const skipContainer = new ContainerBuilder()
         .setAccentColor(0x9327de);

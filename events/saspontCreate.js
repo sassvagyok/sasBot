@@ -4,9 +4,10 @@ export default async (user) => {
     let saspontData = await saspontSchema.findOne();
 
     if (!saspontData) {
-        new saspontSchema({
+        const newData = new saspontSchema({
             Users: []
-        }).save();
+        });
+        await newData.save();
 
         saspontData = await saspontSchema.findOne();
     }
@@ -17,7 +18,7 @@ export default async (user) => {
         const new_user = {
             UserID: user.id,
             Username: user.username
-        }
+        };
 
         saspontData.Users.push(new_user);
         await saspontData.save();
