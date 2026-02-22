@@ -104,7 +104,7 @@ client.on("interactionCreate", async (interaction) => {
                     const hasRole = modifiedCmd.Roles.some(x => roles.includes(x));
                     if (!hasRole) {
                         const requiredRoles = [];
-                        for (elem of modifiedCmd.Roles) {
+                        for (let elem of modifiedCmd.Roles) {
                             const role = interaction.guild.roles.cache.find(r => r.id === elem);
                             requiredRoles.push(role);
                         }

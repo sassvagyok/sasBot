@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } from "discord.js";
 import { fetchRandom } from "nekos-best.js";
-import allNeko from "../../../data/nekosbest.json" with { type: "json" };
+import fetch from "node-fetch";
 
 export default {
     name: "nekosbest",
@@ -16,23 +16,25 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const nekoType = interaction.options.getString("kategória");
+        const nekoCategory = interaction.options.getString("kategória");
 
-        const gifNekos = allNeko.gifNekos;
-        const imgNekos = allNeko.imgNekos;
-        const concatNekos = gifNekos.concat(imgNekos);
+        const fetchCategories = await fetch("https://nekos.best/api/v2/endpoints");
+        const fetchedCategoriesJson = await fetchCategories.json();
 
-        if (!nekoType || !concatNekos.includes(nekoType.toLowerCase())) 
-        {
-            const tagsContainer = new ContainerBuilder()
+        const gifNekos = Object.entries(fetchedCategoriesJson).filter(([name, value]) => value.format === "gif").map(([name]) => name);
+        const imgNekos = Object.entries(fetchedCategoriesJson).filter(([name, value]) => value.format === "png").map(([name]) => name);
+
+        let neko;
+        try {
+            neko = await fetchRandom(nekoCategory?.toLowerCase());
+        } catch(error) {
+           const tagsContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Nekosbest kategóriák`))
             .addSeparatorComponents(new SeparatorBuilder())
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Képek:**\n\`\`\`${imgNekos.join(", ")}\`\`\`\n- **Gifek:**\n\`\`\`${gifNekos.join(", ")}\`\`\``));
 
-            return interaction.reply({ components: [tagsContainer], flags: MessageFlags.IsComponentsV2 });
+            return interaction.reply({ components: [tagsContainer], flags: MessageFlags.IsComponentsV2 }); 
         }
-
-        const neko = await fetchRandom(nekoType.toLowerCase());
 
         const nekoGalleryComponent = new MediaGalleryBuilder()
         .addItems([
@@ -53,12 +55,12 @@ export default {
             .setLabel("Megnyitás");
 
             headerSection = new SectionBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Nekosbest: \`${nekoType.toLowerCase()}\``))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### ${nekoCategory ? `Nekosbest: \`${nekoCategory.toLowerCase()}\`` : "Nekosbest"}`))
             .setButtonAccessory(linkButton);
 
             nekoContainer.addSectionComponents(headerSection);
         } else {
-            nekoContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Nekosbest: \`${nekoType.toLowerCase()}\``));
+            nekoContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`### ${nekoCategory ? `Nekosbest: \`${nekoCategory.toLowerCase()}\`` : "Nekosbest"}`));
         }
 
         nekoContainer
