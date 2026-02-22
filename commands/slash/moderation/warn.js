@@ -28,24 +28,20 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        // Megadott paraméterek beolvasása, ellenőrzése
         const target = interaction.options.getUser("tag");
         const reason = interaction.options.getString("indok");
         const userAuthor = interaction.member;
 
-        if (target.id == userAuthor.id) return interaction.reply({ content: "Nem figyelmeztetheted magadat!", flags: MessageFlags.Ephemeral });
+        if (target.id === userAuthor.id) return interaction.reply({ content: "Nem figyelmeztetheted magadat!", flags: MessageFlags.Ephemeral });
 
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
-
         if (!memberTarget) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
-        // Ellenőrzések
         if (target.bot) return interaction.reply({ content: "Botokat nem figyelmeztethetsz!", flags: MessageFlags.Ephemeral });
         if (memberTarget.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: "Adminisztrátort nem figyelmetheztetsz!", flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom figyelmeztetni!`, flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position  && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} ő rangja magasabban van a tiédnél, ezért nem tudod figyelmeztetni!`, flags: MessageFlags.Ephemeral });
 
-        // Logolás
         let moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
         const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
@@ -53,7 +49,6 @@ export default {
 
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        // Moderáció sorszámának lekérése
         let count = 0;
         let header = "";
 
@@ -63,7 +58,6 @@ export default {
                 count = Math.max(...max);
             }
 
-            // Ha nincs még moderáció a szerveren
             if (!moderationData) {
                 const newData = new moderationSchema({
                     Guild: interaction.guild.id,
@@ -79,7 +73,6 @@ export default {
             header = ` | #${count + 1}`;
         }
 
-        // Containerek létrehozása
         const warnContainer = new ContainerBuilder()
         .setAccentColor(0xffd200)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Figyelmeztetés: \`${memberTarget.user.username}\` (<@${memberTarget.user.id}>)` + header))

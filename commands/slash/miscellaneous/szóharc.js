@@ -32,7 +32,7 @@ export default {
     run: async (client, interaction) => {
 
         const subCommand = interaction.options.getSubcommand();
-        const szo = interaction.options.getString("szó")?.toLowerCase().split(" ")[0];
+        const userWord = interaction.options.getString("szó")?.toLowerCase().split(" ")[0];
         const ötbetűData = await ötbetűSchema.findOne();
         let player = ötbetűData.Users.find(x => x.UserID == interaction.user.id);
         const saspontData = await saspontSchema.findOne();
@@ -47,9 +47,7 @@ export default {
         }
 
         if (subCommand === "játék") {
-            if (!allWords.includes(szo)) return interaction.reply({ content: "Létező szót adj meg!", flags: MessageFlags.Ephemeral });
-
-            const finalWord = Math.floor(Math.random() * allWords.length);
+            if (!allWords.includes(userWord)) return interaction.reply({ content: "Létező szót adj meg!", flags: MessageFlags.Ephemeral });
 
             const countCharacters = (str) => {
                 const chars = [];
@@ -81,15 +79,16 @@ export default {
                 return wordOfTheDayMult;
             }
 
-            const botWord = allWords[finalWord];
+            const randomIndex = Math.floor(Math.random() * allWords.length);
+            const myWord = allWords[randomIndex];
 
-            const userScore = (countCharacters(szo) + specialCharacters(szo) + szo.length) * isWordOfTheDay(szo);
-            const botScore = (countCharacters(botWord) + specialCharacters(botWord) + botWord.length) * isWordOfTheDay(botWord);
+            const userScore = (countCharacters(userWord) + specialCharacters(userWord) + userWord.length) * isWordOfTheDay(userWord);
+            const botScore = (countCharacters(myWord) + specialCharacters(myWord) + myWord.length) * isWordOfTheDay(myWord);
 
             const szoharcContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Szóharc: \`${interaction.user.displayName}\` vs. \`${client.user.username}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`\`${szo}\`: **${userScore} pont** (${szo.length}+${countCharacters(szo)}+${specialCharacters(szo)}\\*${isWordOfTheDay(szo)})\tvs.\t\`${botWord}\`: **${botScore} pont** (${botWord.length}+${countCharacters(botWord)}+${specialCharacters(botWord)}\\*${isWordOfTheDay(botWord)})`));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`\`${userWord}\`: **${userScore} pont** (${userWord.length}+${countCharacters(userWord)}+${specialCharacters(userWord)}\\*${isWordOfTheDay(userWord)})\tvs.\t\`${myWord}\`: **${botScore} pont** (${myWord.length}+${countCharacters(myWord)}+${specialCharacters(myWord)}\\*${isWordOfTheDay(myWord)})`));
 
             const saspontTextComponent = new TextDisplayBuilder();
 

@@ -40,11 +40,9 @@ export default {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ModerateMembers)) return interaction.reply({ content: "Nincs jogom ehhez: \`Moderate Members\`!", flags: MessageFlags.Ephemeral });
         
-        // Megadott paraméterek beolvasása, ellenőrzése
         const target = interaction.options.getUser("tag");
         const reason = interaction.options.getString("indok");
         const timeoutDuration = interaction.options.getString("időtartam").split(" ")[0];
-
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
         if (!memberTarget) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
@@ -56,14 +54,12 @@ export default {
 
         const userAuthor = interaction.member;
 
-        // Ellenőrzések
         if (target == userAuthor) return interaction.reply({ content: "Nem függesztheted fel magadat!", flags: MessageFlags.Ephemeral });
         if (target.bot) return interaction.reply({ content: "Botokat nem függeszthetsz fel!", flags: MessageFlags.Ephemeral });
         if (memberTarget.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: "Adminisztrátort nem függeszthetsz fel!", flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom felfüggeszteni!`, flags: MessageFlags.Ephemeral });  
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} rangja magasabban van a tiédnél, ezért nem tudod felfüggeszteni!`, flags: MessageFlags.Ephemeral });
 
-        // Logolás (moderation channel + moderation logs)
         let moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
         const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
@@ -71,7 +67,6 @@ export default {
 
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        // Moderáció sorszámának lekérése
         let count = 0;
         let header = "";
 
@@ -81,7 +76,6 @@ export default {
                 count = Math.max(...max);
             }
 
-            // Ha nincs még moderáció a szerveren
             if (!moderationData) {
                 const newData = new moderationSchema({
                     Guild: interaction.guild.id,
@@ -97,7 +91,6 @@ export default {
             header = ` | #${count + 1}`;
         }
 
-        // Containerek létrehozása
         const timeoutContainer = new ContainerBuilder()
         .setAccentColor(0xff9d02)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Felfüggesztés: \`${memberTarget.user.username}\` (<@${memberTarget.user.id}>)` + header))
@@ -108,7 +101,6 @@ export default {
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Felfüggesztés | ${interaction.guild}`))
         .addSeparatorComponents(new SeparatorBuilder());
 
-        // Küldés függvénye
         const sendContainer = async () => {
             timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
@@ -124,7 +116,6 @@ export default {
             } catch(err){}
         }
 
-        // Moderations logolása
         const pushModLog = async (type) => {
             if (!modsettingData || modsettingData?.length === 0 || !modsettingData.Log) return;
 
@@ -137,7 +128,6 @@ export default {
                 Length: timeoutDuration
             }
 
-            // Indok
             if (type === 1) defaultLog.Reason = reason;
 
             moderationData.Timeouts.push(defaultLog);
@@ -164,7 +154,6 @@ export default {
         })
         .save();
 
-        // Ha nincs indok
         if (!reason) {
             timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
@@ -174,8 +163,6 @@ export default {
 
             if (memberTarget.communicationDisabledUntil) memberTarget.timeout(null);
             return memberTarget.timeout(ms(timeoutDuration), `Időtartam: ${timeoutDuration} - ${userAuthor.user.username}`);
-
-        // Ha van indok
         } else {
             timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));

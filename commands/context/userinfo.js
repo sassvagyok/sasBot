@@ -1,4 +1,4 @@
-import { ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } from "discord.js";
+import { ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import moment from "moment";
 import "moment-duration-format";
 import "moment-timezone";
@@ -38,7 +38,7 @@ export default {
         } else formattedRoles = "Nincs egy sem!";
 
         const avatarButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL(member.displayAvatarURL({ extension: "png", size: 1024, dynamic: true }))
         .setEmoji("🎭")
         .setLabel("Avatár");
@@ -47,7 +47,7 @@ export default {
 
         if (fetchedUser.banner) {
             const bannerButton = new ButtonBuilder()
-            .setStyle("Link")
+            .setStyle(ButtonStyle.Link)
             .setURL(fetchedUser.bannerURL({ extension: "png", size: 1024, dynamic: true }))
             .setEmoji("🖼️")
             .setLabel("Banner");

@@ -33,7 +33,6 @@ export default {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return interaction.reply({ content: "Nincs jogom ehhez: \`Manage Roles\`!", flags: MessageFlags.Ephemeral });
         
-        // Megadott paraméterek beolvasása, ellenőrzése
         const userAuthor = interaction.member;
         const lockdownDuration = interaction.options.getString("időtartam")?.split(" ")[0];
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;
@@ -45,18 +44,15 @@ export default {
         
         if (!textChannel.permissionsFor(textChannel.guild.roles.everyone).has(PermissionFlagsBits.SendMessages) && !textChannel.permissionsFor(textChannel.guild.roles.everyone).has(PermissionFlagsBits.SendMessagesInThreads)) return interaction.reply({ content: "A csatorna már le van zárva!", flags: MessageFlags.Ephemeral });
         
-        // Logolás (moderation channel)
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
 
-        // Container létrehozása
         const lockdownContainer = new ContainerBuilder()
         .setAccentColor(0xe2162e)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Csatorna lezárás: \`${textChannel.name}\` (${textChannel})`))
         .addSeparatorComponents(new SeparatorBuilder());
 
-        // Lezárás és küldés
         const lockdownAndSend = () => {
             lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
 
@@ -72,9 +68,7 @@ export default {
             logChannel?.send({ components: [lockdownContainer], flags: MessageFlags.IsComponentsV2 });
         }
         
-        // Ha nincs időtartam
         if (!lockdownDuration) lockdownAndSend();
-        // Ha van időtartam | Időtartam ellenőrzése + lockdownSchema létrehozása
         else {
             if (lockdownDuration === parseInt(lockdownDuration) + "m" || lockdownDuration === parseInt(lockdownDuration) + "h" || lockdownDuration === parseInt(lockdownDuration) + "d") {
                 if (lockdownDuration.match(/\d+/)[0] > 2592000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
@@ -83,7 +77,6 @@ export default {
                 const lockdownData = lockdownSchema.findOne({ Guild: interaction.guild.id, Channel: textChannel });
                 if (lockdownData) await lockdownSchema.findOneAndDelete({ Guild: interaction.guild.id, Channel: textChannel });
 
-                // Időtartam formázása
                 let duration = moment.duration(ms(lockdownDuration));
                 let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {
                     trim: "all"

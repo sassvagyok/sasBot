@@ -9,17 +9,17 @@ export default {
         const sides = [
             {
                 result: "Fej",
-                img: "media/100ft_elo.png"
+                img: "media/100ft_head.png"
             },
             {
                 result: "Írás",
-                img: "media/100ft_hat.png"
+                img: "media/100ft_tail.png"
             }
         ];
 
-        const finalSide = Math.floor(Math.random() * sides.length);
-
-        const attachment = new AttachmentBuilder(sides[finalSide].img, { name: "érme.png" });
+        const randomIndex = Math.floor(Math.random() * sides.length);
+        const randomSide = sides[randomIndex];
+        const attachment = new AttachmentBuilder(randomSide.img, { name: "érme.png" });
 
         const coinflipThumbnailComponent = new ThumbnailBuilder({
             media: {
@@ -28,7 +28,7 @@ export default {
         });
 
         const coinflipSection = new SectionBuilder()
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${sides[finalSide].result}`))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${randomSide.result}`))
         .setThumbnailAccessory(coinflipThumbnailComponent);
 
         const coinflipContainer = new ContainerBuilder()

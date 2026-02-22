@@ -20,7 +20,6 @@ export default {
         const target = interaction.options.getUser("tag");
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
-        // Moderációk lekérése
         const moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
         if (!moderationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
@@ -31,7 +30,6 @@ export default {
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kitiltások: \`${memberTarget.user.username}\` [1/1]`))
             .addSeparatorComponents(new SeparatorBuilder());
 
-            // Adatbetöltő függvény
             const loadFunction = async (i) => {
                 let modAuthor = await client.users.fetch(moderationData.Bans[i].Author.replace(/\D/g,""));
 
@@ -43,7 +41,6 @@ export default {
                 );
             }
             
-            // Ha kevesebb mint 5 van feljegyezve
             if (moderationData.Bans.length < 6) {
                 let textArray = [];
                 for (let i = moderationData.Bans.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
@@ -51,8 +48,6 @@ export default {
                 bansContainer.addTextDisplayComponents(textArray);
 
                 interaction.reply({ components: [bansContainer], flags: MessageFlags.IsComponentsV2, allowedMentions: {} });
-
-            // Ha több mint 5 van feljegyezve
             } else {
                 const prevButton = new ButtonBuilder()
                 .setStyle("Primary")
@@ -98,7 +93,6 @@ export default {
                     const id = collected.customId;
                     const currentLength = bansContainer.components.filter(x => x instanceof TextDisplayBuilder).length - 1;
 
-                    // Ha visszafelé lépés történik
                     if (id === "prev") {
                         if (currentChunk > 5) {
                             currentPage--;
@@ -115,7 +109,6 @@ export default {
                         } else await collected.deferUpdate();
                     }
 
-                    // Ha előrefelé lépés történik
                     if (id === "next") {
                         if (moderationData.Bans.length > currentChunk) {
                             currentPage++;

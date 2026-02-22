@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
 
 export default {
     name: "avatár",
@@ -48,22 +48,22 @@ export default {
         const fetchedUser = await target.fetch();
 
         const button256 = new ButtonBuilder()
-        .setStyle("Secondary")
+        .setStyle(ButtonStyle.Secondary)
         .setCustomId("256")
         .setLabel("256x256");
 
         const button512 = new ButtonBuilder()
-        .setStyle("Secondary")
+        .setStyle(ButtonStyle.Secondary)
         .setCustomId("512")
         .setLabel("512x512");
 
         const button1024 = new ButtonBuilder()
-        .setStyle("Primary")
+        .setStyle(ButtonStyle.Primary)
         .setCustomId("1024")
         .setLabel("1024x1024");
 
         const avatarButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL(target.displayAvatarURL({ extension: "png", size: 1024, dynamic: true }))
         .setEmoji("🎭")
         .setLabel("Link");
@@ -72,7 +72,7 @@ export default {
 
         if (fetchedUser.banner) {
             const buttonBanner = new ButtonBuilder()
-            .setStyle("Link")
+            .setStyle(ButtonStyle.Link)
             .setEmoji("🖼️")
             .setLabel("Banner")
             .setURL(fetchedUser.bannerURL({ extension: "png", size: 1024, dynamic: true }));
@@ -122,9 +122,9 @@ export default {
 
             avatarContainer.spliceComponents(2, 1, avatarGalleryComponent);
 
-            row.components[0].setStyle(id === "256" ? "Primary" : "Secondary");
-            row.components[1].setStyle(id === "512" ? "Primary" : "Secondary");
-            row.components[2].setStyle(id === "1024" ? "Primary" : "Secondary");
+            row.components[0].setStyle(id === "256" ? ButtonStyle.Primary : ButtonStyle.Secondary);
+            row.components[1].setStyle(id === "512" ? ButtonStyle.Primary : ButtonStyle.Secondary);
+            row.components[2].setStyle(id === "1024" ? ButtonStyle.Primary : ButtonStyle.Secondary);
 
             await interaction.editReply({ components: [avatarContainer], flags: MessageFlags.IsComponentsV2 });
             await ButtonInteraction.deferUpdate();

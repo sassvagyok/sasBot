@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import figlet from "figlet";
-import fonts from "../../../data/ascii.json" with { type: "json" };
 
 export default {
     name: "ascii",
@@ -22,12 +21,10 @@ export default {
     ],
     run: async(client, interaction) => {
 
-        const msg = interaction.options.getString("szöveg");
-        let chosenFont = interaction.options.getString("betűtípus");
+        const text = interaction.options.getString("szöveg");
+        let chosenFont = interaction.options.getString("betűtípus")?.toLowerCase();
 
-        if (chosenFont) chosenFont = fonts.find(x => x.toLowerCase() == chosenFont.toLowerCase());
-
-        figlet.text(msg, { font: chosenFont ? chosenFont : "" }, function (err, data) {
+        figlet.text(text, { font: chosenFont ? chosenFont : "" }, function (err, data) {
             if (!data) return interaction.reply({ content: "Összes betűtípus: https://pastebin.com/AVsvB8Ju", flags: MessageFlags.Ephemeral });
             if (err) return interaction.reply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
             if (data.length > 1994) return interaction.reply({ content: "A végső üzenet hoszabb, mint 2000 karakter!" });

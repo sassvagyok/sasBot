@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
 import packageJson from "../../../package.json" with { type: "json" };
 
 export default {
@@ -8,22 +8,22 @@ export default {
     run: async (client, interaction) => {
         
         const gitButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL("https://github.com/sassvagyok/sasBot")
         .setLabel("Github");
 
         const inviteButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL("https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands")
         .setLabel("Meghívás");
 
         const supportServerButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL("https://discord.gg/s8XtzBasQF")
         .setLabel("Szerver");
 
         const docsButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL("https://sassvagyok.github.io/sasBot-docs/")
         .setLabel("Dokumentáció");
 

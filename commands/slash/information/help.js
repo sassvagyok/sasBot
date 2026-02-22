@@ -1,4 +1,4 @@
-import { EmbedBuilder, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder } from "discord.js";
+import { EmbedBuilder, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder, ButtonStyle } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -75,7 +75,7 @@ export default {
                 return interaction.reply({ components: [helpContainer], flags: MessageFlags.IsComponentsV2 });
             } else if (builtInCommand) {
                 const docsButton = new ButtonBuilder()
-                .setStyle("Link")
+                .setStyle(ButtonStyle.Link)
                 .setURL(`https://sassvagyok.github.io/sasBot-docs/commands/${builtInCommand.name}`)
                 .setLabel("Dokumentáció");
 

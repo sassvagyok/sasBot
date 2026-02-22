@@ -30,13 +30,11 @@ export default {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: "Nincs jogom ehhez: \`Ban Members\`!", flags: MessageFlags.Ephemeral });
         
-        // Megadott paraméterek beolvasása, ellenőrzése
         const reason = interaction.options.getString("indok");
         const userAuthor = interaction.member;
         let target = interaction.options.getString("tag_id").split(" ")[0];
         let memberTarget;
 
-        // Logolás (moderation channel)
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
@@ -47,7 +45,6 @@ export default {
             return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
         }
 
-        // Containerek létrehozása
         const unbanContainer = new ContainerBuilder()
         .setAccentColor(0x19cc10)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kitiltás feloldása: \`${memberTarget.username}\` (${memberTarget})`))
@@ -58,7 +55,6 @@ export default {
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kitiltás feloldása | ${interaction.guild}`))
         .addSeparatorComponents(new SeparatorBuilder());
 
-        // Küldés függvénye
         const sendContainer = async () => {
             unbanContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
@@ -73,7 +69,6 @@ export default {
             } catch(err){}
         }
 
-        // Ha van indok
         if (reason) {
             unbanContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
@@ -85,8 +80,6 @@ export default {
             } catch (err) {
                 return interaction.reply({ content: "A megadott tag nincs kitiltva!", flags: MessageFlags.Ephemeral });
             }
-
-        // Ha nincs indok
         } else {
             try {
                 await interaction.guild.bans.remove(target, `${userAuthor.user.username}`);

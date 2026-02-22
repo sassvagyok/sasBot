@@ -48,12 +48,10 @@ export default {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: "Nincs jogom ehhez: \`Ban Members\`!", flags: MessageFlags.Ephemeral });
         
-        // Megadott paraméterek beolvasása, ellenőrzése
         const target = interaction.options.getUser("tag");
         const reason = interaction.options.getString("indok");
         const banDuration = interaction.options.getString("időtartam");
         const remove = interaction.options.getNumber("törlés") * 3600 || 0;
-
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
         if (!memberTarget) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
@@ -73,14 +71,12 @@ export default {
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom kitiltani!`, flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} rangja magasabban van a tiédnél, ezért nem tudod kitiltani!`, flags: MessageFlags.Ephemeral  });
 
-        // Logolás (moderation channel + moderation logs)
         let moderationLog = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
         const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
-            
-        // Moderáció sorszámának lekérése
+
         let count = 0;
         let header = "";
 
@@ -90,7 +86,6 @@ export default {
                 count = Math.max(...max);
             }
 
-            // Ha nincs még moderáció a szerveren
             if (!moderationLog) {
                 const newData = new moderationSchema({
                     Guild: interaction.guild.id,
@@ -106,7 +101,6 @@ export default {
             header = ` | #${count + 1}`;
         }
 
-        // Containerek létrehozása
         const banContainer = new ContainerBuilder()
         .setAccentColor(0xe2162e)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kitiltás: \`${memberTarget.user.username}\` (<@${memberTarget.user.id}>)` + header))
@@ -117,7 +111,6 @@ export default {
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Kitiltás | ${interaction.guild}`))
         .addSeparatorComponents(new SeparatorBuilder());
 
-        // Küldés függvénye
         const sendContainer = async () => {
             banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
@@ -132,7 +125,6 @@ export default {
             } catch(err){}
         }
 
-        // Moderations logolása
         const pushModLog = async (type) => {
             if (!modsettingData || modsettingData?.length === 0 || !modsettingData.Log) return;
 
@@ -144,19 +136,14 @@ export default {
                 Type: "Ban"
             }
 
-            // Időtartam
             if (type === 1 || type === 2) defaultLog.Length = banDuration;
-
-            // Indok
             if (type === 2 || type === 3) defaultLog.Reason = reason;
 
             moderationLog.Bans.push(defaultLog);
             await moderationLog.save();
         }
 
-        // Ha nincs időtartam
         if (!banDuration) {
-            // Ha nincs indok
             if (!reason) {
                 remove !== 0 ? banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- Üzenetek törölve ${remove / 3600} órával visszamelőleg`)) : "";
                 
@@ -167,8 +154,6 @@ export default {
                     reason: userAuthor.user.username,
                     deleteMessageSeconds: remove
                 });
-
-            // Ha van indok
             } else {
                 banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
                 dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
@@ -185,7 +170,6 @@ export default {
             const banData = await banLogSchema.findOne({ Guild: interaction.guild.id, User: target.id });
             if (banData) await banLogSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
 
-            // Időtartam formázása
             let duration = moment.duration(ms(banDuration));
             let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {
                 trim: "all"
@@ -202,7 +186,6 @@ export default {
                 Number: modsettingData && modsettingData?.Log ? count + 1 : 0
             }).save();
 
-            //  Ha van időtartam, de nincs indok
             if (!reason) {
                 banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
                 dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
@@ -214,8 +197,6 @@ export default {
                     reason: `Időtartam: ${formattedDuration} - ${userAuthor.user.username}`,
                     deleteMessageSeconds: remove
                 });
-
-            // Ha van időtartam és indok
             } else {
                 banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
                 dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));

@@ -41,12 +41,13 @@ export default {
             "Erősen kétséges"
         ];
 
-        const finalReply = Math.floor(Math.random() * replies.length);
+        const randomIndex = Math.floor(Math.random() * replies.length);
+        const randomReply = replies[randomIndex];
 
         const ballContainer = new ContainerBuilder()
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${interaction.user.displayName}: \`${question}\``))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### 🔮 ${replies[finalReply]} 🔮`));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### 🔮 ${randomReply} 🔮`));
 
         interaction.reply({ components: [ballContainer], flags: [MessageFlags.IsComponentsV2] });
     }

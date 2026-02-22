@@ -28,7 +28,7 @@ export default {
             return "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0");
         }
 
-        const randomSzam = Math.floor(Math.random() * (secondNum - firstNum + 1) + firstNum);
+        const randomNum = Math.floor(Math.random() * (secondNum - firstNum + 1) + firstNum);
 
         registerFont("data/Alexandria-Bold.ttf", { family: "Alexandria" });
 
@@ -36,8 +36,8 @@ export default {
         const tempCtx = tempCanvas.getContext("2d");
         tempCtx.font = "48px Alexandria";
         tempCtx.lineWidth = 4;
-        tempCtx.strokeText(randomSzam.toString(), tempCanvas.width / 2, tempCanvas.height / 2);
-        const textMetrics = tempCtx.measureText(randomSzam.toString());
+        tempCtx.strokeText(randomNum.toString(), tempCanvas.width / 2, tempCanvas.height / 2);
+        const textMetrics = tempCtx.measureText(randomNum.toString());
         const textWidth = textMetrics.width;
 
         const canvas = createCanvas(Math.ceil(textWidth + 40), 70);
@@ -53,13 +53,13 @@ export default {
         ctx.textBaseline = "middle";
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 4;
-        ctx.strokeText(randomSzam.toString(), canvas.width / 2, canvas.height / 2);
-        ctx.fillText(randomSzam.toString(), canvas.width / 2, canvas.height / 2);
+        ctx.strokeText(randomNum.toString(), canvas.width / 2, canvas.height / 2);
+        ctx.fillText(randomNum.toString(), canvas.width / 2, canvas.height / 2);
 
         const buffer = canvas.toBuffer("image/png");
 
-        if (interaction.channel.type !== 1 && !interaction.channel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.AttachFiles)) return interaction.reply({ content: `${randomSzam}` }); 
+        if (interaction.channel.type !== 1 && !interaction.channel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.AttachFiles)) return interaction.reply({ content: `${randomNum}` }); 
 
-        interaction.reply({ files: [{ attachment: buffer, name: `${randomSzam}.png` }] });
+        interaction.reply({ files: [{ attachment: buffer, name: `${randomNum}.png` }] });
     }
 }

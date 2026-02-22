@@ -9,7 +9,7 @@ export default {
         const text = await interaction.channel.messages.fetch(interaction.targetId);
         if (!text.content) return interaction.reply({ content: "A kijelölt üzenet nem változtatható emojivá!", flags: MessageFlags.Ephemeral });
 
-        let sentence = "";
+        let emojifiedText = "";
 
         let chars = {
             char0: ":zero:",
@@ -32,12 +32,12 @@ export default {
         };
         
         for (let e of text.content) {
-            if (/([a-z])/gim.test(e)) sentence += `:regional_indicator_${e.toLowerCase()}:`;
-            else if (/\s/.test(e)) sentence += ":blue_square:";
-            else if (/([0-9])/.test(e) || ["+", "-", "*", "#", "!", "÷", "?"].includes(e)) sentence += chars[`char${e}`];
-            else sentence += e;
+            if (/([a-z])/gim.test(e)) emojifiedText += `:regional_indicator_${e.toLowerCase()}:`;
+            else if (/\s/.test(e)) emojifiedText += ":blue_square:";
+            else if (/([0-9])/.test(e) || ["+", "-", "*", "#", "!", "÷", "?"].includes(e)) emojifiedText += chars[`char${e}`];
+            else emojifiedText += e;
         }
 
-        interaction.reply({ content: sentence });
+        interaction.reply({ content: emojifiedText });
     }
 }

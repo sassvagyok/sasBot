@@ -31,18 +31,13 @@ export default {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageMessages)) return interaction.reply({ content: "Nincs jogom ehhez: \`Manage Messages\`!", flags: MessageFlags.Ephemeral });
 
-        // Megadott paraméterek beolvasása, ellenőrzése
         const numOfMsgs = interaction.options.getNumber("üzenetek");
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;
-
         const userAuthor = interaction.member;
-
-        // Logolás (moderation channel)
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });   
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        // Container létehozása
         const clearContainer = new ContainerBuilder()
         .setAccentColor(0x22b1e5)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### \`${numOfMsgs}\` üzenet törölve | \`${textChannel.name}\` (${textChannel})`))

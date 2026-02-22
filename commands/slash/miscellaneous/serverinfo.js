@@ -1,4 +1,4 @@
-import { MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder } from "discord.js";
+import { MessageFlags, ContainerBuilder, TextDisplayBuilder, ActionRowBuilder, ThumbnailBuilder, SectionBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import moment  from "moment";
 import "moment-duration-format";
 import "moment-timezone";
@@ -39,7 +39,7 @@ export default {
         let formattedRoles = formatFunction(roles);
 
         const avatarButton = new ButtonBuilder()
-        .setStyle("Link")
+        .setStyle(ButtonStyle.Link)
         .setURL(guild.iconURL({ extension: "png", size: 1024, dynamic: true }))
         .setEmoji("🎭")
         .setLabel("Ikon");
@@ -48,7 +48,7 @@ export default {
 
         if (guild.banner) {
             const bannerButton = new ButtonBuilder()
-            .setStyle("Link")
+            .setStyle(ButtonStyle.Link)
             .setURL(guild.bannerURL({ extension: "png", size: 1024, dynamic: true }))
             .setEmoji("🖼️")
             .setLabel("Banner");

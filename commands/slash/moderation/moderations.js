@@ -44,24 +44,19 @@ export default {
 
         let moderationData;
 
-        // Ha sorszám alapján keresünk
         if (subCommand === "sorszám") {
             moderationData = await moderationSchema.find({ Guild: interaction.guild.id });
 
             if (!moderationData) return interaction.reply({ content: "Egy moderáció sem található!", flags: MessageFlags.Ephemeral });
 
-            // A legnagyobb megkeresése
             const max = moderationData.map(x => x.Count);
             count = Math.max(...max);
 
             if(count < 1) return interaction.reply({ content: "Még nem történt egy moderáció sem a szerveren!", flags: MessageFlags.Ephemeral });
             
-            // Logok mapolása
             const mapLogs = (type) => moderationData.map(w => w[type]).flat().filter(n => n.Number === parseInt(num));
-    
             const types = ["Bans", "Kicks", "Timeouts", "Warns"]
     
-            // Moderáció típusának megkeresése
             let finalLog;
             for (let i = 0; i < 4; i++) {
                 if (mapLogs(types[i]).length !== 0) {
@@ -87,11 +82,9 @@ export default {
                 Warn: "Figyelmeztetés"
             }
     
-            // Tag és moderátor lekérése
             let targetUser = await client.users.fetch(finalLog.Target.replace(/\D/g,""));
             let modAuthor = await client.users.fetch(finalLog.Author.replace(/\D/g,""));
 
-            // Container létrehozása
             const moderationsContainer = new ContainerBuilder()
             .setAccentColor(colors[finalLog.Type])
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### \`#${num}\` - ${names[finalLog.Type]}`))
@@ -102,7 +95,6 @@ export default {
             interaction.reply({ components: [moderationsContainer], flags: MessageFlags.IsComponentsV2, allowedMentions: {} });
         }
 
-        // Ha tagot keresünk
         if (subCommand === "tag") {
             let memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
             moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
@@ -126,7 +118,6 @@ export default {
             timeouts = moderationData.Timeouts.length === 0 ? " " : timeouts.join(", ").toString();
             warns = moderationData.Warns.length === 0 ? " " : warns.join(", ").toString();
 
-            // Container létrehozása
             const moderationsContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Moderációk (${sumOfModerations}): \`${memberTarget.user.username}\``))
             .addSeparatorComponents(new SeparatorBuilder())

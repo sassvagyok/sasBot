@@ -21,10 +21,10 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const szo = interaction.options.getString("szó").split(" ")[0];
+        const word = interaction.options.getString("szó").split(" ")[0];
         const searchAll = interaction.options.getBoolean("vizsgálat") || false;
 
-        const filteredWords = allWords.filter(x => searchAll ? x.includes(szo) : x.startsWith(szo));
+        const filteredWords = allWords.filter(x => searchAll ? x.includes(word) : x.startsWith(word));
         let foundWords = "";
         let foundWordCount = 0;
 

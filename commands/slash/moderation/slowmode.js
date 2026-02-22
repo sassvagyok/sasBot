@@ -36,13 +36,11 @@ export default {
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
 
         if (!textChannel.permissionsFor(interaction.member).has(PermissionFlagsBits.SendMessages)) return interaction.reply({ content: "Nincs hozzáférésed ehhez a csatornához!", flags: MessageFlags.Ephemeral });
-
         if (!textChannel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel)) return interaction.reply({ content: "Nincs hozzáférésem a megadott csatornához!", flags: MessageFlags.Ephemeral });
             
         const previousSlow = textChannel.rateLimitPerUser;
         textChannel.setRateLimitPerUser(duration, `${userAuthor.user.username}`);
 
-        // Container létrehozása
         const slowmodeContainer = new ContainerBuilder()
         .setAccentColor(0xffce0c)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lassított mód: \`${previousSlow} mp -> ${duration} mp\` | \`${textChannel.name}\` (${textChannel})`))

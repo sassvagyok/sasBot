@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, ButtonBuilder, ActionRowBuilder, SeparatorBuilder } from "discord.js";
+import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, ButtonBuilder, ActionRowBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
 import permissionSchema from "../../../models/permissionModel.js";
 
 export default {
@@ -144,13 +144,13 @@ export default {
                     interaction.reply({ components: [permissionsContainer], flags: MessageFlags.IsComponentsV2, allowedMentions: {} });
                 } else {
                     const prevButton = new ButtonBuilder()
-                    .setStyle("Primary")
+                    .setStyle(ButtonStyle.Primary)
                     .setCustomId("prev")
                     .setLabel("⬅️")
                     .setDisabled(true);
     
                     const nextButton = new ButtonBuilder()
-                    .setStyle("Primary")
+                    .setStyle(ButtonStyle.Primary)
                     .setCustomId("next")
                     .setLabel("➡️");
     
