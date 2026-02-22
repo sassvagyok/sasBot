@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
+import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } from "discord.js";
 import saspontSchema from "../../../models/saspontModel.js";
 import moment from "moment";
 import"moment-timezone";
@@ -97,11 +97,10 @@ export default {
     ],
     run: async (client, interaction) => {
 
+        const saspontData = await saspontSchema.findOne();
         const subCommandGroup = interaction.options.getSubcommandGroup();
         const subCommand = interaction.options.getSubcommand();
-        const tag = interaction.channel.type === 1 ? interaction.user : interaction.options.getUser("tag") || interaction.user;
-        const saspontData = await saspontSchema.findOne();
-
+        const user = interaction.channel.type === 1 ? interaction.user : interaction.options.getUser("tag") || interaction.user;
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
 
         const sortFunction = (a, b) => {
@@ -123,7 +122,7 @@ export default {
         }
 
         if (subCommand === "adatok") {
-            let saspontUser = saspontData.Users.find(x => x.UserID === tag.id);
+            let saspontUser = saspontData.Users.find(x => x.UserID === user.id);
             if (!saspontUser) return interaction.reply({ content: "Ez a tag még nem szerzett sasPontokat!", flags: MessageFlags.Ephemeral });
             let saspontHistroy = saspontUser.History;
 
@@ -145,16 +144,56 @@ export default {
             const coinflipMaxWin = saspontUser.Casino.Coinflip.MaxWin || 0;
 
             const dataContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasPont adatok: \`${tag.displayName}\``))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasPont adatok: \`${user.displayName}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Egyenleg:** \`${format.format(saspontUser.Balance)} sP\`\n- **Globális helyezés:** \`${findUserIndex + 1}.\`\n- **Kaszinó:**\n    - **Crash:**\n    - **Winrate**: \`${Math.trunc(crashWinrate)}%\`\n    - **Legnagyobb szorzó:** \`${crashMaxMult}x\`\n    - **Legnagyobb nyeremény:** \`${crashMaxWin} sP\`\n   - **Coinflip**:\n    - **Winrate**: \`${Math.trunc(coinflipWinrate)}%\`\n    - **Legnagyobb nyeremény:** \`${coinflipMaxWin} sP\`\n- **Korábbi sasPont-szerzések:**\n${history.join("\n")}`));
-            
-            interaction.reply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Egyenleg:** \`${format.format(saspontUser.Balance)} sP\`${saspontUser.OnLeaderboard ? `\n- **Globális helyezés:** \`${findUserIndex + 1}.\`\n` : "\n"}- **Kaszinó:**\n    - **Crash:**\n    - **Winrate**: \`${Math.trunc(crashWinrate)}%\`\n    - **Legnagyobb szorzó:** \`${crashMaxMult}x\`\n    - **Legnagyobb nyeremény:** \`${crashMaxWin} sP\`\n   - **Coinflip**:\n    - **Winrate**: \`${Math.trunc(coinflipWinrate)}%\`\n    - **Legnagyobb nyeremény:** \`${coinflipMaxWin} sP\`\n- **Korábbi sasPont-szerzések:**\n${history.join("\n")}`));
+
+            if (interaction.user.id === saspontUser.UserID) {
+                const optButton = new ButtonBuilder()
+                .setStyle(saspontUser.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
+                .setCustomId("1024")
+                .setLabel(saspontUser.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
+
+                const row = new ActionRowBuilder().addComponents(optButton);
+                dataContainer.addActionRowComponents(row);
+                const msg = await interaction.reply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
+
+                const filter = (buttonInteraction) => {
+                    if (buttonInteraction.user.id === interaction.user.id) return true;
+                    else buttonInteraction.deferUpdate();
+                }
+
+                const collector = msg.createMessageComponentCollector({
+                    filter,
+                    time: 60000
+                });
+
+                collector.on("collect", async (ButtonInteraction) => {
+                    saspontUser.OnLeaderboard = !saspontUser.OnLeaderboard;
+                    await saspontData.save();
+
+                    row.components[0]
+                    .setStyle(saspontUser.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
+                    .setLabel(saspontUser.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
+
+                    await interaction.editReply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
+                    await ButtonInteraction.deferUpdate();
+                })
+
+                collector.on("end", async () => {
+                    row.components[0].setDisabled(true);
+
+                    await interaction.editReply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
+                });
+            } else {
+                interaction.reply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
+            }
         }
 
         if (subCommandGroup === "ranglista") {
+            const includedUsers = saspontData.Users.filter(x => x.OnLeaderboard);
             if (subCommand === "globális") {
-                createLeaderboard(saspontData.Users);
+                createLeaderboard(includedUsers);
             }
             
             if (subCommand === "szerver") {
@@ -208,8 +247,6 @@ export default {
                     }
                     
                     return b;
-
-                    //return Number((parseFloat(previous) + Math.exp((0.1 + Math.random() * 0.2) * round / 1.5)).toFixed(2));
                 }
 
                 const crashContainer = new ContainerBuilder()
