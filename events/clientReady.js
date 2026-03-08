@@ -13,7 +13,7 @@ import ötbetűTimer from "../timers/ötbetűTimer.js";
 const currentTime = () => moment().tz("Europe/Budapest").format("HH:mm:ss");
 
 const startup = async () => {
-    client.on("ready", () =>
+    client.on("clientReady", () =>
         console.log(`[${currentTime()}] ${client.user.username}@${packageJson.version} beindult (${client.guilds.cache.size})`)
     );
 }
@@ -38,7 +38,7 @@ const getStatistics = async () => {
 }
 
 const startTimers = () => {
-    client.once("ready", () => {
+    client.once("clientReady", () => {
         banTimer(client);
         lockdownTimer(client);
         timeoutTimer(client);

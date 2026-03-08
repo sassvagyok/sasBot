@@ -46,7 +46,7 @@ export default async (client) => {
 
     const allCommands = arrayOfSlashCommands.concat(arrayOfContextMenuCommands);
 
-    client.on("ready", async () => {
+    client.on("clientReady", async () => {
         // Context & Slash beépített parancsok regisztrálása
         await client.application.commands.set(allCommands);
 
