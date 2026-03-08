@@ -33,17 +33,22 @@ client.on("guildCreate", async (guild) => {
     const channel = guild.channels.cache.filter(x => x.type === ChannelType.GuildText && x.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)).first();
 
     if (channel) {
-        const supportButton = new ButtonBuilder()
+        const gitButton = new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
+        .setURL(client.config.githubURL)
+        .setLabel("Github");
+
+        const supportServerButton = new ButtonBuilder()
         .setStyle("Link")
-        .setURL("https://discord.gg/s8XtzBasQF")
+        .setURL(client.config.supportURL)
         .setLabel("Szerver");
 
         const docsButton = new ButtonBuilder()
         .setStyle("Link")
-        .setURL("https://sassvagyok.github.io/sasBot-docs/")
+        .setURL(client.config.docsURL)
         .setLabel("Dokumentáció");
 
-        const row = new ActionRowBuilder().addComponents(supportButton, docsButton);
+        const row = new ActionRowBuilder().addComponents(gitButton, supportServerButton, docsButton);
 
         const introContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)
@@ -69,7 +74,6 @@ client.on("guildCreate", async (guild) => {
 });
 
 client.on("guildMemberAdd", async guildMember => {
-
     // Saveroles (belépéskor)
     const saveRoleAdd = async () => {
         const saveroleData = await saverolesSchema.findOne({ Guild: guildMember.guild.id });
@@ -143,7 +147,6 @@ client.on("guildMemberAdd", async guildMember => {
 });
 
 client.on("guildMemberRemove", async guildMember => {
-
     // Saverole (kilépéskor)
     const saveroleSave = async () => {
         const saveroleData = await saverolesSchema.findOne({ Guild: guildMember.guild.id });

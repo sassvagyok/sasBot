@@ -9,22 +9,22 @@ export default {
         
         const gitButton = new ButtonBuilder()
         .setStyle(ButtonStyle.Link)
-        .setURL("https://github.com/sassvagyok/sasBot")
+        .setURL(client.config.githubURL)
         .setLabel("Github");
 
         const inviteButton = new ButtonBuilder()
         .setStyle(ButtonStyle.Link)
-        .setURL("https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands")
+        .setURL(client.config.inviteURL)
         .setLabel("Meghívás");
 
         const supportServerButton = new ButtonBuilder()
         .setStyle(ButtonStyle.Link)
-        .setURL("https://discord.gg/s8XtzBasQF")
+        .setURL(client.config.supportURL)
         .setLabel("Szerver");
 
         const docsButton = new ButtonBuilder()
         .setStyle(ButtonStyle.Link)
-        .setURL("https://sassvagyok.github.io/sasBot-docs/")
+        .setURL(client.config.docsURL)
         .setLabel("Dokumentáció");
 
         const row = new ActionRowBuilder().addComponents(gitButton, inviteButton, supportServerButton, docsButton);

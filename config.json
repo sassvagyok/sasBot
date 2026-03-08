@@ -1,4 +1,8 @@
 {
     "status": "/help",
-    "globallyDisabledCommands": []
+    "globallyDisabledCommands": [],
+    "docsURL": "https://sasbot.mattexyz.com",
+    "inviteURL": "https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands",
+    "supportURL": "https://discord.gg/s8XtzBasQF",
+    "githubURL": "https://github.com/sassvagyok/sasBot"
 }

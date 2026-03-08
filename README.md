@@ -42,11 +42,19 @@ npm run dev
 - A `config.json` módosításával az alábbi funkciók konfigurálhatóak:
   - `status`: a bot státusz üzenete
   - `globallyDisabledCommands`: globálisan kikapcsolt parancsok listája
+  - `docsURL`: dokumentáció linkje,
+  - `inviteURL`: bot meghívó linkje,
+  - `supportURL`: support szerver meghívó linkje,
+  - `githubURL`: Github repo linkje
 - Példa:
 ```json
 {
     "status": "/help",
-    "globallyDisabledCommands": ["nekosia", "ötbetű"]
+    "globallyDisabledCommands": ["nekosia", "ötbetű"],
+    "docsURL": "https://sasbot.mattexyz.com",
+    "inviteURL": "https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands",
+    "supportURL": "https://discord.gg/s8XtzBasQF",
+    "githubURL": "https://github.com/sassvagyok/sasBot"
 }
 ```
 ## Dokumentáció

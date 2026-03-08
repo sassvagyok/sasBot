@@ -76,7 +76,7 @@ export default {
             } else if (builtInCommand) {
                 const docsButton = new ButtonBuilder()
                 .setStyle(ButtonStyle.Link)
-                .setURL(`https://sassvagyok.github.io/sasBot-docs/commands/${builtInCommand.name}`)
+                .setURL(`${client.config.docsURL}/commands/${builtInCommand.name}`)
                 .setLabel("Dokumentáció");
 
                 const headerSection = new SectionBuilder()
