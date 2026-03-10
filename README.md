@@ -7,12 +7,40 @@
     sasBot egy nyílt forráskódú, rendszeresen fejlesztett bot Moderálással, Zenelejátszással és szerver Konfigurálással, amit akár te is futtathatsz.
 </p>
 
-## Szükséges
+## Funkciók
+### Moderálás
+- Tagok kitiltása, felfüggesztése (akár meghatározott időre, visszavonással), kirúgása, figyelmeztetése indokkal és lehetőség ezek mentésére.
+- Csatornák lezárása (és megnyitása), valamint egyedi lassított üzemmód beállítása.
+- Privát üzenet küldése moderálás után és log-csatorna beállítására.
+
+### Szerver konfigurálás
+- Automatikus rangadás, rangok megjegyzése tag kilépésekor és sasBot parancsainak ranghoz kötése és kikapcsolása.
+- Egyedi parancsok létrehozása, tagszámláló csatorna.
+- Egyedi üdvözlő és búcsúüzenet beállítása.
+
+### Zenelejátszás
+- Zenehallgatás több száz oldalról, akár automatikus lejátszással.
+- Lejátszott zene kezelése: megállítás, átugrás és visszalépés, előre ugrás és újraindítás, ismétlés, hangerő állítása, zeneszöveg kiírása és filterek alkalmazása.
+- Zenés-parancsok ranghoz vagy csatornához kötése egyszerűen.
+
+### Mindenféle
+- Profilképek megjelenítése, tag és szerverinformációk.
+- Anime képek és gifek lekérése, szöveg ASCII képpé és emojivá alakítása és sok más!
+
+### sasPont-rendszer
+- Pontok gyűjtése sasBot interakciók után:
+  - Napi 5 betűs magyar szó kitalálása, harcolás szavakkal és sasPont kaszinó crash és érmedobás játékkal.
+- A legügyesebb tagok felkerülhetnek a globális vagy szerver ranglistára is.
+
+**Ez csak a parancsok egy töredéke, minden parancs részletes leírása elérhető a [Dokumentációban](https://sasbot.mattexyz.com).**
+
+## Futtatás
+### Szükséges
 - Node.js 22.x<=
 - MongoDB
 - FFMPEG
 
-## Első konfiguráció
+### Első konfiguráció
 1. Hozz létre a gyökérmappába egy `.env` fájlt és töltsd ki a saját adataiddal:
 ```
 mainToken=[Fő Discord token]
@@ -28,7 +56,7 @@ feedbackChannelId=[Csatorna a devServer-en, ahová a visszajelzések érkezzenek
 npm install
 ```
 
-## Használat
+### Indítás
 - Ha a fő Discord tokennel akarod futtatni:
 ```
 npm start
@@ -38,7 +66,7 @@ npm start
 npm run dev
 ```
 
-## További konfiguráció
+### További konfiguráció
 - A `config.json` módosításával az alábbi funkciók konfigurálhatóak:
   - `status`: a bot státusz üzenete
   - `globallyDisabledCommands`: globálisan kikapcsolt parancsok listája
@@ -46,7 +74,10 @@ npm run dev
   - `inviteURL`: bot meghívó linkje,
   - `supportURL`: support szerver meghívó linkje,
   - `githubURL`: Github repo linkje
-- Példa:
+
+<details>
+<summary>Példa</summary>
+
 ```json
 {
     "status": "/help",
@@ -57,5 +88,5 @@ npm run dev
     "githubURL": "https://github.com/sassvagyok/sasBot"
 }
 ```
-## Dokumentáció
-- A parancsok leírása és működése elérhető itt: https://sassvagyok.github.io/sasBot-docs/
+
+</details>
