@@ -178,7 +178,7 @@ export default {
                 }
             });
     
-            const helpEmbed = new EmbedBuilder()
+            let helpEmbed = new EmbedBuilder()
             .setDescription("Válassz kategóriát!")
             .setColor("1D88EC");
     
@@ -227,7 +227,7 @@ export default {
             collector.on("collect", async (ButtonInteraction) => {
                 if (!ButtonInteraction.values) return collector.stop();
         
-                if (ButtonInteraction.values === "custom") {
+                if (ButtonInteraction.values[0] === "custom") {
                     helpEmbed = new EmbedBuilder()
                     .setTitle("💾 Egyedi parancsok")
 

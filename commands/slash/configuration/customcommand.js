@@ -70,10 +70,10 @@ export default {
     ],
     run: async (client, interaction) => {
 
+        const customCommandName = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
         const customCommand = await customCommandSchema.findOne({ Guild: interaction.guild.id, Command: customCommandName });
         const customCommandData = await customCommandSchema.find({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
-        const customCommandName = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
         const customCommandResponse = interaction.options.getString("válasz");
         const builtInCommand = client.commands.get(customCommandName);
 
