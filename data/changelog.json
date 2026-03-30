@@ -1,5 +1,10 @@
 [
     {
+        "version": "template",
+        "date": "date",
+        "changelog": "🔹**Rendszerszintű**\n**🔨 Moderációs-parancsok**\n **🎵 Zene-parancsok**\n**⌨️ Konfigurációs-parancsok**\n**🍥 Sokszínű-parancsok**\n** 🤖Információs-parancsok**"
+    },
+    {
         "version": "1.0.0",
         "date": 1769904000,
         "changelog": "🔹**Rendszerszintű**\n- sasBot mostantól nyílt forráskódú!\n- Új verziószámozás\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Catfact`: mostantól angolul\n\n🤖 **Információs-parancsok**\n-# Változás:\n- `Changelog`: mostantól nincsenek alverziók, pontos verziószámot kell megadni"
@@ -18,5 +23,10 @@
         "version": "1.3.1",
         "date": 1771782934,
         "changelog": "**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Ötbetű`: mostantól kétszer annyi sasPontot ad\n- `Saspont ranglista`: mostantól az első 3 helyezettet medállal jelzi"
+    },
+    {
+        "version": "1.4.0",
+        "date": 1774829569,
+        "changelog": "**🎵 Zene-parancsok**\n-# Javítás:\n- `Play`: nem indul el a lejátszás\n\n**⌨️ Konfigurációs-parancsok**\n-# Változás:\n - `Membercounter`: mostantól a csatornanév bármelyik részében megjeleníthető a tagok száma a [tagok] használatával"
     }
 ]

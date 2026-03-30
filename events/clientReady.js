@@ -10,11 +10,11 @@ import lockdownTimer from "../timers/lockdownTimer.js";
 import timeoutTimer from "../timers/timeoutTimer.js";
 import ötbetűTimer from "../timers/ötbetűTimer.js";
 
-const currentTime = () => moment().tz("Europe/Budapest").format("HH:mm:ss");
+const currentTime = () => moment().tz("Europe/Budapest").format("HH:mm:ss.SSS");
 
 const startup = async () => {
     client.on("clientReady", () =>
-        console.log(`[${currentTime()}] ${client.user.username}@${packageJson.version} beindult (${client.guilds.cache.size})`)
+        console.log(`[${currentTime()}] ${client.user.username}@${packageJson.version} beindult ${client.guilds.cache.size} szerveren`)
     );
 }
 

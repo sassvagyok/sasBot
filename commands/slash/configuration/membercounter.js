@@ -15,7 +15,7 @@ export default {
             options: [
                 {
                     name: "név",
-                    description: "Új csatorna neve, vagy meglévő tagszámláló új neve",
+                    description: "Új csatorna neve, vagy meglévő tagszámláló új neve (Tagok számának kiírása: [tagok])",
                     type: ApplicationCommandOptionType.String,
                     required: true,
                     maxLength: 50
@@ -38,9 +38,10 @@ export default {
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({ content: "Nincs jogom ehhez: `Manage Channels`!", flags: MessageFlags.Ephemeral });
 
         if (subCommand === "beállítás") {
+            const formattedChannelName = channelName.includes("[tagok]") ? channelName.replace("[tagok]", members) : `${channelName}: ${members}`;
             if (membercounterData && interaction.guild.channels.cache.get(membercounterData.Channel)) {
                 if (!interaction.guild.channels.cache.get(membercounterData.Channel).permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ManageChannels)) return interaction.reply({ content: "Nincs jogom ehhez: `Manage Channels`!", flags: MessageFlags.Ephemeral });
-                interaction.guild.channels.cache.get(membercounterData.Channel).setName(`${channelName}: ${members}`);
+                interaction.guild.channels.cache.get(membercounterData.Channel).setName(formattedChannelName);
     
                 await membercounterSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Name: channelName });
                 interaction.reply({ content: "Tagszámláló csatorna átnevezve" });
@@ -48,7 +49,7 @@ export default {
                 if (membercounterData) await membercounterSchema.findOneAndDelete({ Guild: interaction.guild.id });
     
                 const channel = await interaction.guild.channels.create({
-                    name: `${channelName}: ${members}`,
+                    name: formattedChannelName,
                     type: ChannelType.GuildVoice,
                     permissionOverwrites: [
                         {

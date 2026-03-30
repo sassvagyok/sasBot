@@ -14,6 +14,7 @@ const updateMembercounter = async (guildMember) => {
 
     const guild = guildMember.guild;
     const memberCount = guild.memberCount;
+    const formattedChannelName = membercounterData.Name.includes("[tagok]") ? membercounterData.Name.replace("[tagok]", memberCount) : `${membercounterData.Name}: ${memberCount}`;
 
     if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageChannels)) return;
 
@@ -22,7 +23,7 @@ const updateMembercounter = async (guildMember) => {
     if (!channel) return membercounterSchema.deleteOne({ _id: membercounterData._id })
     if (!channel.permissionsFor(guild.members.me).has(PermissionFlagsBits.Connect)) return;
 
-    channel.setName(`${membercounterData.Name}: ${memberCount}`);
+    channel.setName(formattedChannelName);
 
     membercounterData.Member = memberCount;
     await membercounterData.save();
@@ -188,7 +189,7 @@ client.on("guildMemberRemove", async guildMember => {
 
         if (farewellData.Title) farewellEmbed.setTitle(replacedTitle);
         farewellEmbed.setThumbnail(farewellData.Thumbnail ? farewellData.Thumbnail : guildMember.displayAvatarURL({ extension: "png", size: 1024, dynamic: true }));
-        farewellEmbed.setColor(farewellData.Color ? farewellData.Color : "#E2162E");
+        farewellEmbed.setColor(farewellData.Color ? farewellData.Color : "#17BC0F");
         if (farewellData.Timestamp) farewellEmbed.setTimestamp();
         if (farewellData.Icon) farewellEmbed.setAuthor({ name: farewellData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!`, iconURL: guildMember.user.displayAvatarURL() });
         else farewellEmbed.setAuthor({ name: farewellData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!` });
