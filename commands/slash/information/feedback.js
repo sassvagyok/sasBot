@@ -1,4 +1,4 @@
-import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from "discord.js";
+import { ModalBuilder, TextInputBuilder, TextInputStyle, LabelBuilder, StringSelectMenuBuilder } from "discord.js";
 
 export default {
     name: "feedback",
@@ -6,28 +6,48 @@ export default {
     info: "Hibák, észrevételek és javaslatok megosztása sasBot-tal kapcsolatban.",
     run: async (client, interaction) => {
 
-        const mainModal = new ModalBuilder()
-        .setCustomId("fb")
-        .setTitle("Visszajelzés küldése");
+        const typeMenu = new StringSelectMenuBuilder()
+        .setCustomId("type")
+        .setPlaceholder("Visszajelzés típusa")
+        .addOptions(
+            [
+                { label: "Hiba", value: "bug", description: "Hiba jelentése" },
+                { label: "Fejlesztés", value: "improvement", description: "Meglévő funkció fejlesztése" },
+                { label: "Új funkció", value: "addition", description: "Új funkció ajánlása" }
+            ]
+        );
 
-        const subject = new TextInputBuilder()
-        .setCustomId("title")
-        .setLabel("Tárgy (max. 200 karakter)")
+        const subjectInput = new TextInputBuilder()
+        .setCustomId("subject")
         .setStyle(TextInputStyle.Short)
         .setRequired(true)
-        .setMaxLength(200);
+        .setMaxLength(150);
 
-        const content = new TextInputBuilder()
-        .setCustomId("desc")
-        .setLabel("Leírás (max. 1000 karakter)")
+        const bodyInput = new TextInputBuilder()
+        .setCustomId("body")
         .setStyle(TextInputStyle.Paragraph)
         .setRequired(true)
-        .setMaxLength(1000);
+        .setMaxLength(500);
 
-        const subjectActionRow = new ActionRowBuilder().addComponents(subject);
-		const contentActionRow = new ActionRowBuilder().addComponents(content);
+        const type = new LabelBuilder()
+        .setId(1)
+        .setLabel("Típus")
+        .setStringSelectMenuComponent(typeMenu);
 
-        mainModal.addComponents(subjectActionRow, contentActionRow);
+        const subject = new LabelBuilder()
+        .setId(2)
+        .setLabel("Tárgy (max. 150 karakter)")
+        .setTextInputComponent(subjectInput);
+
+        const body = new LabelBuilder()
+        .setId(3)
+        .setLabel("Leírás (max. 500 karakter)")
+        .setTextInputComponent(bodyInput);
+
+        const mainModal = new ModalBuilder()
+        .setCustomId("fb")
+        .setTitle("Visszajelzés küldése")
+        .addLabelComponents(type, subject, body);
 
         interaction.showModal(mainModal);
     }

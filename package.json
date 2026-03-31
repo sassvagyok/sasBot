@@ -22,7 +22,7 @@
         "@distube/yt-dlp": "^2.0.1",
         "@distube/ytdl-core": "^4.16.12",
         "canvas": "^3.1.2",
-        "discord.js": "^14.25.1",
+        "discord.js": "^14.26.0",
         "distube": "^5.2.3",
         "dotenv": "^17.2.3",
         "figlet": "^1.7.0",

@@ -193,11 +193,12 @@ client.on("interactionCreate", async (interaction) => {
     }
     
     // Feedback kezelése
-    if (interaction.type == InteractionType.ModalSubmit) {
+    if (interaction.type === InteractionType.ModalSubmit) {
         if (interaction.customId === "fb") {
-            await interaction.reply({ content: "Visszajelzés elküldve! Köszönöm!", flags: MessageFlags.Ephemeral });
-            const feedbackTitle = interaction.fields.getTextInputValue("title");
-            const feedbackContent = interaction.fields.getTextInputValue("desc");
+            await interaction.reply({ content: "Visszajelzés elküldve!", flags: MessageFlags.Ephemeral });
+            const feedBackType = interaction.fields.getStringSelectValues("type")
+            const feedbackTitle = interaction.fields.getTextInputValue("subject");
+            const feedbackContent = interaction.fields.getTextInputValue("body");
         
             const guild = client.guilds.cache.get(process.env.devServerId);
             if (!guild) return;
@@ -208,7 +209,7 @@ client.on("interactionCreate", async (interaction) => {
             .setAccentColor(0x1d88ec)
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Visszajelzés: \`${interaction.user.username}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`**Tárgy**\n${feedbackTitle}\n**Leírás**\n${feedbackContent}`));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`**Típus**\n${feedBackType}\n**Tárgy**\n${feedbackTitle}\n**Leírás**\n${feedbackContent}`));
 
             channel.send({ components: [feedbackContainer], flags: MessageFlags.IsComponentsV2 });
         }

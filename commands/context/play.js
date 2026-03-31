@@ -29,7 +29,7 @@ export default {
         
             await interaction.editReply("`Hozzáadva!`");
         } catch (err) {
-            return interaction.reply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
+            return interaction.editReply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
         }
     }
 }

@@ -28,5 +28,10 @@
         "version": "1.4.0",
         "date": 1774829569,
         "changelog": "**🎵 Zene-parancsok**\n-# Javítás:\n- `Play`: nem indul el a lejátszás\n\n**⌨️ Konfigurációs-parancsok**\n-# Változás:\n - `Membercounter`: mostantól a csatornanév bármelyik részében megjeleníthető a tagok száma a [tagok] használatával"
+    },
+    {
+        "version": "1.4.1",
+        "date": 1774961563,
+        "changelog": "** 🤖Információs-parancsok**\n-# Változás:\n- `Feedback`: mostantól kiválasztható a visszajelzés típusa"
     }
 ]
