@@ -1,8 +1,8 @@
 import { PermissionFlagsBits, EmbedBuilder } from "discord.js";
-import { updateMembercounter } from "../utils/updateMembercounter.js";
-import autoRoleSchema from "../models/autoroleModel.js";
-import saverolesSchema from "../models/saveroleModel.js";
-import welcomeSchema from "../models/welcomeModel.js";
+import { updateMembercounter } from "../../utils/updateMembercounter.js";
+import autoRoleSchema from "../../models/autoroleModel.js";
+import saverolesSchema from "../../models/saveroleModel.js";
+import welcomeSchema from "../../models/welcomeModel.js";
 
 export default {
     name: "guildMemberAdd",

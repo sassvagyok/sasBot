@@ -1,7 +1,7 @@
 import { PermissionFlagsBits, ChannelType, ContainerBuilder, TextDisplayBuilder, MessageFlags, ButtonBuilder, ActionRowBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
-import modsettingSchema from "../models/modsettingModel.js";
-import customCommandSchema from "../models/customcommandModel.js";
-import config from "../config.json" with { type: "json" };
+import modsettingSchema from "../../models/modsettingModel.js";
+import customCommandSchema from "../../models/customcommandModel.js";
+import config from "../../config.json" with { type: "json" };
 
 export default {
     name: "guildCreate",

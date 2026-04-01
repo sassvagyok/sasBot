@@ -32,7 +32,7 @@ export default {
 
         const disabledCommandData = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
-        const builtInCommandName = interaction.options.getString("parancs").toLowerCase().split(" ")[0];
+        const builtInCommandName = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
         
         if (subCommand === "átállítás") {
             const builtInCommand = client.commands.get(builtInCommandName);

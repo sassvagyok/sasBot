@@ -1,3 +1,7 @@
 import client from "../index.js";
 
-client.login(process.env.mainToken);
+if (process.env.mainToken) {
+    client.login(process.env.mainToken);
+} else {
+    console.log("Nincs mainToken hozzáadva!");
+}

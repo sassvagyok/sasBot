@@ -33,5 +33,10 @@
         "version": "1.4.1",
         "date": 1774961563,
         "changelog": "** 🤖Információs-parancsok**\n-# Változás:\n- `Feedback`: mostantól kiválasztható a visszajelzés típusa"
+    },
+    {
+        "version": "2.0.0",
+        "date": 1775055756,
+        "changelog": "🔹**Rendszerszintű**\n-# Javítás:\n- Bemutatkozó üzenet mostantól helyesen küldődik el\n\n**⌨️ Konfigurációs-parancsok**\n-# Javítás:\n- `Customcommand`: mostantól bot kirúgása és visszahívása után megjelennek az egyedi parancsok\n- `Farewell/Welcome`: színek felcserélésének javítása\n- `Toggle`: hiba a `kikapcsoltak` alparancs használatakor\n\n** 🤖Információs-parancsok**\n-# Javítás:\n- `Status`: hiba küldésnél"
     }
 ]

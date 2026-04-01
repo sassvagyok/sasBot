@@ -1,6 +1,6 @@
 {
     "name": "sasbot",
-    "version": "1.4.1",
+    "version": "2.0.0",
     "description": "Csodálatos bot!",
     "main": "start/main.js",
     "type": "module",
@@ -9,7 +9,7 @@
     },
     "scripts": {
         "start": "node start/main.js",
-        "dev": "node start/dev.js"
+        "dev": "node --trace-deprecation start/dev.js"
     },
     "keywords": [],
     "author": "sasos",

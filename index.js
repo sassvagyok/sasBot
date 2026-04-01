@@ -1,6 +1,11 @@
 import { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
-import { readdirSync } from 'fs';
-import { pathToFileURL } from 'url';
+import { DisTube } from "distube";
+import { YouTubePlugin } from "@distube/youtube";
+import { SoundCloudPlugin } from "@distube/soundcloud";
+import { SpotifyPlugin } from "@distube/spotify";
+import { YtDlpPlugin } from "@distube/yt-dlp";
+import { readdirSync, statSync } from "fs";
+import { pathToFileURL } from "url";
 import config from "./config.json" with { type: "json" };
 import commandHandler from "./handler/commandHandler.js";
 import "dotenv/config";
@@ -27,6 +32,16 @@ const client = new Client({
     ]
 });
 
+const distube = new DisTube(client, {
+    plugins: [
+        new YouTubePlugin(),
+        new SpotifyPlugin(),
+        new SoundCloudPlugin(),
+        new YtDlpPlugin()
+    ],
+    emitNewSongOnly: false
+});
+
 export default client;
 
 process.on("unhandledRejection", error => {
@@ -44,22 +59,34 @@ process.on("unhandledRejection", error => {
     channel.send({ components: [errorContainerPrivate], flags: MessageFlags.IsComponentsV2 });
 });
 
-const eventFiles = readdirSync('./new_events').filter(f => f.endsWith('.js'));
+const loadEvents = async (dir) => {
+    const files = readdirSync(dir);
 
-for (const file of eventFiles) {
-    const event = await import(pathToFileURL(`./new_events/${file}`).href);
-    const { default: e } = event;
+    for (const file of files) {
+        const fullPath = `${dir}/${file}`;
 
-    if (e.once) {
-        client.once(e.name, (...args) => e.run(client, ...args));
-    } else {
-        client.on(e.name, (...args) => e.run(client, ...args));
+        if (statSync(fullPath).isDirectory()) {
+            await loadEvents(fullPath);
+        } else if (file.endsWith(".js")) {
+            const event = await import(pathToFileURL(fullPath).href);
+            const { default: e } = event;
+            const emitter = e.distube ? client.distube : client;
+
+            if (e.once) {
+                emitter.once(e.name, (...args) => e.run(client, ...args));
+            } else {
+                emitter.on(e.name, (...args) => e.run(client, ...args));
+            }
+        }
     }
-}
+};
 
 client.commands = new Collection();
 client.slashCommands = new Collection();
 client.contextMenuCommands = new Collection();
 client.config = config;
+client.distube = distube;
+
+await loadEvents("./events");
 
 commandHandler(client);

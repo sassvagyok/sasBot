@@ -1,7 +1,7 @@
 import { PermissionFlagsBits, EmbedBuilder } from "discord.js";
-import { updateMembercounter } from "../utils/updateMembercounter.js";
-import saverolesSchema from "../models/saveroleModel.js";
-import farewellSchema from "../models/farewellModel.js";
+import { updateMembercounter } from "../../utils/updateMembercounter.js";
+import saverolesSchema from "../../models/saveroleModel.js";
+import farewellSchema from "../../models/farewellModel.js";
 
 export default {
     name: "guildMemberRemove",
