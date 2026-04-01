@@ -54,10 +54,13 @@ export default async (client) => {
         customCommandSchema.find().then(data => {
             data.forEach((cmd) => {
                 const guild = client.guilds.cache.get(cmd.Guild);
-                guild?.commands.create({
-                    name: cmd.Command,
-                    description: "Egyedi parancs ezen a szerveren" 
-                });
+
+                if (guild) {
+                    guild.commands.create({
+                        name: cmd.Command,
+                        description: "Egyedi parancs ezen a szerveren" 
+                    }).catch(error => {});
+                }
             });
         });
     });

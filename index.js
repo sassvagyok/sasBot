@@ -1,4 +1,6 @@
 import { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
+import { readdirSync } from 'fs';
+import { pathToFileURL } from 'url';
 import config from "./config.json" with { type: "json" };
 import commandHandler from "./handler/commandHandler.js";
 import "dotenv/config";
@@ -41,6 +43,19 @@ process.on("unhandledRejection", error => {
 
     channel.send({ components: [errorContainerPrivate], flags: MessageFlags.IsComponentsV2 });
 });
+
+const eventFiles = readdirSync('./new_events').filter(f => f.endsWith('.js'));
+
+for (const file of eventFiles) {
+    const event = await import(pathToFileURL(`./new_events/${file}`).href);
+    const { default: e } = event;
+
+    if (e.once) {
+        client.once(e.name, (...args) => e.run(client, ...args));
+    } else {
+        client.on(e.name, (...args) => e.run(client, ...args));
+    }
+}
 
 client.commands = new Collection();
 client.slashCommands = new Collection();
