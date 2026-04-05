@@ -18,7 +18,7 @@ export default async () => {
             });
             await newData.save();
 
-            console.log(`[${moment().tz("Europe/Budapest").format("HH:mm:ss")}] Napi szó frissítve`);
+            console.log(`[${moment().tz("Europe/Budapest").format("HH:mm:ss.SSS")}] Napi szó frissítve`);
         } else {
             if (ötbetűData.Date !== moment().tz("Europe/Budapest").format("YYYY-MM-DD")) {
                 await ötbetűSchema.findOneAndUpdate({
@@ -27,7 +27,15 @@ export default async () => {
                     $set: { "Users.$[].Tries": 0, "Users.$[].Guessed": false, "Users.$[].Sequence": "" }
                 });
 
-                console.log(`[${moment().tz("Europe/Budapest").format("HH:mm:ss")}] Napi szó frissítve`);
+                const yesterday = moment().tz("Europe/Budapest").startOf('day').subtract(1, 'days').toDate();
+
+                await ötbetűSchema.updateMany(
+                    {},
+                    { $set: { "Users.$[elem].Streak": 0 } },
+                    { arrayFilters: [{ "elem.LastWonOn": { $lt: yesterday, $ne: null } }] }
+                );
+
+                console.log(`[${moment().tz("Europe/Budapest").format("HH:mm:ss.SSS")}] Napi szó frissítve`);
             }
         }
     }

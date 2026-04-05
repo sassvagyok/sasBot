@@ -221,7 +221,7 @@ export default {
         }
 
         const handleFeedback = async (i) => {
-            if (i.customId === "fb") {
+            if (i.customId === "feedback") {
                 await i.reply({ content: "Visszajelzés elküldve!", flags: MessageFlags.Ephemeral });
                 const feedBackType = i.fields.getStringSelectValues("type")
                 const feedbackTitle = i.fields.getTextInputValue("subject");

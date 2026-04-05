@@ -45,7 +45,7 @@ export default {
         .setTextInputComponent(bodyInput);
 
         const mainModal = new ModalBuilder()
-        .setCustomId("fb")
+        .setCustomId("feedback")
         .setTitle("Visszajelzés küldése")
         .addLabelComponents(type, subject, body);
 

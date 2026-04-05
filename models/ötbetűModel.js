@@ -8,6 +8,8 @@ export default model('ötbetű-v3', new Schema({
             UserID: String,
             Tries: Number,
             Guessed: Boolean,
+            Streak: { type: Number, default: 0 },
+            LastWonOn: { type: Date, default: null },
             Sequence: String,
             Stats: {
                 Games: Number,
