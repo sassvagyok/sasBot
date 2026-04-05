@@ -118,14 +118,15 @@ export default {
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
                 .addTextDisplayComponents(new TextDisplayBuilder().setContent(`A nap szava: \`${otbetuData.Word}\``))
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${player.Streak > 0 ? `${player.Streak} napos Streak elvesztve!\n` : ""}-# +0 sasPont`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${player.Streak > 0 ? `-# ${player.Streak} napos Streak elvesztve!\n` : ""}-# +0 sasPont`));
 
                 player.Streak = 0;
                 await otbetuData.save();
             }
 
             if (hasWon) {
-                const earnedPoints = 200 * (7 - player.Tries) + 25 * player.Streak;
+                player.Streak += 1;
+                const earnedPoints = 200 * (7 - player.Tries) + 50 * player.Streak;
                 
                 saspontUser.Balance += earnedPoints;
                 saspontUser.History.push({
@@ -149,7 +150,6 @@ export default {
                 player.Guessed = true;
                 player.Stats.Wins += 1;
                 player.Tries = 6;
-                player.Streak += 1;
                 player.LastWonOn = moment().tz("Europe/Budapest").startOf('day').toDate();
 
                 await otbetuData.save();
@@ -164,14 +164,14 @@ export default {
             const statsContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű statisztikák: \`${interaction.user.displayName}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Játékok:** \`${player.Stats.Games}\`\n- **Kitalálások:** \`${player.Stats.Wins}\`\n- **Legjobb játék:** ${player.Stats.Best.Tries == null ? "nincs" : `\n    - **Próbák:** \`${player.Stats.Best.Tries}\`\n   - **Dátum:** \`${player.Stats.Best.Date}\``}`));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Streak:** \`${player.Streak}\`\n- **Játékok:** \`${player.Stats.Games}\`\n- **Kitalálások:** \`${player.Stats.Wins}\`\n- **Legjobb játék:** ${player.Stats.Best.Tries == null ? "nincs" : `\n    - **Próbák:** \`${player.Stats.Best.Tries}\`\n   - **Dátum:** \`${player.Stats.Best.Date}\``}`));
             
             interaction.reply({ components: [statsContainer], flags: MessageFlags.IsComponentsV2 });
         }
 
         if (subCommand === "súgó") {
             const ruleContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Játékmenet\n- Adj meg egy öt betűs magyar szót, hogy megtudd melyik betűk szerepelnek a nap szavában!\n- Találd ki legfeljebb 6 próbából ezt a szót!\n### Színek jelentése\n- ⬛: a betű nincs benne a szóban\n- 🟧: a betű benne van a szóban, de rossz helyen\n- 🟩: a betű benne van a szóban, jó helyen"));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Játékmenet\n- Adj meg egy öt betűs magyar szót, hogy megtudd melyik betűk szerepelnek a nap szavában!\n- Találd ki legfeljebb 6 próbából ezt a szót!\n- Minél kevesebb próbálkozásból kitalálod a szót, annál több sasPontot kapsz!\n- Ha mindennap helyesen kitalálod, akkor még több sasPontot kaphatsz!\n### Színek jelentése\n- ⬛: a betű nincs benne a szóban\n- 🟧: a betű benne van a szóban, de rossz helyen\n- 🟩: a betű benne van a szóban és jó helyen"));
 
             interaction.reply({ components: [ruleContainer], flags: MessageFlags.IsComponentsV2 });
         }

@@ -2,7 +2,7 @@
     {
         "version": "template",
         "date": "date",
-        "changelog": "🔹**Rendszerszintű**\n**🔨 Moderációs-parancsok**\n **🎵 Zene-parancsok**\n**⌨️ Konfigurációs-parancsok**\n**🍥 Sokszínű-parancsok**\n** 🤖Információs-parancsok**"
+        "changelog": "**🔹Rendszerszintű**\n**🔨 Moderációs-parancsok**\n **🎵 Zene-parancsok**\n**⌨️ Konfigurációs-parancsok**\n**🍥 Sokszínű-parancsok**\n**🤖Információs-parancsok**"
     },
     {
         "version": "1.0.0",
@@ -38,5 +38,10 @@
         "version": "2.0.0",
         "date": 1775055756,
         "changelog": "🔹**Rendszerszintű**\n-# Javítás:\n- Bemutatkozó üzenet mostantól helyesen küldődik el\n\n**⌨️ Konfigurációs-parancsok**\n-# Javítás:\n- `Customcommand`: mostantól bot kirúgása és visszahívása után megjelennek az egyedi parancsok\n- `Farewell/Welcome`: színek felcserélésének javítása\n- `Toggle`: hiba a `kikapcsoltak` alparancs használatakor\n\n** 🤖Információs-parancsok**\n-# Javítás:\n- `Status`: hiba küldésnél"
+    },
+    {
+        "version": "2.1.0",
+        "date": 1775358439,
+        "changelog": "**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Ötbetű`: Streak 🔥\n    - mostantól minden egymás utáni napon kitalált szó feljebb viszi a Streaket\n   - minden Streak szint +50 sasPontot ad a kitalálásért\n   - a Streak elveszik, ha az aznapi szó nem lett kitalálva (vagy egyáltalán nem játszott)\n-# Javítás:\n- `Ötbetű statisztikák/súgó`: csak a felhasználónak voltak láthatóak"
     }
 ]
