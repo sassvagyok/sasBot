@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDispl
 import moment from "moment";
 import "moment-timezone";
 import allWords from "../../../data/words.json" with { type: "json" };
-import ötbetűSchema from "../../../models/ötbetűModel.js";
+import otbetuSchema from "../../../models/ötbetűModel.js";
 import saspontSchema from "../../../models/saspontModel.js";
 
 export default {
@@ -38,7 +38,7 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const otbetuData = await ötbetűSchema.findOne();
+        const otbetuData = await otbetuSchema.findOne();
         const saspontData = await saspontSchema.findOne();
         const subCommand = interaction.options.getSubcommand();
         const guess = interaction.options.getString("szó");
@@ -126,7 +126,7 @@ export default {
 
             if (hasWon) {
                 player.Streak += 1;
-                const earnedPoints = 200 * (7 - player.Tries) + 50 * player.Streak;
+                const earnedPoints = 500 * (7 - player.Tries) + 50 * player.Streak;
                 
                 saspontUser.Balance += earnedPoints;
                 saspontUser.History.push({
@@ -145,7 +145,7 @@ export default {
 
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(200 * (7 - player.Tries))} sasPont (${player.Tries} találatból)${(player.Streak > 0 ? `\n-# +${format.format(25 * player.Streak)} sasPont (Streak ${player.Streak})` : "")}`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(500 * (7 - player.Tries))} sasPont (${player.Tries} találatból)${(player.Streak > 0 ? `\n-# +${format.format(25 * player.Streak)} sasPont (Streak ${player.Streak})` : "")}`));
 
                 player.Guessed = true;
                 player.Stats.Wins += 1;

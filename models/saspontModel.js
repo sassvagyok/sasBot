@@ -6,7 +6,7 @@ export default model('saspont', new Schema({
             UserID: String,
             Username: String,
             OnLeaderboard: { type: Boolean, default: true },
-            Balance: { type: Number, default: 5 },
+            Balance: { type: Number, default: 25 },
             History: {
                 type: [
                     {

@@ -43,5 +43,10 @@
         "version": "2.1.0",
         "date": 1775358439,
         "changelog": "**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Ötbetű`: Streak 🔥\n    - mostantól minden egymás utáni napon kitalált szó feljebb viszi a Streaket\n   - minden Streak szint +50 sasPontot ad a kitalálásért\n   - a Streak elveszik, ha az aznapi szó nem lett kitalálva (vagy egyáltalán nem játszott)\n-# Javítás:\n- `Ötbetű statisztikák/súgó`: csak a felhasználónak voltak láthatóak"
+    },
+    {
+        "version": "2.2.0",
+        "date": 1775762438,
+        "changelog": "**🔹Rendszerszintű**\n-# sasPont:\n- sasPont szerzés változások:\n    - `Szóharc`: 2x-es szorzó helyett 5x-ös\n   - `Ötbetű`: 1200 helyett akár 3000 pont is szerezhető\n   - Parancs használatáért 5 helyett 25 pont jár\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Szóharc`: mostantól egy játszott szó nem játszható újra 10 körig"
     }
 ]

@@ -23,7 +23,7 @@ export default async (user) => {
         saspontData.Users.push(new_user);
         await saspontData.save();
     } else {
-        saspontUser.Balance += 5;
+        saspontUser.Balance += 25;
 
         if (saspontUser.Username !== user.username) saspontUser.Username = user.username;
 
