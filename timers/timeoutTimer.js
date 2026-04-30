@@ -22,6 +22,7 @@ export default async (client) => {
                 const end = value.End;
                 const now = moment().tz("Europe/Budapest").format("YYYY/MM/DD-HH:mm");
                 const count = value.Number;
+                const reason = value.Reason;
 
                 if (!channel) return;
                 if (!target) return;
@@ -33,20 +34,20 @@ export default async (client) => {
 
                 if (now === end) {
                     const headerTextComponent = new TextDisplayBuilder()
-                    .setContent(`### Lejárt felfüggesztés: \`${target.username}\` (${target})${count ? `#${count}` : ""}`);
+                    .setContent(`### Lejárt felfüggesztés: \`${target.username}\` (${target})${count ? ` | #${count}` : ""}`);
 
                     const removetimeoutContainer = new ContainerBuilder()
                     .setAccentColor(0x19cc10)
                     .addTextDisplayComponents(headerTextComponent)
                     .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\``))
+                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
 
                     const dmContainer = new ContainerBuilder()
                     .setAccentColor(0x19cc10)
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt felfüggesztés | ${guild}`))
                     .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\``))
+                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
 
                     if ((!modsettingData || modsettingData?.length === 0 || modsettingData.Send) && channel.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)) channel.send({ components: [removetimeoutContainer], flags: MessageFlags.IsComponentsV2 });

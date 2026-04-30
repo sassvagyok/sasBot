@@ -22,6 +22,7 @@ export default async (client) => {
                 const end = value.End;
                 const now = moment().tz("Europe/Budapest").format("YYYY/MM/DD-HH:mm");
                 const count = value.Number;
+                const reason = value.Reason;
 
                 if (!channel) return;
                 if (!target) return;
@@ -34,16 +35,16 @@ export default async (client) => {
                 if (now === end) {
                     const unbanContainer = new ContainerBuilder()
                     .setAccentColor(0x19cc10)
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt kitiltás: \`${target.username}\` (${target})` + count ? `| #${count}` : ""))
+                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt kitiltás: \`${target.username}\` (${target})${count ? ` | #${count}` : ""}`))
                     .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\``))
+                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
 
                     const dmContainer = new ContainerBuilder()
                     .setAccentColor(0x19cc10)
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt kitiltás | ${guild}`))
                     .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\``))
+                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
 
                     try {

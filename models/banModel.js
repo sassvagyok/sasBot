@@ -8,5 +8,6 @@ export default model('ban', new Schema({
     Length: String,
     Start: String,
     End: String,
-    Number: Number
+    Number: Number,
+    Reason: String
 }));
