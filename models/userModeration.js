@@ -1,9 +1,8 @@
 import { Schema, model } from "mongoose";
 
-export default model('moderations', new Schema({
+export default model('usermoderations', new Schema({
     Guild: String,
     User: String,
-    Count: Number,
     Bans: [
         {
             Number: Number,

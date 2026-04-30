@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 import timeoutSchema from "../../../models/timeoutModel.js";
-import moderationSchema from "../../../models/moderationlogModel.js";
+import userModerationSchema from "../../../models/userModeration.js";
+import serverModerationSchema from "../../../models/serverModeration.js";
 import logChannelSchema from "../../../models/logchannelModel.js";
 import modsettingSchema from "../../../models/modsettingModel.js";
 import ms from "ms";
@@ -60,35 +61,61 @@ export default {
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom felfüggeszteni!`, flags: MessageFlags.Ephemeral });  
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} rangja magasabban van a tiédnél, ezért nem tudod felfüggeszteni!`, flags: MessageFlags.Ephemeral });
 
-        let moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let serverModerationData = await serverModerationSchema.findOne({ Guild: interaction.guild.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
-        const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
 
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        let count = 0;
+        let count = 1;
         let header = "";
 
         if (modsettingData && modsettingData?.Log) {
-            if (guildModData.length > 0) {
-                const max = guildModData.map(x => x.Count);
-                count = Math.max(...max);
-            }
-
-            if (!moderationData) {
-                const newData = new moderationSchema({
+            if (serverModerationData) {
+                count = serverModerationData.Count + 1;
+                serverModerationData.Count = count;
+                await serverModerationData.save();
+            } else {
+                const newData = new serverModerationSchema({
                     Guild: interaction.guild.id,
-                    User: target.id,
                     Count: count
                 });
                 await newData.save();
             }
 
-            moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-            await moderationSchema.findOneAndUpdate({ Guild: interaction.guild.id, User: target.id }, { Count: count + 1 });
+            if (!userModerationData) {
+                const newData = new userModerationSchema({
+                    Guild: interaction.guild.id,
+                    User: target.id,
+                    Timeouts: [
+                        {
+                            Number: count,
+                            Target: target,
+                            Type: "Timeout",
+                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                            Author: interaction.member,
+                            Length: timeoutDuration,
+                            Reason: reason ? reason : null
+                        }
+                    ]
+                });
+                await newData.save();
+            } else {
+                userModerationData.Timeouts.push({
+                    Number: count,
+                    Target: target,
+                    Type: "Timeout",
+                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                    Author: interaction.member,
+                    Length: timeoutDuration,
+                    Reason: reason ? reason : null
+                });
+                await userModerationData.save();
+            }
 
-            header = ` | #${count + 1}`;
+            userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+            header = ` | #${count}`;
         }
 
         const timeoutContainer = new ContainerBuilder()
@@ -116,24 +143,6 @@ export default {
             } catch(err){}
         }
 
-        const pushModLog = async (type) => {
-            if (!modsettingData || modsettingData?.length === 0 || !modsettingData.Log) return;
-
-            const defaultLog = {
-                Number: count + 1,
-                Target: target,
-                Type: "Timeout",
-                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                Author: interaction.member,
-                Length: timeoutDuration
-            }
-
-            if (type === 1) defaultLog.Reason = reason;
-
-            moderationData.Timeouts.push(defaultLog);
-            await moderationData.save();
-        }
-
         let duration = moment.duration(ms(timeoutDuration));
         let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {
             trim: "all"
@@ -150,28 +159,18 @@ export default {
             Length: formattedDuration,
             Start: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
             End: moment().tz("Europe/Budapest").add(parseInt(args[1].slice(0, -1)), args[1].slice(-1)).format("YYYY/MM/DD-HH:mm"),
-            Number: modsettingData && modsettingData?.Log ? count + 1 : 0
-        })
-        .save();
+            Number: modsettingData && modsettingData?.Log ? count : null,
+            Reason: reason ? reason : null
+        }).save();
 
-        if (!reason) {
-            timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
-            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
-            
-            pushModLog(0);
-            sendContainer();
+        const formattedDate = moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm");
 
-            if (memberTarget.communicationDisabledUntil) memberTarget.timeout(null);
-            return memberTarget.timeout(ms(timeoutDuration), `Időtartam: ${timeoutDuration} - ${userAuthor.user.username}`);
-        } else {
-            timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));
-            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));
+        timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${formattedDate} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}\n> Ez a(z) **${userModerationData.Timeouts.length}.** felfüggesztése`));
+        dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${formattedDate} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}\n> Ez a(z) **${userModerationData.Timeouts.length}.** felfüggesztésed`));
 
-            pushModLog(1);
-            sendContainer();
+        sendContainer();
 
-            if (memberTarget.communicationDisabledUntil) memberTarget.timeout(null);
-            return memberTarget.timeout(ms(timeoutDuration), reason + " | Időtartam: " + timeoutDuration + ` | (${userAuthor.user.username})`);
-        }
+        if (memberTarget.communicationDisabledUntil) memberTarget.timeout(null);
+        memberTarget.timeout(ms(timeoutDuration), `${reason ? `Indok: ${reason} | `: ""}Lejár: ${formattedDate} (${formattedDuration}) | (${userAuthor.user.username})`);
     }
 }

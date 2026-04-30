@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/moderationlogModel.js";
+import userModerationSchema from "../../../models/userModeration.js";
+import serverModerationSchema from "../../../models/serverModeration.js";
 import logChannelSchema from "../../../models/logchannelModel.js";
 import modsettingSchema from "../../../models/modsettingModel.js";
 import moment from "moment";
@@ -44,35 +45,59 @@ export default {
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom kirúgni!`, flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} rangja magasabban van a tiédnél, ezért nem tudod kirúgni!`, flags: MessageFlags.Ephemeral });
 
-        let moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let serverModerationData = await serverModerationSchema.findOne({ Guild: interaction.guild.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
-        const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
 
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        let count = 0;
+        let count = 1;
         let header = "";
 
         if (modsettingData && modsettingData?.Log) {
-            if (guildModData.length > 0) {
-                const max = guildModData.map(x => x.Count);
-                count = Math.max(...max);
-            }
-
-            if (!moderationData) {
-                const newData = new moderationSchema({
+            if (serverModerationData) {
+                count = serverModerationData.Count + 1;
+                serverModerationData.Count = count;
+                await serverModerationData.save();
+            } else {
+                const newData = new serverModerationSchema({
                     Guild: interaction.guild.id,
-                    User: target.id,
                     Count: count
                 });
                 await newData.save();
             }
 
-            moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-            await moderationSchema.findOneAndUpdate({ Guild: interaction.guild.id, User: target.id }, { Count: count + 1 });
+            if (!userModerationData) {
+                const newData = new userModerationSchema({
+                    Guild: interaction.guild.id,
+                    User: target.id,
+                    Kicks: [
+                        {
+                            Number: count,
+                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                            Target: target,
+                            Author: interaction.member,
+                            Type: "Kick",
+                            Reason: reason ? reason : null
+                        }
+                    ]
+                });
+                await newData.save();
+            } else {
+                userModerationData.Kicks.push({
+                    Number: count,
+                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                    Target: target,
+                    Author: interaction.member,
+                    Type: "Kick",
+                    Reason: reason ? reason : null
+                });
+                await userModerationData.save();
+            }
 
-            header = ` | #${count + 1}`;
+            userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+            header = ` | #${count}`;
         }
 
         const kickContainer = new ContainerBuilder()
@@ -99,37 +124,11 @@ export default {
             } catch(err){}
         }
 
-        const pushModLog = async (type) => {
-            if (!modsettingData || modsettingData?.length === 0 || !modsettingData.Log) return;
+        kickContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`\n` : ""}> Ez a(z) **${userModerationData.Kicks.length}.** kirúgása`));
+        dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`\n` : ""}> Ez a(z) **${userModerationData.Kicks.length}.** kirúgásod`));
 
-            const defaultLog = {
-                Number: count + 1,
-                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                Target: target,
-                Author: interaction.member,
-                Type: "Kick"
-            }
+        sendContainer();
 
-            if (type === 1) defaultLog.Reason = reason;
-
-            moderationData.Kicks.push(defaultLog);
-            await moderationData.save();
-        }
-
-        if (!reason) {
-            pushModLog(0);
-            sendContainer();
-
-            return memberTarget.kick(`${userAuthor.user.username}`);
-
-        } else {
-            kickContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
-            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
-
-            pushModLog(1);
-            sendContainer();
-
-            return memberTarget.kick(`Indok: ${reason} - ${userAuthor.user.username}`);
-        }
+        memberTarget.kick(`${reason ? `Indok: ${reason} - `: ""}${userAuthor.user.username}`);
     }
 }

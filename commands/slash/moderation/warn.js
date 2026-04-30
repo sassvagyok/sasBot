@@ -1,7 +1,8 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema  from "../../../models/moderationlogModel.js";
-import logChannelSchema  from "../../../models/logchannelModel.js";
-import modsettingSchema  from "../../../models/modsettingModel.js";
+import userModerationSchema from "../../../models/userModeration.js";
+import serverModerationSchema from "../../../models/serverModeration.js";
+import logChannelSchema from "../../../models/logchannelModel.js";
+import modsettingSchema from "../../../models/modsettingModel.js";
 import moment from "moment";
 import "moment-timezone";
 
@@ -42,62 +43,75 @@ export default {
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom figyelmeztetni!`, flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position  && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} ő rangja magasabban van a tiédnél, ezért nem tudod figyelmeztetni!`, flags: MessageFlags.Ephemeral });
 
-        let moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let serverModerationData = await serverModerationSchema.findOne({ Guild: interaction.guild.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
-        const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
+        const guildModData = await userModerationSchema.find({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
 
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        let count = 0;
+        let count = 1;
         let header = "";
 
         if (modsettingData && modsettingData?.Log) {
-            if (guildModData.length > 0) {
-                const max = guildModData.map(x => x.Count);
-                count = Math.max(...max);
-            }
-
-            if (!moderationData) {
-                const newData = new moderationSchema({
+            if (serverModerationData) {
+                count = serverModerationData.Count + 1;
+                serverModerationData.Count = count;
+                await serverModerationData.save();
+            } else {
+                const newData = new serverModerationSchema({
                     Guild: interaction.guild.id,
-                    User: target.id,
                     Count: count
                 });
                 await newData.save();
             }
 
-            moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-            await moderationSchema.findOneAndUpdate({ Guild: interaction.guild.id, User: target.id }, { Count: count + 1 });
+            if (!userModerationData) {
+                const newData = new userModerationSchema({
+                    Guild: interaction.guild.id,
+                    User: target.id,
+                    Warns: [
+                        {
+                            Number: count,
+                            Target: target,
+                            Type: "Warn",
+                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                            Author: interaction.member,
+                            Reason: reason
+                        }
+                    ]
+                });
+                await newData.save();
+            } else {
+                userModerationData.Warns.push({
+                    Number: count,
+                    Target: target,
+                    Type: "Warn",
+                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                    Author: interaction.member,
+                    Reason: reason
+                });
+                await userModerationData.save();
+            }
 
-            header = ` | #${count + 1}`;
+            userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+            header = ` | #${count}`;
         }
 
         const warnContainer = new ContainerBuilder()
         .setAccentColor(0xffd200)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Figyelmeztetés: \`${memberTarget.user.username}\` (<@${memberTarget.user.id}>)` + header))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`\n> Ez a(z) **${userModerationData.Warns.length}.** figyelmezetetése`))
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
 
         const dmContainer = new ContainerBuilder()
         .setAccentColor(0xffd200)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Figyelmeztetés | ${interaction.guild}`))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`\n> Ez a(z) **${userModerationData.Warns.length}.** figyelmezetetésed`))
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
-
-        if (modsettingData && modsettingData?.length !== 0 && modsettingData.Log) {
-            moderationData.Warns.push({
-                Number: count + 1,
-                Target: target,
-                Type: "Warn",
-                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                Author: interaction.member,
-                Reason: reason
-            });
-            await moderationData.save();
-        }
 
         interaction.reply({ components: [warnContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
         if (logChannel && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel) && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.SendMessages)) return;

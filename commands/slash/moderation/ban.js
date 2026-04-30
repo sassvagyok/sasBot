@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 import banLogSchema from "../../../models/banModel.js";
-import moderationSchema from "../../../models/moderationlogModel.js";
+import userModerationSchema from "../../../models/userModeration.js";
+import serverModerationSchema from "../../../models/serverModeration.js";
 import logChannelSchema from "../../../models/logchannelModel.js";
 import modsettingSchema from "../../../models/modsettingModel.js";
 import ms from "ms";
@@ -71,34 +72,60 @@ export default {
         if (memberTarget.roles.highest.position >= interaction.guild.members.me.roles.highest.position) return interaction.reply({ content: `${target} rangja magasabban van az enyémnél, ezért nem tudom kitiltani!`, flags: MessageFlags.Ephemeral });
         if (memberTarget.roles.highest.position >= interaction.guild.members.cache.get(interaction.member.id).roles.highest.position && !interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `${target} rangja magasabban van a tiédnél, ezért nem tudod kitiltani!`, flags: MessageFlags.Ephemeral  });
 
-        let moderationLog = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        let serverModerationData = await serverModerationSchema.findOne({ Guild: interaction.guild.id });
         const modsettingData = await modsettingSchema.findOne({ Guild: interaction.guild.id });
-        const guildModData = await moderationSchema.find({ Guild: interaction.guild.id });
         const logChannelData = await logChannelSchema.findOne({ Guild: interaction.guild.id });
         const logChannel = interaction.guild.channels.cache.get(logChannelData?.Channel);
 
-        let count = 0;
+        let count = 1;
         let header = "";
 
         if (modsettingData && modsettingData?.Log) {
-            if (guildModData.length > 0) {
-                const max = guildModData.map(x => x.Count);
-                count = Math.max(...max);
-            }
-
-            if (!moderationLog) {
-                const newData = new moderationSchema({
+            if (serverModerationData) {
+                count = serverModerationData.Count + 1;
+                serverModerationData.Count = count;
+                await serverModerationData.save();
+            } else {
+                const newData = new serverModerationSchema({
                     Guild: interaction.guild.id,
-                    User: target.id,
                     Count: count
                 });
                 await newData.save();
             }
 
-            moderationLog = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-            await moderationSchema.findOneAndUpdate({ Guild: interaction.guild.id, User: target.id }, { Count: count + 1 });
+            if (!userModerationData) {
+                const newData = new userModerationSchema({
+                    Guild: interaction.guild.id,
+                    User: target.id,
+                    Bans: [
+                        {
+                            Number: count,
+                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                            Target: target,
+                            Author: interaction.member,
+                            Type: "Ban",
+                            Reason: reason ? reason : null,
+                            Length: banDuration ? banDuration : null
+                        }
+                    ]
+                });
+                await newData.save();
+            } else {
+                userModerationData.Bans.push({
+                    Number: count,
+                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                    Target: target,
+                    Author: interaction.member,
+                    Type: "Ban",
+                    Reason: reason ? reason : null,
+                    Length: banDuration ? banDuration : null
+                });
+                await userModerationData.save();
+            }
 
-            header = ` | #${count + 1}`;
+            userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+            header = ` | #${count}`;
         }
 
         const banContainer = new ContainerBuilder()
@@ -125,47 +152,16 @@ export default {
             } catch(err){}
         }
 
-        const pushModLog = async (type) => {
-            if (!modsettingData || modsettingData?.length === 0 || !modsettingData.Log) return;
-
-            const defaultLog = {
-                Number: count + 1,
-                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                Target: target,
-                Author: interaction.member,
-                Type: "Ban"
-            }
-
-            if (type === 1 || type === 2) defaultLog.Length = banDuration;
-            if (type === 2 || type === 3) defaultLog.Reason = reason;
-
-            moderationLog.Bans.push(defaultLog);
-            await moderationLog.save();
-        }
-
         if (!banDuration) {
-            if (!reason) {
-                remove !== 0 ? banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- Üzenetek törölve ${remove / 3600} órával visszamelőleg`)) : "";
-                
-                pushModLog(0);
-                await sendContainer();
+            banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`` : ""}${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltása`));
+            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltásod`));
 
-                return memberTarget.ban({
-                    reason: userAuthor.user.username,
-                    deleteMessageSeconds: remove
-                });
-            } else {
-                banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
-                dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
+            await sendContainer();
 
-                pushModLog(3);
-                await sendContainer();
-
-                return memberTarget.ban({
-                    reason: `Indok: ${reason} - ${userAuthor.user.username}`,
-                    deleteMessageSeconds: remove
-                });
-            }
+            return memberTarget.ban({
+                reason: `${reason ? `Indok: ${reason} - `: ""}${userAuthor.user.username}`,
+                deleteMessageSeconds: remove
+            });
         } else {
             const banData = await banLogSchema.findOne({ Guild: interaction.guild.id, User: target.id });
             if (banData) await banLogSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
@@ -183,32 +179,21 @@ export default {
                 Length: formattedDuration,
                 Start: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
                 End: moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD-HH:mm"),
-                Number: modsettingData && modsettingData?.Log ? count + 1 : 0
+                Number: modsettingData && modsettingData?.Log ? count : null,
+                Reason: reason ? reason : null
             }).save();
 
-            if (!reason) {
-                banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
-                dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
+            const formattedDate = moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm");
 
-                pushModLog(1);
-                await sendContainer();
+            banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${formattedDate} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltása`));
+            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${formattedDate} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltásod`));
 
-                return memberTarget.ban({
-                    reason: `Időtartam: ${formattedDuration} - ${userAuthor.user.username}`,
-                    deleteMessageSeconds: remove
-                });
-            } else {
-                banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\`${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}`));
-                dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`\n- **Indok:** \`${reason}\``));
+            await sendContainer();
 
-                pushModLog(2);
-                await sendContainer();
-
-                return memberTarget.ban({
-                    reason: `Indok: ${reason} | Időtartam: ${formattedDuration} - ${userAuthor.user.username}`,
-                    deleteMessageSeconds: remove
-                });
-            }
+            return memberTarget.ban({
+                reason: `${reason ? `Indok: ${reason} | `: ""}Lejár: ${formattedDate} (${formattedDuration}) - ${userAuthor.user.username}`,
+                deleteMessageSeconds: remove
+            });
         }
     }
 }
