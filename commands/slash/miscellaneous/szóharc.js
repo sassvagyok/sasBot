@@ -2,7 +2,8 @@ import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDispl
 import moment from "moment";
 import "moment-timezone";
 import allWords from "../../../data/words.json" with { type: "json" };
-import otbetuSchema from "../../../models/ötbetűModel.js";
+import dailyOtbetuSchema from "../../../models/dailyOtbetuModel.js";
+import userOtbetuSchema from "../../../models/userOtbetuModel.js";
 import saspontSchema from "../../../models/saspontModel.js";
 import szoharcSchema from "../../../models/szóharcModel.js";
 
@@ -34,8 +35,8 @@ export default {
 
         const subCommand = interaction.options.getSubcommand();
         const userWord = interaction.options.getString("szó")?.toLowerCase().split(" ")[0];
-        const otbetuData = await otbetuSchema.findOne();
-        let otbetuPlayer = otbetuData.Users.find(x => x.UserID === interaction.user.id);
+        const dailyOtbetuData = await dailyOtbetuSchema.findOne();
+        let userOtbetuData = await userOtbetuSchema.findOne({ UserID: interaction.user.id });
         const saspontData = await saspontSchema.findOne();
         let saspontUser = saspontData.Users.find(x => x.UserID === interaction.user.id);
         let szoharcData  = await szoharcSchema.findOne();
@@ -104,11 +105,9 @@ export default {
             }
 
             const isWordOfTheDay = (str) => {
-                let wordOfTheDayMult = 1;
+                if (dailyOtbetuData.Word === str && userOtbetuData && userOtbetuData.Today.Guessed) return 2;
 
-                if (otbetuData.Word === str && otbetuPlayer && otbetuPlayer.Guessed) wordOfTheDayMult = 2;
-
-                return wordOfTheDayMult;
+                return 1;
             }
 
             const randomIndex = Math.floor(Math.random() * allWords.length);

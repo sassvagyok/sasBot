@@ -48,5 +48,10 @@
         "version": "2.2.0",
         "date": 1775762438,
         "changelog": "**🔹Rendszerszintű**\n-# sasPont:\n- sasPont szerzés változások:\n    - `Szóharc`: 2x-es szorzó helyett 5x-ös\n   - `Ötbetű`: 1200 helyett akár 3000 pont is szerezhető\n   - Parancs használatáért 5 helyett 25 pont jár\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Szóharc`: mostantól egy játszott szó nem játszható újra 10 körig"
+    },
+    {
+        "version": "x.x.x",
+        "date": 1775762438,
+        "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Kick/Timeout/Warn`: mostantól jelzik, hanyadik ilyen fajta moderálása volt ez a tagnak\n- `Ban/Timeout`: lejáratkor az eredeti indok kiírása\n-# Javítás:\n- `Ban/Timeout`: formázási hibák javítása lejáratkor"
     }
 ]

@@ -2,7 +2,8 @@ import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDispl
 import moment from "moment";
 import "moment-timezone";
 import allWords from "../../../data/words.json" with { type: "json" };
-import otbetuSchema from "../../../models/ötbetűModel.js";
+import dailyOtbetuSchema from "../../../models/dailyOtbetuModel.js";
+import userOtbetuSchema from "../../../models/userOtbetuModel.js";
 import saspontSchema from "../../../models/saspontModel.js";
 
 export default {
@@ -38,11 +39,11 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const otbetuData = await otbetuSchema.findOne();
         const saspontData = await saspontSchema.findOne();
         const subCommand = interaction.options.getSubcommand();
         const guess = interaction.options.getString("szó");
-        let player = otbetuData.Users.find(x => x.UserID == interaction.user.id);
+        const dailyOtbetuData = await dailyOtbetuSchema.findOne();
+        let userOtbetuData = await userOtbetuSchema.findOne({ UserID: interaction.user.id });
         let saspontUser = saspontData.Users.find(x => x.UserID == interaction.user.id);
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
@@ -50,45 +51,47 @@ export default {
         if (subCommand === "játék") {
             if (!allWords.includes(guess) || guess.length < 5) return interaction.reply({ content: "Egy létező, 5 betűs szót adj meg!", flags: MessageFlags.Ephemeral });
 
-            if (!player) {
-                const new_player = {
+            if (!userOtbetuData) {
+                const newData = new userOtbetuSchema({
                     UserID: interaction.user.id,
-                    Tries: 1,
-                    Guessed: false,
+                    Today: {
+                        Tries: 1,
+                        Guessed: false,
+                        Sequence: null
+                    },
                     Stats: {
-                        Games: 1,
+                        GamesPlayed: 1,
                         Wins: 0,
-                        Best: {
-                            Tries: null,
-                            Date: null
-                        }
+                    },
+                    BestGame: {
+                        Tries: null,
+                        Date: null
                     }
-                }
+                });
+                await newData.save();
 
-                otbetuData.Users.push(new_player);
-                await otbetuData.save();
-                player = otbetuData.Users.find(x => x.UserID === interaction.user.id);
+                userOtbetuData = userOtbetuSchema.findOne({ UserID: interaction.user.id });
             } else {
-                if (player.Tries >= 6) return interaction.reply({ content: "Ma már játszottál! Új szó éjfélkor!", flags: MessageFlags.Ephemeral });
+                if (userOtbetuData.Today.Tries >= 6) return interaction.reply({ content: "Ma már játszottál! Új szó éjfélkor!", flags: MessageFlags.Ephemeral });
 
-                player.Tries += 1;
+                userOtbetuData.Today.Tries += 1;
 
-                if (player.Tries === 1) player.Stats.Games += 1;
+                if (userOtbetuData.Today.Tries === 1) userOtbetuData.Stats.GamesPlayed += 1;
 
-                await otbetuData.save();
+                await userOtbetuData.save();
             }
 
             const charCountOfWord = {};
-            for (const char of otbetuData.Word) {
+            for (const char of dailyOtbetuData.Word) {
                 charCountOfWord[char] = (charCountOfWord[char] || 0) + 1;
             }
 
             let results = "";
             for (let i = 0; i < 5; i++) {
-                if (guess[i] == otbetuData.Word[i]) {
+                if (guess[i] == dailyOtbetuData.Word[i]) {
                     results += "🟩";
                     charCountOfWord[guess[i]] -= 1;
-                } else if (otbetuData.Word.includes(guess[i]) && charCountOfWord[guess[i]] > 0) {
+                } else if (dailyOtbetuData.Word.includes(guess[i]) && charCountOfWord[guess[i]] > 0) {
                     results += "🟧";
                     charCountOfWord[guess[i]] -= 1;
                 } else {
@@ -96,37 +99,37 @@ export default {
                 }
             }
 
-            const hasWon = guess === otbetuData.Word;
+            const hasWon = guess === dailyOtbetuData.Word;
 
-            if (player.Sequence) player.Sequence += "\n" + [...results].join("  ");
-            else player.Sequence = [...results].join("  ");
+            if (userOtbetuData.Today.Sequence) userOtbetuData.Today.Sequence += "\n" + [...results].join("  ");
+            else userOtbetuData.Today.Sequence = [...results].join("  ");
             
-            await otbetuData.save();
+            await userOtbetuData.save();
     
             const otbetuContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű: <t:${Math.floor(Date.now() / 1000)}:D> \`${player.Tries}/6\``))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű: <t:${Math.floor(Date.now() / 1000)}:D> \`${userOtbetuData.Today.Tries}/6\``))
             .addSeparatorComponents(new SeparatorBuilder());
 
-            player.Sequence.split(/\r?\n/).forEach(line => {
+            userOtbetuData.Today.Sequence.split(/\r?\n/).forEach(line => {
                 otbetuContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(line));
             });
 
             otbetuContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${guess.split("").map(char => `\`${char}\``).join("\t")}`));
 
-            if (player.Tries === 6 && !hasWon) {
+            if (userOtbetuData.Today.Tries === 6 && !hasWon) {
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`A nap szava: \`${otbetuData.Word}\``))
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`A nap szava: \`${dailyOtbetuData.Word}\``))
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${player.Streak > 0 ? `-# ${player.Streak} napos Streak elvesztve!\n` : ""}-# +0 sasPont`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${userOtbetuData.Streak > 0 ? `-# ${userOtbetuData.Streak} napos Streak elvesztve!\n` : ""}-# +0 sasPont`));
 
-                player.Streak = 0;
-                await otbetuData.save();
+                userOtbetuData.Streak = 0;
+                await userOtbetuData.save();
             }
 
             if (hasWon) {
-                player.Streak += 1;
-                const earnedPoints = 500 * (7 - player.Tries) + 50 * player.Streak;
+                userOtbetuData.Streak += 1;
+                const earnedPoints = 500 * (7 - userOtbetuData.Today.Tries) + 50 * userOtbetuData.Streak;
                 
                 saspontUser.Balance += earnedPoints;
                 saspontUser.History.push({
@@ -138,33 +141,33 @@ export default {
 
                 await saspontData.save();
 
-                if (player.Tries < player.Stats.Best.Tries || player.Stats.Best.Tries === null) {
-                    player.Stats.Best.Tries = player.Tries;
-                    player.Stats.Best.Date = moment().tz("Europe/Budapest").format("YYYY-MM-DD");
+                if (userOtbetuData.Today.Tries < userOtbetuData.BestGame.Tries || userOtbetuData.BestGame.Tries === null) {
+                    userOtbetuData.BestGame.Tries = userOtbetuData.Today.Tries;
+                    userOtbetuData.BestGame.Date = moment().tz("Europe/Budapest").format("YYYY-MM-DD");
                 }
 
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(500 * (7 - player.Tries))} sasPont (${player.Tries} találatból)${(player.Streak > 0 ? `\n-# +${format.format(25 * player.Streak)} sasPont (Streak ${player.Streak})` : "")}`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(500 * (7 - userOtbetuData.Today.Tries))} sasPont (${userOtbetuData.Today.Tries} találatból)${(userOtbetuData.Streak > 0 ? `\n-# +${format.format(50 * userOtbetuData.Streak)} sasPont (Streak ${userOtbetuData.Streak})` : "")}`));
 
-                player.Guessed = true;
-                player.Stats.Wins += 1;
-                player.Tries = 6;
-                player.LastWonOn = moment().tz("Europe/Budapest").startOf('day').toDate();
+                userOtbetuData.Today.Guessed = true;
+                userOtbetuData.Stats.Wins += 1;
+                userOtbetuData.Today.Tries = 6;
+                userOtbetuData.LastWonOn = moment().tz("Europe/Budapest").startOf('day').toDate();
 
-                await otbetuData.save();
+                await userOtbetuData.save();
             }
             
             interaction.reply({ components: [otbetuContainer], flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
         }
 
         if (subCommand === "statisztikák") {
-            if (!player) return interaction.reply({ content: "Még egy játékot sem játszottál!", flags: MessageFlags.Ephemeral });
+            if (!userOtbetuData) return interaction.reply({ content: "Még egy játékot sem játszottál!", flags: MessageFlags.Ephemeral });
     
             const statsContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű statisztikák: \`${interaction.user.displayName}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Streak:** \`${player.Streak}\`\n- **Játékok:** \`${player.Stats.Games}\`\n- **Kitalálások:** \`${player.Stats.Wins}\`\n- **Legjobb játék:** ${player.Stats.Best.Tries == null ? "nincs" : `\n    - **Próbák:** \`${player.Stats.Best.Tries}\`\n   - **Dátum:** \`${player.Stats.Best.Date}\``}`));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Streak:** \`${userOtbetuData.Streak}\`\n- **Játékok:** \`${userOtbetuData.Stats.GamesPlayed}\`\n- **Kitalálások:** \`${userOtbetuData.Stats.Wins}\`\n- **Legjobb játék:** ${userOtbetuData.BestGame.Tries == null ? "nincs" : `\n    - **Próbák:** \`${userOtbetuData.BestGame.Tries}\`\n   - **Dátum:** \`${userOtbetuData.BestGame.Date}\``}`));
             
             interaction.reply({ components: [statsContainer], flags: MessageFlags.IsComponentsV2 });
         }

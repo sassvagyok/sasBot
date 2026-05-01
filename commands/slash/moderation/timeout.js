@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 import timeoutSchema from "../../../models/timeoutModel.js";
-import userModerationSchema from "../../../models/userModeration.js";
-import serverModerationSchema from "../../../models/serverModeration.js";
+import userModerationSchema from "../../../models/userModerationModel.js";
+import serverModerationSchema from "../../../models/serverModerationModel.js";
 import logChannelSchema from "../../../models/logchannelModel.js";
 import modsettingSchema from "../../../models/modsettingModel.js";
 import ms from "ms";

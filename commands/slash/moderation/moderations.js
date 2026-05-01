@@ -1,5 +1,5 @@
 import { PermissionFlagsBits, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/userModeration.js";
+import moderationSchema from "../../../models/userModerationModel.js";
 
 export default {
     name: "moderations",
