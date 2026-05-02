@@ -15,12 +15,8 @@ export default {
         const user = await interaction.targetUser;
         const roles = target.roles.cache.filter((roles) => roles.id !== interaction.guild.id).map((role) => role.toString());
         const fetchedUser = await user.fetch();
-        const saspontData = await saspontSchema.findOne();
-
+        const saspontData = await saspontSchema.findOne({ UserID: target.id });
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
-
-        let saspontUser = saspontData.Users.find(x => x.UserID === target.id);
-        if (!saspontUser) saspontUser = { Balance: 0 };
 
         let formattedRoles = "";
 
@@ -62,7 +58,7 @@ export default {
         });
 
         const avatarSection = new SectionBuilder()
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(member.user.bot ? `### ${member.user.username} | Bot` : `### ${member.user.username} \`${format.format(saspontUser.Balance)} sP\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(member.user.bot ? `### ${member.user.username} | Bot` : `### ${member.user.username} \`${format.format(saspontData.Balance)} sP\``))
         .setThumbnailAccessory(avatarThumbnailComponent)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${fetchedUser.accentColor ? `- 🎨 **Banner-szín:** #${fetchedUser.accentColor.toString(16)}` : ""}\n- 🕑 **Regisztráció:** <t:${Math.round(member.user.createdTimestamp / 1000)}> (${moment.duration(moment().tz("Europe/Budapest") - member.user.createdAt).format(" Y [éve], M [hónapja], D [napja]", { trim: "all" })})\n- 📅 **Csatlakozás:** <t:${Math.round(member.joinedTimestamp / 1000)}> (${moment.duration(moment().tz("Europe/Budapest") - member.joinedAt).format(" Y [éve], M [hónapja], D [napja]", { trim: "all" })})\n- 🏅 **Rangok:** ${roles.length} (${formattedRoles})`))
 

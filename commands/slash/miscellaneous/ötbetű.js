@@ -39,12 +39,11 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const saspontData = await saspontSchema.findOne();
         const subCommand = interaction.options.getSubcommand();
         const guess = interaction.options.getString("szó");
         const dailyOtbetuData = await dailyOtbetuSchema.findOne();
+        const saspontData = await saspontSchema.findOne({ UserID: interaction.user.id });
         let userOtbetuData = await userOtbetuSchema.findOne({ UserID: interaction.user.id });
-        let saspontUser = saspontData.Users.find(x => x.UserID == interaction.user.id);
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
 
@@ -130,9 +129,11 @@ export default {
             if (hasWon) {
                 userOtbetuData.Streak += 1;
                 const earnedPoints = 500 * (7 - userOtbetuData.Today.Tries) + 50 * userOtbetuData.Streak;
+
+                if (saspontData.Games.Otbetu.MaxWin < earnedPoints) saspontData.Games.Otbetu.MaxWin = earnedPoints
                 
-                saspontUser.Balance += earnedPoints;
-                saspontUser.History.push({
+                saspontData.Balance += earnedPoints;
+                saspontData.History.push({
                     Value: earnedPoints,
                     Origin: "Ötbetű",
                     Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
@@ -165,7 +166,7 @@ export default {
             if (!userOtbetuData) return interaction.reply({ content: "Még egy játékot sem játszottál!", flags: MessageFlags.Ephemeral });
     
             const statsContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű statisztikák: \`${interaction.user.displayName}\``))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Ötbetű statisztikák: \`${interaction.user.username}\``))
             .addSeparatorComponents(new SeparatorBuilder())
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Streak:** \`${userOtbetuData.Streak}\`\n- **Játékok:** \`${userOtbetuData.Stats.GamesPlayed}\`\n- **Kitalálások:** \`${userOtbetuData.Stats.Wins}\`\n- **Legjobb játék:** ${userOtbetuData.BestGame.Tries == null ? "nincs" : `\n    - **Próbák:** \`${userOtbetuData.BestGame.Tries}\`\n   - **Dátum:** \`${userOtbetuData.BestGame.Date}\``}`));
             

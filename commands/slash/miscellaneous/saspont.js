@@ -97,10 +97,10 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const saspontData = await saspontSchema.findOne();
         const subCommandGroup = interaction.options.getSubcommandGroup();
         const subCommand = interaction.options.getSubcommand();
         const user = interaction.channel.type === 1 ? interaction.user : interaction.options.getUser("tag") || interaction.user;
+        const saspontData = await saspontSchema.findOne({ UserID: user.id });
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
 
         const sortFunction = (a, b) => {
@@ -123,37 +123,40 @@ export default {
         }
 
         if (subCommand === "adatok") {
-            let saspontUser = saspontData.Users.find(x => x.UserID === user.id);
-            if (!saspontUser) return interaction.reply({ content: "Ez a tag még nem szerzett sasPontokat!", flags: MessageFlags.Ephemeral });
-            let saspontHistroy = saspontUser.History;
+            if (!saspontData) return interaction.reply({ content: "Ez a tag még nem szerzett sasPontokat!", flags: MessageFlags.Ephemeral });
+            let saspontHistory = saspontData.History;
 
-            let history = [];
+            let formattedHistory = [];
 
-            if (!saspontHistroy || saspontHistroy?.length === 0) history.push("- Nincs előzmény")
+            if (!saspontHistory || saspontHistory?.length === 0) formattedHistory.push("> Nincs előzmény")
             else {
-                history = saspontHistroy.map(x => `> \`${Math.sign(x.Value) === -1 ? "" : "+"}${format.format(x.Value)} sP\` (${x.Origin}) | ${x.Date}`).reverse();
-                history.length = Math.min(5, saspontHistroy.length);
+                formattedHistory = saspontHistory.map(x => `> \`${Math.sign(x.Value) === -1 ? "" : "+"}${format.format(x.Value)} sP\` (${x.Origin}) | ${x.Date}`).reverse();
+                formattedHistory.length = Math.min(5, saspontHistory.length);
             }
 
-            const sortedUsers = saspontData.Users.sort(sortFunction);
-            const findUserIndex = sortedUsers.findIndex(x => x.UserID == saspontUser.UserID);
+            const findUserIndex = await saspontSchema.countDocuments({ 
+                Balance: { $gt: saspontData.Balance }, 
+                OnLeaderboard: true 
+            });
 
-            const crashWinrate = saspontUser.Casino.Crash.Wins / (saspontUser.Casino.Crash.Wins + saspontUser.Casino.Crash.Losses) * 100 || 0;
-            const coinflipWinrate = saspontUser.Casino.Coinflip.Wins / (saspontUser.Casino.Coinflip.Wins + saspontUser.Casino.Coinflip.Losses) * 100 || 0;
-            const crashMaxMult = saspontUser.Casino.Crash.MaxMult || 0;
-            const crashMaxWin = saspontUser.Casino.Crash.MaxWin || 0;
-            const coinflipMaxWin = saspontUser.Casino.Coinflip.MaxWin || 0;
+            const crashWinrate = saspontData.Casino.Crash.Wins / (saspontData.Casino.Crash.Wins + saspontData.Casino.Crash.Losses) * 100 || 0;
+            const coinflipWinrate = saspontData.Casino.Coinflip.Wins / (saspontData.Casino.Coinflip.Wins + saspontData.Casino.Coinflip.Losses) * 100 || 0;
+            const crashMaxMult = saspontData.Casino.Crash.MaxMult || 0;
+            const crashMaxWin = saspontData.Casino.Crash.MaxWin || 0;
+            const coinflipMaxWin = saspontData.Casino.Coinflip.MaxWin || 0;
+            const szoharcMaxWin = saspontData.Games.Szoharc.MaxWin || 0;
+            const otbetuMaxWin = saspontData.Games.Otbetu.MaxWin || 0;
 
             const dataContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasPont adatok: \`${user.displayName}\``))
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### sasPont adatok: \`${user.username}\``))
             .addSeparatorComponents(new SeparatorBuilder())
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Egyenleg:** \`${format.format(saspontUser.Balance)} sP\`${saspontUser.OnLeaderboard ? `\n- **Globális helyezés:** \`${findUserIndex + 1}.\`\n` : "\n"}- **Kaszinó:**\n    - **Crash:**\n    - **Winrate**: \`${Math.trunc(crashWinrate)}%\`\n    - **Legnagyobb szorzó:** \`${crashMaxMult}x\`\n    - **Legnagyobb nyeremény:** \`${crashMaxWin} sP\`\n   - **Coinflip**:\n    - **Winrate**: \`${Math.trunc(coinflipWinrate)}%\`\n    - **Legnagyobb nyeremény:** \`${coinflipMaxWin} sP\`\n- **Korábbi sasPont-szerzések:**\n${history.join("\n")}`));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Egyenleg:** \`${format.format(saspontData.Balance)} sP\`${saspontData.OnLeaderboard ? `\n- **Globális helyezés:** \`${findUserIndex + 1}.\`\n` : "\n"}- **Statisztikák:**\n    - **Crash:** \`${saspontData.Casino.Crash.Wins}W - ${saspontData.Casino.Crash.Losses}L (${Math.trunc(crashWinrate)}% WR)\` | \`${crashMaxMult}x - ${crashMaxWin} sP\`\n   - **Coinflip**: \`${saspontData.Casino.Coinflip.Wins}W - ${saspontData.Casino.Coinflip.Losses}L (${Math.trunc(coinflipWinrate)}% WR)\` | \`${coinflipMaxWin} sP\`\n   - **Szóharc:** \`${szoharcMaxWin} sP\`\n   - **Ötbetű:** \`${otbetuMaxWin} sP\`\n- **Korábbi sasPont-szerzések:**\n${formattedHistory.join("\n")}`));
 
-            if (interaction.user.id === saspontUser.UserID) {
+            if (interaction.user.id === saspontData.UserID) {
                 const optButton = new ButtonBuilder()
-                .setStyle(saspontUser.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
+                .setStyle(saspontData.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
                 .setCustomId("1024")
-                .setLabel(saspontUser.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
+                .setLabel(saspontData.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
 
                 const row = new ActionRowBuilder().addComponents(optButton);
                 dataContainer.addActionRowComponents(row);
@@ -170,12 +173,12 @@ export default {
                 });
 
                 collector.on("collect", async (ButtonInteraction) => {
-                    saspontUser.OnLeaderboard = !saspontUser.OnLeaderboard;
+                    saspontData.OnLeaderboard = !saspontData.OnLeaderboard;
                     await saspontData.save();
 
                     row.components[0]
-                    .setStyle(saspontUser.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
-                    .setLabel(saspontUser.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
+                    .setStyle(saspontData.OnLeaderboard ? ButtonStyle.Danger : ButtonStyle.Success)
+                    .setLabel(saspontData.OnLeaderboard ? "Ne legyek rajta a globális ranglistán" : "Legyek rajta a globális ranglistán");
 
                     await interaction.editReply({ components: [dataContainer], flags: MessageFlags.IsComponentsV2 });
                     await ButtonInteraction.deferUpdate();
@@ -192,7 +195,7 @@ export default {
         }
 
         if (subCommandGroup === "ranglista") {
-            const includedUsers = saspontData.Users.filter(x => x.OnLeaderboard);
+            const includedUsers = await saspontSchema.find({ OnLeaderboard: true });
             if (subCommand === "globális") {
                 createLeaderboard(includedUsers);
             }
@@ -202,8 +205,9 @@ export default {
 
                 const isMember = async (id) => await interaction.guild.members.fetch(id).then(() => true).catch(() => false);
 
-                const membership = await Promise.all(saspontData.Users.map(user => isMember(user.UserID)));
-                const users = saspontData.Users.filter((user, id) => membership[id]);
+                const allUsers = await saspontSchema.find({});
+                const membership = await Promise.all(allUsers.map(user => isMember(user.UserID)));
+                const users = allUsers.filter((user, id) => membership[id]);
                 
                 createLeaderboard(users);
             }
@@ -211,21 +215,20 @@ export default {
 
         if (subCommandGroup === "casino") {
             const bet = interaction.options.getNumber("tét");
-            let saspontUser = saspontData.Users.find(x => x.UserID === interaction.user.id);
 
-            if (bet > saspontUser.Balance) return interaction.reply({ content: "Nincs ennyi sasPontod!", flags: MessageFlags.Ephemeral });
+            if (bet > saspontData.Balance) return interaction.reply({ content: "Nincs ennyi sasPontod!", flags: MessageFlags.Ephemeral });
 
-            saspontUser.Balance -= bet;
+            saspontData.Balance -= bet;
             await saspontData.save();
 
             if (subCommand === "crash") {
                 const buttonNext = new ButtonBuilder()
-                .setStyle("Primary")
+                .setStyle(ButtonStyle.Primary)
                 .setCustomId("stay")
                 .setLabel("Emelés (50%)");
         
                 const buttonCashout = new ButtonBuilder()
-                .setStyle("Success")
+                .setStyle(ButtonStyle.Success)
                 .setCustomId("cashout")
                 .setLabel(`Begyűjtés (${format.format(bet)} sP)`);
 
@@ -273,17 +276,17 @@ export default {
                     const id = ButtonInteraction.customId;
 
                     if (id === "cashout") {
-                        saspontUser.Balance += Math.round(bet * multiplier);
-                        saspontUser.Casino.Crash.Wins += 1;
-                        saspontUser.History.push({
+                        saspontData.Balance += Math.round(bet * multiplier);
+                        saspontData.Casino.Crash.Wins += 1;
+                        saspontData.History.push({
                             Value: Math.round(bet * multiplier) - bet,
                             Origin: "sP-Crash",
                             Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
                             Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD HH:mm")
                         });
 
-                        if (multiplier > saspontUser.Casino.Crash.MaxMult) saspontUser.Casino.Crash.MaxMult = multiplier;
-                        if (Math.round(bet * multiplier) > saspontUser.Casino.Crash.MaxWin) saspontUser.Casino.Crash.MaxWin = Math.round(bet * multiplier);
+                        if (multiplier > saspontData.Casino.Crash.MaxMult) saspontData.Casino.Crash.MaxMult = multiplier;
+                        if (Math.round(bet * multiplier) > saspontData.Casino.Crash.MaxWin) saspontData.Casino.Crash.MaxWin = Math.round(bet * multiplier);
         
                         await saspontData.save();
 
@@ -300,15 +303,15 @@ export default {
                     }
 
                     const crashPoint = getCrashPoint();
-                    let old_multiplier = multiplier;
+                    const old_multiplier = multiplier;
                     multiplier = getMultiplier(collector.total);
 
                     if (id === "stay") {
                         crashContainer.spliceComponents(0, 1, new TextDisplayBuilder().setContent(`### sasPont Crash: \`${multiplier}x\``));
 
                         if (!crashPoint) {
-                            saspontUser.Casino.Crash.Losses += 1;
-                            saspontUser.History.push({
+                            saspontData.Casino.Crash.Losses += 1;
+                            saspontData.History.push({
                                 Value: bet * (-1),
                                 Origin: "sP-Crash",
                                 Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
@@ -362,16 +365,16 @@ export default {
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(bet * 2)} (${format.format(bet)}) sasPont`))
                     .setAccentColor(0x19cc10);
 
-                    saspontUser.Balance += bet * 2;
-                    saspontUser.Casino.Coinflip.Wins += 1;
-                    saspontUser.History.push({
+                    saspontData.Balance += bet * 2;
+                    saspontData.Casino.Coinflip.Wins += 1;
+                    saspontData.History.push({
                         Value: bet,
                         Origin: "sP-Coinflip",
                         Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
                         Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD HH:mm")
                     });
 
-                    if (bet * 2 > saspontUser.Casino.Coinflip.MaxWin) saspontUser.Casino.Coinflip.MaxWin = bet * 2;
+                    if (bet * 2 > saspontData.Casino.Coinflip.MaxWin) saspontData.Casino.Coinflip.MaxWin = bet * 2;
     
                     await saspontData.save();
                 } else {
@@ -379,8 +382,8 @@ export default {
                     .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# -${format.format(bet)} sasPont`))
                     .setAccentColor(0xe2162e);
 
-                    saspontUser.Casino.Coinflip.Losses += 1;
-                    saspontUser.History.push({
+                    saspontData.Casino.Coinflip.Losses += 1;
+                    saspontData.History.push({
                         Value: bet * -1,
                         Origin: "sP-Coinflip",
                         Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
@@ -394,7 +397,7 @@ export default {
             }
         }
 
-        if (subCommand == "súgó") {
+        if (subCommand === "súgó") {
             const helpContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Hogyan működik?\n- Különböző sasBot-tal való interakciókért sasPontokat szerezhetsz és veszthetsz, amik gyűjtésével felkerülhetsz a ranglistákra:\n    - Minden sasBot parancs használatért +5 sP jár\n   - `Ötbetű`: minél kevesebb próbából kitalálod, annál több sP-t kapsz\n   - `Szóharc`: ha nyersz, a szavad pontszámának kétszeresének megfelelő sP-t kapsz\n### sasPont Kaszinó\n- `Coinflip`: találd el az érme oldalát és duplázd meg a tétedet, vagy vesztesz\n- `Crash`: a szorzó minden gombnyomásra 50% eséllyel növekedhet, de ugyanennyi eséllyel be is dőlhet. Gyűjtsd be a sasPontokat mielőtt ez megtörténik, vagy elveszíted a tétedet"));
 

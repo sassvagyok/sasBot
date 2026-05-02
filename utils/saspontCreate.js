@@ -1,31 +1,18 @@
 import saspontSchema from "../models/saspontModel.js";
 
 export default async (user) => {
-    let saspontData = await saspontSchema.findOne();
+    let saspontData = await saspontSchema.findOne({ UserID: user.id });
 
     if (!saspontData) {
         const newData = new saspontSchema({
-            Users: []
-        });
-        await newData.save();
-
-        saspontData = await saspontSchema.findOne();
-    }
-    
-    let saspontUser = saspontData.Users.find(x => x.UserID === user.id);
-
-    if (!saspontUser) {
-        const new_user = {
             UserID: user.id,
             Username: user.username
-        };
-
-        saspontData.Users.push(new_user);
-        await saspontData.save();
+        });
+        await newData.save();
     } else {
-        saspontUser.Balance += 25;
+        saspontData.Balance += 25;
 
-        if (saspontUser.Username !== user.username) saspontUser.Username = user.username;
+        if (saspontData.Username !== user.username) saspontData.Username = user.username;
 
         await saspontData.save();
     }
