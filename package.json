@@ -1,6 +1,6 @@
 {
     "name": "sasbot",
-    "version": "2.2.0",
+    "version": "3.0.0",
     "description": "Csodálatos bot!",
     "main": "start/main.js",
     "type": "module",
@@ -9,7 +9,7 @@
     },
     "scripts": {
         "start": "node start/main.js",
-        "dev": "node --trace-deprecation start/dev.js"
+        "dev": "node start/dev.js"
     },
     "keywords": [],
     "author": "sasos",
@@ -22,7 +22,7 @@
         "@distube/yt-dlp": "^2.0.1",
         "@distube/ytdl-core": "^4.16.12",
         "canvas": "^3.1.2",
-        "discord.js": "^14.26.2",
+        "discord.js": "^14.26.4",
         "distube": "^5.2.3",
         "dotenv": "^17.2.3",
         "figlet": "^1.7.0",
@@ -40,5 +40,8 @@
         "node-fetch": "^2.7.0",
         "opusscript": "^0.1.1",
         "ytdl-core": "^4.11.5"
+    },
+    "overrides": {
+        "tar": "^7.5.11"
     }
 }
