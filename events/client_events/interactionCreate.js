@@ -282,12 +282,12 @@ export default {
         
         // Feedback kezelése
         if (interaction.type === InteractionType.ModalSubmit) {
-            await handleFeedback(i);
+            await handleFeedback(interaction);
         }
 
         // Context menü kezelése
         if (interaction.isContextMenuCommand()) {
-            await handleContextCommands(i, locallyDisabled, commandStatisticsData);
+            await handleContextCommands(interaction, locallyDisabled, commandStatisticsData);
         }
     }
 };
