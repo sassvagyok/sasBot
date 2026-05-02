@@ -1,5 +1,5 @@
 import { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/userModerationModel.js";
+import userModerationSchema from "../../../models/userModerationModel.js";
 
 export default {
     name: "kicks",
@@ -20,10 +20,10 @@ export default {
         const target = interaction.options.getUser("tag");
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
-        const moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-        if (!moderationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
+        const userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        if (!userModerationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
-        if (moderationData.Kicks.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett kirúgásai!", flags: MessageFlags.Ephemeral });
+        if (userModerationData.Kicks.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett kirúgásai!", flags: MessageFlags.Ephemeral });
         else {
             const kicksContainer = new ContainerBuilder()
             .setAccentColor(0xff6600)
@@ -31,15 +31,15 @@ export default {
             .addSeparatorComponents(new SeparatorBuilder());
 
             const loadFunction = async (i) => {
-                let modAuthor = await client.users.fetch(moderationData.Kicks[i].Author.replace(/\D/g,""));
+                let modAuthor = await client.users.fetch(userModerationData.Kicks[i].Author.replace(/\D/g,""));
 
                 return new TextDisplayBuilder()
-                .setContent(`**#${moderationData.Kicks[i].Number}** \`${moderationData.Kicks[i].Date}\`\n${moderationData.Kicks[i].Reason ? `- Indok: "${moderationData.Kicks[i].Reason}"\n- ${moderationData.Kicks[i].Author} (${modAuthor.username})` : `- ${moderationData.Kicks[i].Author} (${modAuthor.username})`}`);
+                .setContent(`**#${userModerationData.Kicks[i].Number}** \`${userModerationData.Kicks[i].Date}\`\n${userModerationData.Kicks[i].Reason ? `- Indok: "${userModerationData.Kicks[i].Reason}"\n- ${userModerationData.Kicks[i].Author} (${modAuthor.username})` : `- ${userModerationData.Kicks[i].Author} (${modAuthor.username})`}`);
             }
 
-            if (moderationData.Kicks.length < 6) {
+            if (userModerationData.Kicks.length < 6) {
                 let textArray = [];
-                for (let i = moderationData.Kicks.length-1; i > -1; i -= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Kicks.length-1; i > -1; i -= 1) textArray.push(await loadFunction(i));
 
                 kicksContainer.addTextDisplayComponents(textArray);
 
@@ -64,10 +64,10 @@ export default {
                 let chunkSize = 5;
                 let currentChunk = 5;
 
-                for (let i = 0; i < moderationData.Kicks.length; i+= chunkSize) allPages++;
+                for (let i = 0; i < userModerationData.Kicks.length; i+= chunkSize) allPages++;
 
                 let textArray = [];
-                for (let i = moderationData.Kicks.length - 1; i > moderationData.Kicks.length - 6; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Kicks.length - 1; i > userModerationData.Kicks.length - 6; i-= 1) textArray.push(await loadFunction(i));
 
                 kicksContainer.spliceComponents(0, 1, new TextDisplayBuilder().setContent(`### Kirúgások: \`${memberTarget.user.username}\` [${currentPage}/${allPages}]`))
                 .addTextDisplayComponents(textArray)
@@ -95,7 +95,7 @@ export default {
                             currentPage--;
 
                             let textArray = [];
-                            for (let i = moderationData.Kicks.length - currentChunk + 9; i > moderationData.Kicks.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Kicks.length - currentChunk + 9; i > userModerationData.Kicks.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
 
                             kicksContainer.spliceComponents(2, currentLength, textArray);
 
@@ -107,11 +107,11 @@ export default {
                     }
     
                     if (id === "next") {
-                        if (moderationData.Kicks.length > currentChunk) {
+                        if (userModerationData.Kicks.length > currentChunk) {
                             currentPage++;
 
                             let textArray = [];
-                            for (let i = moderationData.Kicks.length - currentChunk - 1; i > moderationData.Kicks.length - currentChunk - 6; i--) if (moderationData.Kicks[i]) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Kicks.length - currentChunk - 1; i > userModerationData.Kicks.length - currentChunk - 6; i--) if (userModerationData.Kicks[i]) textArray.push(await loadFunction(i));
 
                             kicksContainer.spliceComponents(2, currentLength, textArray);
 

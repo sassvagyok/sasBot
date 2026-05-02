@@ -1,5 +1,5 @@
 import { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/userModerationModel.js";
+import userModerationSchema from "../../../models/userModerationModel.js";
 
 export default {
     name: "warns",
@@ -20,10 +20,10 @@ export default {
         const target = interaction.options.getUser("tag");
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
-        const moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-        if (!moderationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
+        const userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        if (!userModerationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
-        if (moderationData.Warns.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett figyelmeztetései!", flags: MessageFlags.Ephemeral });
+        if (userModerationData.Warns.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett figyelmeztetései!", flags: MessageFlags.Ephemeral });
         else {
             const warnsContainer = new ContainerBuilder()
             .setAccentColor(0xffd200)
@@ -31,14 +31,14 @@ export default {
             .addSeparatorComponents(new SeparatorBuilder());
 
             const loadFunction = async (i) => {
-                let modAuthor = await client.users.fetch(moderationData.Warns[i].Author.replace(/\D/g,""));
+                let modAuthor = await client.users.fetch(userModerationData.Warns[i].Author.replace(/\D/g,""));
 
-                return new TextDisplayBuilder().setContent(`**#${moderationData.Warns[i].Number}** \`${moderationData.Warns[i].Date}\`\n- Indok: "${moderationData.Warns[i].Reason}"\n- ${moderationData.Warns[i].Author} (${modAuthor.username})`);
+                return new TextDisplayBuilder().setContent(`**#${userModerationData.Warns[i].Number}** \`${userModerationData.Warns[i].Date}\`\n- Indok: "${userModerationData.Warns[i].Reason}"\n- ${userModerationData.Warns[i].Author} (${modAuthor.username})`);
             }
 
-            if (moderationData.Warns.length < 6) {
+            if (userModerationData.Warns.length < 6) {
                 let textArray = [];
-                for (let i = moderationData.Warns.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Warns.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
 
                 warnsContainer.addTextDisplayComponents(textArray);
 
@@ -63,10 +63,10 @@ export default {
                 let chunkSize = 5;
                 let currentChunk = 5;
 
-                for (let i = 0; i < moderationData.Warns.length; i+= chunkSize) allPages++;
+                for (let i = 0; i < userModerationData.Warns.length; i+= chunkSize) allPages++;
 
                 let textArray = [];
-                for (let i = moderationData.Warns.length-1; i > moderationData.Warns.length-6; i -= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Warns.length-1; i > userModerationData.Warns.length-6; i -= 1) textArray.push(await loadFunction(i));
 
                 warnsContainer.spliceComponents(0, 1, new TextDisplayBuilder().setContent(`### Figyelmeztetések: \`${memberTarget.user.username}\` [${currentPage}/${allPages}]`))
                 .addTextDisplayComponents(textArray)
@@ -94,7 +94,7 @@ export default {
                             currentPage--;
 
                             let textArray = [];
-                            for (let i = moderationData.Warns.length - currentChunk + 9; i > moderationData.Warns.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Warns.length - currentChunk + 9; i > userModerationData.Warns.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
 
                             warnsContainer.spliceComponents(2, currentLength, textArray);
 
@@ -106,11 +106,11 @@ export default {
                     }
     
                     if (id === "next") {
-                        if (moderationData.Warns.length > currentChunk) {
+                        if (userModerationData.Warns.length > currentChunk) {
                             currentPage++;
 
                             let textArray = [];
-                            for (let i = moderationData.Warns.length - currentChunk - 1; i > moderationData.Warns.length - currentChunk - 6; i--) if (moderationData.Warns[i]) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Warns.length - currentChunk - 1; i > userModerationData.Warns.length - currentChunk - 6; i--) if (userModerationData.Warns[i]) textArray.push(await loadFunction(i));
 
                             warnsContainer.spliceComponents(2, currentLength, textArray);
 

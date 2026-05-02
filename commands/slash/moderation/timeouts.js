@@ -1,5 +1,5 @@
 import { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/userModerationModel.js";
+import userModerationSchema from "../../../models/userModerationModel.js";
 
 export default {
     name: "timeouts",
@@ -20,10 +20,10 @@ export default {
         const target = interaction.options.getUser("tag");
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
-        const moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-        if (!moderationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
+        const userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        if (!userModerationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
-        if (moderationData.Timeouts.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett felfüggesztései!", flags: MessageFlags.Ephemeral });
+        if (userModerationData.Timeouts.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett felfüggesztései!", flags: MessageFlags.Ephemeral });
         else {
             const timeoutsContainer = new ContainerBuilder()
             .setAccentColor(0xff9d02)
@@ -31,16 +31,16 @@ export default {
             .addSeparatorComponents(new SeparatorBuilder());
 
             const loadFunction = async (i) => {
-                let modAuthor = await client.users.fetch(moderationData.Timeouts[i].Author.replace(/\D/g,""));
+                let modAuthor = await client.users.fetch(userModerationData.Timeouts[i].Author.replace(/\D/g,""));
                 
                 return new TextDisplayBuilder()
-                .setContent(`**#${moderationData.Timeouts[i].Number}** \`${moderationData.Timeouts[i].Date}\`\n${moderationData.Timeouts[i].Reason ? `- Indok: "${moderationData.Timeouts[i].Reason}"\n- \`${moderationData.Timeouts[i].Length}\` | ${moderationData.Timeouts[i].Author} (${modAuthor.username})` : 
-                    `- \`${moderationData.Timeouts[i].Length}\` | ${moderationData.Timeouts[i].Author} (${modAuthor.username})`}`);
+                .setContent(`**#${userModerationData.Timeouts[i].Number}** \`${userModerationData.Timeouts[i].Date}\`\n${userModerationData.Timeouts[i].Reason ? `- Indok: "${userModerationData.Timeouts[i].Reason}"\n- \`${userModerationData.Timeouts[i].Length}\` | ${userModerationData.Timeouts[i].Author} (${modAuthor.username})` : 
+                    `- \`${userModerationData.Timeouts[i].Length}\` | ${userModerationData.Timeouts[i].Author} (${modAuthor.username})`}`);
             }
 
-            if (moderationData.Timeouts.length < 6) {
+            if (userModerationData.Timeouts.length < 6) {
                 let textArray = [];
-                for (let i = moderationData.Timeouts.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Timeouts.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
 
                 timeoutsContainer.addTextDisplayComponents(textArray);
 
@@ -65,10 +65,10 @@ export default {
                 let chunkSize = 5;
                 let currentChunk = 5;
 
-                for (let i = 0; i < moderationData.Timeouts.length; i+= chunkSize) allPages++;
+                for (let i = 0; i < userModerationData.Timeouts.length; i+= chunkSize) allPages++;
 
                 let textArray = [];
-                for (let i = moderationData.Timeouts.length - 1; i > moderationData.Timeouts.length - 6; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Timeouts.length - 1; i > userModerationData.Timeouts.length - 6; i-= 1) textArray.push(await loadFunction(i));
 
                 timeoutsContainer.spliceComponents(0, 1, new TextDisplayBuilder().setContent(`### Felfüggesztések: \`${memberTarget.user.username}\` [${currentPage}/${allPages}]`))
                 .addTextDisplayComponents(textArray)
@@ -96,7 +96,7 @@ export default {
                             currentPage--;
             
                             let textArray = [];
-                            for (let i = moderationData.Timeouts.length - currentChunk + 9; i > moderationData.Timeouts.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Timeouts.length - currentChunk + 9; i > userModerationData.Timeouts.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
 
                             timeoutsContainer.spliceComponents(2, currentLength, textArray);
 
@@ -108,11 +108,11 @@ export default {
                     }
     
                     if (id === "next") {
-                        if (moderationData.Timeouts.length > currentChunk) {
+                        if (userModerationData.Timeouts.length > currentChunk) {
                             currentPage++;
             
                             let textArray = [];
-                            for (let i = moderationData.Timeouts.length - currentChunk - 1; i > moderationData.Timeouts.length - currentChunk - 6; i--) if (moderationData.Timeouts[i]) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Timeouts.length - currentChunk - 1; i > userModerationData.Timeouts.length - currentChunk - 6; i--) if (userModerationData.Timeouts[i]) textArray.push(await loadFunction(i));
 
                             timeoutsContainer.spliceComponents(2, currentLength, textArray);
 

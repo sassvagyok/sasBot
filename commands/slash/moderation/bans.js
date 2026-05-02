@@ -1,5 +1,5 @@
 import { ActionRowBuilder, PermissionFlagsBits, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
-import moderationSchema from "../../../models/userModerationModel.js";
+import userModerationSchema from "../../../models/userModerationModel.js";
 
 export default {
     name: "bans",
@@ -20,10 +20,10 @@ export default {
         const target = interaction.options.getUser("tag");
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
-        const moderationData = await moderationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-        if (!moderationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
+        const userModerationData = await userModerationSchema.findOne({ Guild: interaction.guild.id, User: target.id });
+        if (!userModerationData) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
 
-        if (moderationData.Bans.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett kitiltásai!", flags: MessageFlags.Ephemeral });
+        if (userModerationData.Bans.length === 0) await interaction.reply({ content: "A megadott tagnak nincsenek feljegyzett kitiltásai!", flags: MessageFlags.Ephemeral });
         else {
             const bansContainer = new ContainerBuilder()
             .setAccentColor(0xe2162e)
@@ -31,19 +31,19 @@ export default {
             .addSeparatorComponents(new SeparatorBuilder());
 
             const loadFunction = async (i) => {
-                let modAuthor = await client.users.fetch(moderationData.Bans[i].Author.replace(/\D/g,""));
+                let modAuthor = await client.users.fetch(userModerationData.Bans[i].Author.replace(/\D/g,""));
 
                 return new TextDisplayBuilder()
                 .setContent(
-                    `**#${moderationData.Bans[i].Number}** \`${moderationData.Bans[i].Date}\`\n${moderationData.Bans[i].Reason && moderationData.Bans[i].Length ? `- Indok: "${moderationData.Bans[i].Reason}"\n- \`${moderationData.Bans[i].Length}\` | ${moderationData.Bans[i].Author} (${modAuthor.username})` :
-                    moderationData.Bans[i].Reason ? `- Indok: "${moderationData.Bans[i].Reason}"\n- ${moderationData.Bans[i].Author} (${modAuthor.username})` :
-                    moderationData.Bans[i].Length ? `- \`${moderationData.Bans[i].Length}\` | ${moderationData.Bans[i].Author} (${modAuthor.username})` : `- ${moderationData.Bans[i].Author} (${modAuthor.username})`}`
+                    `**#${userModerationData.Bans[i].Number}** \`${userModerationData.Bans[i].Date}\`\n${userModerationData.Bans[i].Reason && userModerationData.Bans[i].Length ? `- Indok: "${userModerationData.Bans[i].Reason}"\n- \`${userModerationData.Bans[i].Length}\` | ${userModerationData.Bans[i].Author} (${modAuthor.username})` :
+                    userModerationData.Bans[i].Reason ? `- Indok: "${userModerationData.Bans[i].Reason}"\n- ${userModerationData.Bans[i].Author} (${modAuthor.username})` :
+                    userModerationData.Bans[i].Length ? `- \`${userModerationData.Bans[i].Length}\` | ${userModerationData.Bans[i].Author} (${modAuthor.username})` : `- ${userModerationData.Bans[i].Author} (${modAuthor.username})`}`
                 );
             }
             
-            if (moderationData.Bans.length < 6) {
+            if (userModerationData.Bans.length < 6) {
                 let textArray = [];
-                for (let i = moderationData.Bans.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Bans.length - 1; i > -1; i-= 1) textArray.push(await loadFunction(i));
 
                 bansContainer.addTextDisplayComponents(textArray);
 
@@ -67,10 +67,10 @@ export default {
                 let chunkSize = 5;
                 let currentChunk = 5;
 
-                for (let i = 0; i < moderationData.Bans.length; i+= chunkSize) allPages++;
+                for (let i = 0; i < userModerationData.Bans.length; i+= chunkSize) allPages++;
 
                 let textArray = [];
-                for (let i = moderationData.Bans.length - 1; i > moderationData.Bans.length - 6; i-= 1) textArray.push(await loadFunction(i));
+                for (let i = userModerationData.Bans.length - 1; i > userModerationData.Bans.length - 6; i-= 1) textArray.push(await loadFunction(i));
 
                 bansContainer.spliceComponents(0, 1, new TextDisplayBuilder().setContent(`### Kitiltások: \`${memberTarget.user.username}\` [${currentPage}/${allPages}]`))
                 .addTextDisplayComponents(textArray)
@@ -98,7 +98,7 @@ export default {
                             currentPage--;
 
                             let textArray = [];
-                            for (let i = moderationData.Bans.length - currentChunk + 9; i > moderationData.Bans.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Bans.length - currentChunk + 9; i > userModerationData.Bans.length - currentChunk + 4; i--) textArray.push(await loadFunction(i));
 
                             bansContainer.spliceComponents(2, currentLength, textArray);
 
@@ -110,11 +110,11 @@ export default {
                     }
 
                     if (id === "next") {
-                        if (moderationData.Bans.length > currentChunk) {
+                        if (userModerationData.Bans.length > currentChunk) {
                             currentPage++;
                             
                             let textArray = [];
-                            for (let i = moderationData.Bans.length - currentChunk - 1; i > moderationData.Bans.length - currentChunk - 6; i--) if (moderationData.Bans[i]) textArray.push(await loadFunction(i));
+                            for (let i = userModerationData.Bans.length - currentChunk - 1; i > userModerationData.Bans.length - currentChunk - 6; i--) if (userModerationData.Bans[i]) textArray.push(await loadFunction(i));
 
                             bansContainer.spliceComponents(2, currentLength, textArray);
 
