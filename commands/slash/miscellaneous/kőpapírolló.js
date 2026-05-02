@@ -45,7 +45,7 @@ export default {
             .addTextDisplayComponents(footerTextComponent);
 
             if (result === 0) {
-                footerTextComponent.setContent(`**${interaction.user.displayName} nyert!**`);
+                footerTextComponent.setContent(`**${interaction.user.username} nyert!**`);
                 rpcContainer.setAccentColor(0x19cc10);
             } else if (result === 1) {
                 footerTextComponent.setContent(`**${client.user.displayName} nyert!**`);

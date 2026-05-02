@@ -52,6 +52,6 @@
     {
         "version": "x.x.x",
         "date": 1775762438,
-        "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Kick/Timeout/Warn`: mostantól jelzik, hanyadik ilyen fajta moderálása volt ez a tagnak\n- `Ban/Timeout`: lejáratkor az eredeti indok kiírása\n-# Javítás:\n- `Ban/Timeout`: formázási hibák javítása lejáratkor"
+        "changelog": "**🔹Rendszerszintű**\n-# Változás:\n- Mostantól a parancsok a felhasználók megjelenített nevei helyett a felhasználóneveiket írják ki\n-# Javítás:\n- Context menü parancsok javítása\n\n**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Kick/Timeout/Warn`: mostantól jelzik, hanyadik ilyen fajta moderálása volt ez a tagnak\n- `Ban/Timeout`: lejáratkor az eredeti indok kiírása\n-# Javítás:\n- `Ban/Timeout`: formázási hibák javítása lejáratkor\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Saspont adatok`: mostantól megjeleníti a Szóharcból és Ötbetűből szerzett legnagyobb nyereményt"
     }
 ]

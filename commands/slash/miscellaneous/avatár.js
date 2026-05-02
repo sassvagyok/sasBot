@@ -91,7 +91,7 @@ export default {
 
         const avatarContainer = new ContainerBuilder()
         .setAccentColor(fetchedUser.accentColor || 0x1d88ec)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Avatár: \`${target.displayName}\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Avatár: \`${target.username}\``))
         .addSeparatorComponents(new SeparatorBuilder())
         .addMediaGalleryComponents(avatarGalleryComponent)
         .addActionRowComponents(row);

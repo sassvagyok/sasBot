@@ -45,7 +45,7 @@ export default {
         const randomReply = replies[randomIndex];
 
         const ballContainer = new ContainerBuilder()
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${interaction.user.displayName}: \`${question}\``))
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`${interaction.user.username}: \`${question}\``))
         .addSeparatorComponents(new SeparatorBuilder())
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### 🔮 ${randomReply} 🔮`));
 
