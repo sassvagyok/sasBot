@@ -5,6 +5,7 @@ export default model('lockdown', new Schema({
     Channel: String,
     Author: String,
     Length: String,
-    Start: String,
-    End: String
+    Start: Date,
+    End: Date,
+    Reason: String
 }));

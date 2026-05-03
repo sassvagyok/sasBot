@@ -5,64 +5,72 @@ import modsettingSchema from "../models/modsettingModel.js";
 import moment from "moment";
 import "moment-timezone";
 
-export default async (client) => {
+export default (client) => {
     setInterval(async () => {
-        timeoutSchema.find().then(async (data) => {
-            if (!data && !data.length) return;
+        try {
+            const data = await timeoutSchema.find({ End: { $lte: new Date() } });
+            if (!data || !data.length) return;
 
-            data.forEach(async (value) => {
+            for (const value of data) {
                 const guild = client.guilds.cache.get(value.Guild);
-                if (!guild) return;
+                if (!guild) continue;
 
                 const channel = guild.channels.cache.get(value.Channel);
-                const target = await client.users.fetch(value.User);
-                const author = await client.users.fetch(value.Author);
+                if (!channel) continue;
+
+                const target = await client.users.fetch(value.User).catch(() => null);
+                if (!target) {
+                    await timeoutSchema.deleteOne({ _id: value._id });
+                    continue;
+                }
+
+                const author = await client.users.fetch(value.Author).catch(() => null);
+                if (!author) continue;
+
+                if (!guild.members.me.permissions.has(PermissionFlagsBits.ModerateMembers)) continue;
+
                 const length = value.Length;
-                const start = value.Start;
-                const end = value.End;
-                const now = moment().tz("Europe/Budapest").format("YYYY/MM/DD-HH:mm");
                 const count = value.Number;
                 const reason = value.Reason;
-
-                if (!channel) return;
-                if (!target) return;
-                if (!guild.members.me.permissions.has(PermissionFlagsBits.ModerateMembers)) return;
+                
+                const formattedStart = moment(value.Start).tz("Europe/Budapest").format("YYYY/MM/DD HH:mm");
 
                 const logChannelData = await logChannelSchema.findOne({ Guild: guild.id });
                 const logChannel = guild.channels.cache.get(logChannelData?.Channel);
                 const modsettingData = await modsettingSchema.findOne({ Guild: guild.id });
 
-                if (now === end) {
-                    const headerTextComponent = new TextDisplayBuilder()
-                    .setContent(`### Lejárt felfüggesztés: \`${target.username}\` (${target})${count ? ` | #${count}` : ""}`);
+                const removetimeoutContainer = new ContainerBuilder()
+                .setAccentColor(0x19cc10)
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt felfüggesztés: \`${target.username}\` (${target})${count ? ` | #${count}` : ""}`))
+                .addSeparatorComponents(new SeparatorBuilder())
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${formattedStart} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
 
-                    const removetimeoutContainer = new ContainerBuilder()
-                    .setAccentColor(0x19cc10)
-                    .addTextDisplayComponents(headerTextComponent)
-                    .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+                const dmContainer = new ContainerBuilder()
+                .setAccentColor(0x19cc10)
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt felfüggesztés | ${guild}`))
+                .addSeparatorComponents(new SeparatorBuilder())
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${formattedStart} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
 
-                    const dmContainer = new ContainerBuilder()
-                    .setAccentColor(0x19cc10)
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lejárt felfüggesztés | ${guild}`))
-                    .addSeparatorComponents(new SeparatorBuilder())
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Kezdet:** \`${start} (${length})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`))
-                    .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${author.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+                if ((!modsettingData || modsettingData?.length === 0 || modsettingData.Send) && channel.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)) {
+                    channel.send({ components: [removetimeoutContainer], flags: MessageFlags.IsComponentsV2 });
+                }
 
-                    if ((!modsettingData || modsettingData?.length === 0 || modsettingData.Send) && channel.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)) channel.send({ components: [removetimeoutContainer], flags: MessageFlags.IsComponentsV2 });
+                if (logChannel && logChannel.permissionsFor(guild.members.me).has(PermissionFlagsBits.ViewChannel) && logChannel.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)) {
+                    logChannel.send({ components: [removetimeoutContainer], flags: MessageFlags.IsComponentsV2 });
+                }
 
-                    if (logChannel && !logChannel?.permissionsFor(guild.members.me).has(PermissionFlagsBits.ViewChannel) && !logChannel?.permissionsFor(guild.members.me).has(PermissionFlagsBits.SendMessages)) return;
-                    logChannel?.send({ components: [removetimeoutContainer], flags: MessageFlags.IsComponentsV2 });
-
-                    if (!modsettingData || modsettingData?.length == 0 || !modsettingData.DM) return;
+                if (modsettingData && modsettingData?.length !== 0 && modsettingData.DM) {
                     try {
                         await target.send({ components: [dmContainer], flags: MessageFlags.IsComponentsV2 });
                     } catch(err){}
-
-                    await timeoutSchema.deleteOne({ _id: value._id });
                 }
-            });
-        });
-    }, 60000);
+
+                await timeoutSchema.deleteOne({ _id: value._id });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }, 10000);
 }

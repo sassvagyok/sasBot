@@ -27,6 +27,13 @@ export default {
             type: ApplicationCommandOptionType.String,
             required: false,
             maxLength: 100
+        },
+        {
+            name: "indok",
+            description: "Lezárás indoka (üres: nincs indok)",
+            type: ApplicationCommandOptionType.String,
+            required: false,
+            maxLength: 250
         }
     ],
     run: async (client, interaction) => {
@@ -36,6 +43,7 @@ export default {
         const userAuthor = interaction.member;
         const lockdownDuration = interaction.options.getString("időtartam")?.split(" ")[0];
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;
+        const reason = interaction.options.getString("indok");
 
         if (!textChannel.permissionsFor(interaction.member).has(PermissionFlagsBits.SendMessages)) return interaction.reply({ content: "Nincs hozzáférésed ehhez a csatornához!", flags: MessageFlags.Ephemeral });
 
@@ -54,7 +62,7 @@ export default {
         .addSeparatorComponents(new SeparatorBuilder());
 
         const lockdownAndSend = () => {
-            lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
+            lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``)); 
 
             textChannel.permissionOverwrites.create(interaction.guild.members.me, { SendMessages: true });
             textChannel.permissionOverwrites.create(interaction.member, { SendMessages: true });
@@ -68,7 +76,11 @@ export default {
             logChannel?.send({ components: [lockdownContainer], flags: MessageFlags.IsComponentsV2 });
         }
         
-        if (!lockdownDuration) lockdownAndSend();
+        if (!lockdownDuration) {
+            if (reason) lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
+
+            lockdownAndSend();
+        }
         else {
             if (lockdownDuration === parseInt(lockdownDuration) + "m" || lockdownDuration === parseInt(lockdownDuration) + "h" || lockdownDuration === parseInt(lockdownDuration) + "d") {
                 if (lockdownDuration.match(/\d+/)[0] > 2592000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
@@ -87,11 +99,12 @@ export default {
                     Channel: textChannel.id,
                     Author: interaction.member.id,
                     Length: formattedDuration,
-                    Start: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss"),
-                    End: moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).format("YYYY/MM/DD-HH:mm")
+                    Start: new Date(),
+                    End: moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).toDate(),
+                    Reason: reason || null
                 }).save();
 
-                lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\``));
+                lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`));
 
                 lockdownAndSend();
             } else return interaction.reply({ content: "Megadható időtartamok: `m/h/d`" });

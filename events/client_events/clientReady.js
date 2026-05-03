@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import fs from "fs";
+import fetch from "node-fetch";
+import chalk from "chalk";
+import semver from "semver";
 import moment from "moment";
 import "moment-timezone";
 import packageJson from "../../package.json" with { type: "json" };
@@ -14,6 +17,17 @@ export default {
     once: true,
     run: async (client) => {
         const getCurrentTime = () => moment().tz("Europe/Budapest").format("HH:mm:ss.SSS");
+
+        const checkForUpdate = async () => {
+            const gitPackage = await fetch("https://raw.githubusercontent.com/sassvagyok/sasBot/refs/heads/main/package.json")
+
+            if (!gitPackage.ok) return; 
+            const fetchedgitPackage = await gitPackage.json();
+
+            if (semver.gt(fetchedgitPackage.version, packageJson.version)) {
+                console.log(chalk.bold(`Új verzió elérhető! ${chalk.red(packageJson.version)} -> ${chalk.green(fetchedgitPackage.version)}`));
+            }
+        }
         
         const writeStatistics = async () => {
             if (!fs.existsSync("./statistics")) return;
@@ -46,11 +60,7 @@ export default {
         const connectMongoose = async () => {
             if (process.env.mongooseConnectionString) {
                 mongoose.set("strictQuery", false);
-                await mongoose.connect(process.env.mongooseConnectionString).then(() => {
-                    startTimers();
-                    writeStatistics();
-                    console.log(`[${getCurrentTime()}] ${client.user.username}@${packageJson.version} beindult ${client.guilds.cache.size} szerveren`);
-                });
+                await mongoose.connect(process.env.mongooseConnectionString);
             
                 console.log(`[${getCurrentTime()}] MongoDB csatlakoztatva`);
             } else {
@@ -59,6 +69,11 @@ export default {
             }
         }
         
-        connectMongoose();
+        await checkForUpdate();
+        await connectMongoose();
+        await startTimers();
+        await writeStatistics();
+        console.log(`[${getCurrentTime()}] ${client.user.username}@${packageJson.version} beindult ${client.guilds.cache.size} szerveren`);
+                
     }
 };

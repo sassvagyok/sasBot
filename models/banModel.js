@@ -6,8 +6,8 @@ export default model('ban', new Schema({
     User: String,
     Author: String,
     Length: String,
-    Start: String,
-    End: String,
+    Start: Date,
+    End: Date,
     Number: Number,
     Reason: String
 }));

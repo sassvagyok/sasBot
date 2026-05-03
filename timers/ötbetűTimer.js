@@ -10,19 +10,20 @@ export default async () => {
         const filteredWords = allWords.filter(x => x.length === 5 && x[0].toUpperCase() !== x[0]);
 
         let dailyOtbetuData = await dailyOtbetuSchema.findOne();
+        const todayStart = moment().tz("Europe/Budapest").startOf("day").toDate();
 
         if (!dailyOtbetuData) {
             const newData = new dailyOtbetuSchema({
-                Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD"),
+                Date: todayStart,
                 Word: filteredWords[Math.floor(Math.random() * filteredWords.length)]
             });
             await newData.save();
 
             console.log(`[${moment().tz("Europe/Budapest").format("HH:mm:ss.SSS")}] Ötbetű szó létrehozva`);
         } else {
-            if (dailyOtbetuData.Date !== moment().tz("Europe/Budapest").format("YYYY-MM-DD")) {
+            if (dailyOtbetuData.Date.getTime() < todayStart.getTime()) {
                 await dailyOtbetuSchema.findOneAndUpdate({}, {
-                    Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD"),
+                    Date: todayStart,
                     Word: filteredWords[Math.floor(Math.random() * filteredWords.length)]
                 });
 
@@ -34,10 +35,10 @@ export default async () => {
                     }
                 });
 
-                const yesterday = moment().tz("Europe/Budapest").startOf('day').subtract(1, 'days').toDate();
+                const yesterdayStart = moment().tz("Europe/Budapest").startOf('day').subtract(1, 'days').toDate();
 
                 await userOtbetuSchema.updateMany(
-                    { LastWonOn: { $lt: yesterday, $ne: null } },
+                    { LastWonOn: { $lt: yesterdayStart, $ne: null } },
                     { $set: { Streak: 0 } }
                 );
 
@@ -48,7 +49,7 @@ export default async () => {
 
     updateWord();
 
-    cron.schedule(" * 0 * * *", async () => {
+    cron.schedule("0 0 * * *", async () => {
         await updateWord();
     }, {
         timezone: "Europe/Budapest"

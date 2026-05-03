@@ -104,14 +104,14 @@ export default {
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Figyelmeztetés: \`${memberTarget.user.username}\` (<@${memberTarget.user.id}>)` + header))
         .addSeparatorComponents(new SeparatorBuilder())
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`\n> Ez a(z) **${userModerationData.Warns.length}.** figyelmezetetése`))
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``)); 
 
         const dmContainer = new ContainerBuilder()
         .setAccentColor(0xffd200)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Figyelmeztetés | ${interaction.guild}`))
         .addSeparatorComponents(new SeparatorBuilder())
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\`\n> Ez a(z) **${userModerationData.Warns.length}.** figyelmezetetésed`))
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
 
         interaction.reply({ components: [warnContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
         if (logChannel && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel) && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.SendMessages)) return;

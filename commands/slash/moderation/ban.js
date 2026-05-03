@@ -139,8 +139,8 @@ export default {
         .addSeparatorComponents(new SeparatorBuilder());
 
         const sendContainer = async () => {
-            banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
-            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+            banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
+            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
             interaction.reply({ components: [banContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
             
             if (logChannel && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel) && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.SendMessages)) return;
@@ -177,10 +177,10 @@ export default {
                 User: target.id,
                 Author: interaction.member.id,
                 Length: formattedDuration,
-                Start: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                End: moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD-HH:mm"),
+                Start: new Date(),
+                End: moment().add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).toDate(),
                 Number: modsettingData && modsettingData?.Log ? count : null,
-                Reason: reason ? reason : null
+                Reason: reason || null
             }).save();
 
             const formattedDate = moment().tz("Europe/Budapest").add(parseInt(banDuration.slice(0, -1)), banDuration.slice(-1)).format("YYYY/MM/DD HH:mm");

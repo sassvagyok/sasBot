@@ -129,8 +129,8 @@ export default {
         .addSeparatorComponents(new SeparatorBuilder());
 
         const sendContainer = async () => {
-            timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
-            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+            timeoutContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
+            dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
                         
             interaction.reply({ components: [timeoutContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
 
@@ -157,10 +157,10 @@ export default {
             User: target.id,
             Author: interaction.member.id,
             Length: formattedDuration,
-            Start: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-            End: moment().tz("Europe/Budapest").add(parseInt(args[1].slice(0, -1)), args[1].slice(-1)).format("YYYY/MM/DD-HH:mm"),
+            Start: new Date(),
+            End: moment().add(parseInt(args[1].slice(0, -1)), args[1].slice(-1)).toDate(),
             Number: modsettingData && modsettingData?.Log ? count : null,
-            Reason: reason ? reason : null
+            Reason: reason || null
         }).save();
 
         const formattedDate = moment().tz("Europe/Budapest").add(parseInt(timeoutDuration.slice(0, -1)), timeoutDuration.slice(-1)).format("YYYY/MM/DD HH:mm");
@@ -170,7 +170,6 @@ export default {
 
         sendContainer();
 
-        if (memberTarget.communicationDisabledUntil) memberTarget.timeout(null);
-        memberTarget.timeout(ms(timeoutDuration), `${reason ? `Indok: ${reason} | `: ""}Lejár: ${formattedDate} (${formattedDuration}) | (${userAuthor.user.username})`);
+        await memberTarget.timeout(ms(timeoutDuration), `${reason ? `Indok: ${reason} | `: ""}Lejár: ${formattedDate} (${formattedDuration}) | (${userAuthor.user.username})`);
     }
 }

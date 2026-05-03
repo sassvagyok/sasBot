@@ -45,7 +45,7 @@ export default {
         .setAccentColor(0xffce0c)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Lassított mód: \`${previousSlow} mp -> ${duration} mp\` | \`${textChannel.name}\` (${textChannel})`))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``)); 
 
         interaction.reply({ components: [slowmodeContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
     }

@@ -41,7 +41,7 @@ export default {
         .setAccentColor(0x19cc10)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Csatorna megnyitás: \`${textChannel.name}\` (${textChannel})`))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
 
         interaction.reply({ components: [unlockdownContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
         if ((interaction.channel.id !== textChannel.id) && (!modsettingData || modsettingData?.length === 0 || modsettingData.Send)) textChannel.send({ components: [unlockdownContainer], flags: MessageFlags.IsComponentsV2 });

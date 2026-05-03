@@ -42,7 +42,7 @@ export default {
         .setAccentColor(0x22b1e5)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### \`${numOfMsgs}\` üzenet törölve | \`${textChannel.name}\` (${textChannel})`))
         .addSeparatorComponents(new SeparatorBuilder().setDivider())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm:ss")}\``)); 
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``)); 
 
         await textChannel.messages.fetch({ limit: numOfMsgs}).then(messages => {
             textChannel.bulkDelete(messages, true);
