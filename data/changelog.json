@@ -2,7 +2,7 @@
     {
         "version": "template",
         "date": "date",
-        "changelog": "**🔹Rendszerszintű**\n**🔨 Moderációs-parancsok**\n **🎵 Zene-parancsok**\n**⌨️ Konfigurációs-parancsok**\n**🍥 Sokszínű-parancsok**\n**🤖Információs-parancsok**"
+        "changelog": "**🔹 Rendszerszintű**\n**🔨 Moderációs-parancsok**\n **🎵 Zene-parancsok**\n**⌨️ Konfigurációs-parancsok**\n**🍥 Sokszínű-parancsok**\n**🤖 Információs-parancsok**"
     },
     {
         "version": "1.0.0",
@@ -53,5 +53,10 @@
         "version": "3.0.0",
         "date": 1777682199,
         "changelog": "**🔹Rendszerszintű**\n-# Változás:\n- Mostantól a parancsok a felhasználók megjelenített nevei helyett a felhasználóneveiket írják ki\n-# Javítás:\n- Context menü parancsok javítása\n\n**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Kick/Timeout/Warn`: mostantól jelzik, hanyadik ilyen fajta moderálása volt ez a tagnak\n- `Ban/Timeout`: lejáratkor az eredeti indok kiírása\n-# Javítás:\n- `Ban/Timeout`: formázási hibák javítása lejáratkor\n\n**🍥 Sokszínű-parancsok**\n-# Változás:\n- `Saspont adatok`: mostantól megjeleníti a Szóharcból és Ötbetűből szerzett legnagyobb nyereményt"
+    },
+    {
+        "version": "3.1.0",
+        "date": 1777820047,
+        "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Lockdown/Unlockdown`: mostantól megadható indok\n- A lejárt moderációk pontosabban vannak kezelve\n\n**🤖 Információs-parancsok**\n-# Javítás:\n- `Help részletes`: a paraméterek tördelésének hiánya javítva"
     }
 ]

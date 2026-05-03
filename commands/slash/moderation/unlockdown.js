@@ -17,6 +17,13 @@ export default {
             type: ApplicationCommandOptionType.Channel,
             channelTypes: [ChannelType.GuildText],
             required: false
+        },
+        {
+            name: "indok",
+            description: "Megnyitás indoka (üres: nincs indok)",
+            type: ApplicationCommandOptionType.String,
+            required: false,
+            maxLength: 250
         }
     ],
     run: async (client, interaction) => {
@@ -25,6 +32,7 @@ export default {
 
         const userAuthor = interaction.member;
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;
+        const reason = interaction.options.getString("indok");
         
         if (!textChannel.permissionsFor(interaction.member).has(PermissionFlagsBits.SendMessages)) return interaction.reply({ content: "Nincs hozzáférésed ehhez a csatornához!", flags: MessageFlags.Ephemeral });
         if (!textChannel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel)) return interaction.reply({ content: "Nincs hozzáférésem a megadott csatornához!", flags: MessageFlags.Ephemeral });
@@ -40,7 +48,11 @@ export default {
         const unlockdownContainer = new ContainerBuilder()
         .setAccentColor(0x19cc10)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Csatorna megnyitás: \`${textChannel.name}\` (${textChannel})`))
-        .addSeparatorComponents(new SeparatorBuilder())
+        .addSeparatorComponents(new SeparatorBuilder());
+
+        if (reason) unlockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
+
+        unlockdownContainer
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${userAuthor.user.username} ● \`${moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm")}\``));
 
         interaction.reply({ components: [unlockdownContainer], flags: [!modsettingData || modsettingData?.length === 0 || modsettingData.Send ? "" : MessageFlags.Ephemeral, MessageFlags.IsComponentsV2] });
