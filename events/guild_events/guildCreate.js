@@ -24,17 +24,17 @@ export default {
             
             const gitButton = new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
-            .setURL(client.config.githubURL)
+            .setURL(client.config.githubURL || "https://github.com/sassvagyok/sasBot")
             .setLabel("Github");
 
             const supportServerButton = new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
-            .setURL(client.config.supportURL)
+            .setURL(client.config.supportURL || "https://discord.gg/s8XtzBasQF")
             .setLabel("Szerver");
 
             const docsButton = new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
-            .setURL(config.docsURL)
+            .setURL(config.docsURL || "https://sasbot.mattexyz.com")
             .setLabel("Dokumentáció");
 
             const row = new ActionRowBuilder().addComponents(gitButton, supportServerButton, docsButton);

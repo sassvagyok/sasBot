@@ -14,7 +14,7 @@ const client = new Client({
     presence: {
         status: "online",
             activities: [{
-                name: config.status,
+                name: config.status || "/help",
                 type: ActivityType.Playing
             }]
     },

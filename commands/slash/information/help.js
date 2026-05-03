@@ -40,7 +40,7 @@ export default {
 
         if (interaction.channel.type !== 1) {
             customCommandData = await customCommandSchema.find({ Guild: interaction.guild.id, Command: command });
-            globallyDisabled = client.config.globallyDisabledCommands;
+            globallyDisabled = client.config.globallyDisabledCommands || [];
             disabledCommandData = await disabledCommandSchema.findOne({ Guild: interaction.guild.id });
         };
 
@@ -76,7 +76,7 @@ export default {
             } else if (builtInCommand) {
                 const docsButton = new ButtonBuilder()
                 .setStyle(ButtonStyle.Link)
-                .setURL(`${client.config.docsURL}/commands/${builtInCommand.name}`)
+                .setURL(`${client.config.docsURL || "https://sasbot.mattexyz.com"}/commands/${builtInCommand.name}`)
                 .setLabel("Dokumentáció");
 
                 const headerSection = new SectionBuilder()
@@ -91,7 +91,7 @@ export default {
 
                 if (builtInCommand.options) {
                     const onlySubCommands = builtInCommand.options.filter(x => x.type === 1 || x.type === 2);
-                    const notSubCommandsAsString = builtInCommand.options.filter(x => x.type !== 1 && x.type !== 2).map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join(" ");
+                    const notSubCommandsAsString = builtInCommand.options.filter(x => x.type !== 1 && x.type !== 2).map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join("\n- ");
                     let subCommands = [];
                     const subCommandsWithGroups = [];
 
@@ -101,7 +101,7 @@ export default {
     
                             if (cmd[i].type === 1) {
                                 if (cmd[i].options) {
-                                    params = cmd[i].options.map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join(" ");
+                                    params = cmd[i].options.map(x => x.required ? `**\`${x.name}\`**: ${x.description}` : `\`${x.name}\`: ${x.description}`).join("\n   - ");
                                 }
     
                                 subCommands.push(`**${cmd[i].name.charAt(0).toUpperCase() + cmd[i].name.slice(1)}**: ${cmd[i].description}${params ? `\n    - ${params}` : ""}`);
