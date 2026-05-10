@@ -399,7 +399,7 @@ export default {
 
         if (subCommand === "súgó") {
             const helpContainer = new ContainerBuilder()
-            .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Hogyan működik?\n- Különböző sasBot-tal való interakciókért sasPontokat szerezhetsz és veszthetsz, amik gyűjtésével felkerülhetsz a ranglistákra:\n    - Minden sasBot parancs használatért +5 sP jár\n   - `Ötbetű`: minél kevesebb próbából kitalálod, annál több sP-t kapsz\n   - `Szóharc`: ha nyersz, a szavad pontszámának kétszeresének megfelelő sP-t kapsz\n### sasPont Kaszinó\n- `Coinflip`: találd el az érme oldalát és duplázd meg a tétedet, vagy vesztesz\n- `Crash`: a szorzó minden gombnyomásra 50% eséllyel növekedhet, de ugyanennyi eséllyel be is dőlhet. Gyűjtsd be a sasPontokat mielőtt ez megtörténik, vagy elveszíted a tétedet"));
+            .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Hogyan működik?\n- Különböző sasBot-tal való interakciókért sasPontokat szerezhetsz és veszthetsz, amik gyűjtésével felkerülhetsz a ranglistákra:\n    - Minden sasBot parancs használatért sP jár\n   - `Ötbetű`: minél kevesebb próbából kitalálod, annál több sP-t kapsz\n   - `Szóharc`: ha nyersz, a szavad pontszámának kétszeresének megfelelő sP-t kapsz\n### sasPont Kaszinó\n- `Coinflip`: találd el az érme oldalát és duplázd meg a tétedet, vagy vesztesz\n- `Crash`: a szorzó minden gombnyomásra 50% eséllyel növekedhet, de ugyanennyi eséllyel be is dőlhet. Gyűjtsd be a sasPontokat mielőtt ez megtörténik, vagy elveszíted a tétedet"));
 
             interaction.reply({ components: [helpContainer], flags: MessageFlags.IsComponentsV2 });
         }

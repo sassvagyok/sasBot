@@ -46,6 +46,7 @@ export default {
         let userOtbetuData = await userOtbetuSchema.findOne({ UserID: interaction.user.id });
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
+        const base = client.config.otbetuSaspontBase || 500;
 
         if (subCommand === "játék") {
             if (!allWords.includes(guess) || guess.length < 5) return interaction.reply({ content: "Egy létező, 5 betűs szót adj meg!", flags: MessageFlags.Ephemeral });
@@ -128,7 +129,7 @@ export default {
 
             if (hasWon) {
                 userOtbetuData.Streak += 1;
-                const earnedPoints = 500 * (7 - userOtbetuData.Today.Tries) + 50 * userOtbetuData.Streak;
+                const earnedPoints = base * (7 - userOtbetuData.Today.Tries) + 50 * userOtbetuData.Streak;
 
                 if (saspontData.Games.Otbetu.MaxWin < earnedPoints) saspontData.Games.Otbetu.MaxWin = earnedPoints
                 
@@ -149,7 +150,7 @@ export default {
 
                 otbetuContainer
                 .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
-                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(500 * (7 - userOtbetuData.Today.Tries))} sasPont (${userOtbetuData.Today.Tries} találatból)${(userOtbetuData.Streak > 0 ? `\n-# +${format.format(50 * userOtbetuData.Streak)} sasPont (Streak ${userOtbetuData.Streak})` : "")}`));
+                .addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# +${format.format(base * (7 - userOtbetuData.Today.Tries))} sasPont (${userOtbetuData.Today.Tries} találatból)${(userOtbetuData.Streak > 0 ? `\n-# +${format.format(50 * userOtbetuData.Streak)} sasPont (Streak ${userOtbetuData.Streak})` : "")}`));
 
                 userOtbetuData.Today.Guessed = true;
                 userOtbetuData.Stats.Wins += 1;

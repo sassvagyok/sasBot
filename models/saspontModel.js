@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose";
+import config from "../config.json" with { type: "json" };
 
 export default model('saspont-v2', new Schema({
     UserID: String,
     Username: String,
     OnLeaderboard: { type: Boolean, default: true },
-    Balance: { type: Number, default: 25 },
+    Balance: { type: Number, default: config.commandSaspontGain || 25 },
     History: {
         type: [
             {

@@ -49,6 +49,7 @@ export default {
         }
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
+        const multiplier = client.config.szoharcSaspontMultiplier || 5;
 
         if (subCommand === "súgó") {
             const ruleContainer = new ContainerBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent("### Játékmenet\n- Adj meg egy tetszőleges szót, majd sasBot is kiválaszt egyet\n- A szavakra pontok kaphatóak, az nyer, akinek több pontja lesz!\n### Pontozás\n- a szó karakterhosszával megegyező pont\n- `+5` pont ismétlődő betűnként\n- `+10` pont ritka karakter használatáért\n- `*2` a kitalált nap szava használatáért"));
@@ -108,12 +109,13 @@ export default {
             const saspontTextComponent = new TextDisplayBuilder();
 
             if (userScore > botScore) {
-                saspontData.Balance += userScore * 5;
+                const gained = userScore * multiplier;
+                saspontData.Balance += gained;
 
-                if (saspontData.Games.Szoharc.MaxWin < userScore * 5) saspontData.Games.Szoharc.MaxWin = userScore * 5
+                if (saspontData.Games.Szoharc.MaxWin < gained) saspontData.Games.Szoharc.MaxWin = gained;
 
                 saspontData.History.push({
-                    Value: userScore * 5,
+                    Value: gained,
                     Origin: "Szóharc",
                     Guild: interaction.channel.type === 1 ? "DM" : interaction.guild.name,
                     Date: moment().tz("Europe/Budapest").format("YYYY-MM-DD HH:mm")
@@ -121,7 +123,7 @@ export default {
 
                 await saspontData.save();
 
-                saspontTextComponent.setContent(`-# +${format.format(userScore * 5)} sasPont`);
+                saspontTextComponent.setContent(`-# +${format.format(gained)} sasPont`);
 
                 szoharcContainer
                 .setAccentColor(0x19cc10)
