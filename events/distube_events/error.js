@@ -5,6 +5,7 @@ export default {
     distube: true,
     run: async (client, e, queue, song) => {
         console.error(e);
+        queue.voice.leave();
 
         const errorContainer = new ContainerBuilder()
         .setAccentColor(0xe2162e)
