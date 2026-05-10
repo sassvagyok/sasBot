@@ -68,7 +68,7 @@ git clone -b dev https://github.com/sassvagyok/sasBot.git
 ```
 
 ### Első konfiguráció
-1. Hozz létre a gyökérmappába egy `.env` fájlt:
+1. Nevezd át a `.env.example` fájlt `.env`-re és töltsd fel adatokkal:
 ```
 mainToken=[Fő Discord token]
 testToken=[Másodlagos Discord token, ha tesztelnél (elhagyható)]
@@ -101,6 +101,9 @@ npm run dev
   - `inviteURL`: bot meghívó linkje
   - `supportURL`: support szerver meghívó linkje
   - `githubURL`: Github repo linkje
+  - `szoharcSaspontMultiplier`: Szóharc sasPontok szorzója
+  - `otbetuSaspontBase`: Ötbetű sasPontok alapja
+  - `commandSaspontGain`: kapott sasPontok parancs használata után
 
 <details>
 <summary>Példa konfiguráció</summary>
@@ -112,7 +115,10 @@ npm run dev
     "docsURL": "https://sasbot.mattexyz.com",
     "inviteURL": "https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands",
     "supportURL": "https://discord.gg/s8XtzBasQF",
-    "githubURL": "https://github.com/sassvagyok/sasBot"
+    "githubURL": "https://github.com/sassvagyok/sasBot",
+    "szoharcSaspontMultiplier": 5,
+    "otbetuSaspontBase": 500,
+    "commandSaspontGain": 25
 }
 ```
 
