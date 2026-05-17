@@ -104,21 +104,23 @@ npm run dev
   - `szoharcSaspontMultiplier`: Szóharc sasPontok szorzója
   - `otbetuSaspontBase`: Ötbetű sasPontok alapja
   - `commandSaspontGain`: kapott sasPontok parancs használata után
+  - `maxCustomCommands`: maximum hozzáadható egyedi parancsok száma
 
 <details>
-<summary>Példa konfiguráció</summary>
+<summary>Alapértelmezett konfiguráció</summary>
 
 ```json
 {
     "status": "/help",
-    "globallyDisabledCommands": ["nekosia", "ötbetű"],
+    "globallyDisabledCommands": [],
     "docsURL": "https://sasbot.mattexyz.com",
     "inviteURL": "https://discord.com/oauth2/authorize?client_id=742556187425505312&permissions=1099816889494&integration_type=0&scope=bot+applications.commands",
     "supportURL": "https://discord.gg/s8XtzBasQF",
     "githubURL": "https://github.com/sassvagyok/sasBot",
     "szoharcSaspontMultiplier": 5,
     "otbetuSaspontBase": 500,
-    "commandSaspontGain": 25
+    "commandSaspontGain": 25,
+    "maxCustomCommands": 50
 }
 ```
 
