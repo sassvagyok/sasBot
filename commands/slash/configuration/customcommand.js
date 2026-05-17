@@ -1,10 +1,12 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 import customCommandSchema from "../../../models/customcommandModel.js";
+import config from "../../../config.json" with { type: "json" };
+const maxCustomCommands = config.maxCustomCommands || 50;
 
 export default {
     name: "customcommand",
     description: "Egyedi parancsok kezelése",
-    info: "Egyedi parancsok hozzáadása (maximum 50), szerkesztése, törlése és megjelenítése.\n`Szükséges jogosultság: Adminisztrátor*`",
+    info: `Egyedi parancsok hozzáadása (maximum ${maxCustomCommands}), szerkesztése, törlése és megjelenítése.\n\`Szükséges jogosultság: Adminisztrátor*\``,
     dm_permission: false,
     options: [
         {
@@ -92,7 +94,7 @@ export default {
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: "Hiányzó jogosultság: \`Adminisztrátor\`", flags: MessageFlags.Ephemeral });
 
         if (subCommand === "hozzáadás") {
-            if (customCommandData.length >= 50) return interaction.reply({ content: "Maximum 50 egyedi parancsot adhatsz hozzá egy szerverhez!", flags: MessageFlags.Ephemeral });
+            if (customCommandData.length >= maxCustomCommands) return interaction.reply({ content: `Maximum ${maxCustomCommands} egyedi parancsot adhatsz hozzá egy szerverhez!`, flags: MessageFlags.Ephemeral });
             if (builtInCommand?.name === customCommandName) return interaction.reply({ content: `\`${customCommandName}\` nevű parancs már létezik!`, flags: MessageFlags.Ephemeral });
     
             if (customCommand) interaction.reply({ content: `\`${customCommandName}\` nevű egyedi parancs már létezik!`, flags: MessageFlags.Ephemeral });

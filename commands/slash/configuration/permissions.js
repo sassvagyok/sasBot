@@ -9,7 +9,7 @@ export default {
     permission: PermissionFlagsBits.Administrator,
     options: [
         {
-            name: "átállítás",
+            name: "módosítás",
             description: "Parancs használatának ranghoz kötése, vagy beállított rang kivétele",
             type: ApplicationCommandOptionType.Subcommand,
             options: [
@@ -22,14 +22,14 @@ export default {
                 },
                 {
                     name: "rang",
-                    description: "Rang, ami szükséges legyen a parancs használatához, vagy ennek kivétele",
+                    description: "Rang, ami szükséges legyen a parancs használatához, vagy hozzáadott kivétele",
                     type: ApplicationCommandOptionType.Role,
                     required: true
                 }
             ]
         },
         {
-            name: "visszaállítás",
+            name: "törlés",
             description: "Ranghoz kötött parancs visszaállítása alaphelyzetbe",
             type: ApplicationCommandOptionType.Subcommand,
             options: [
@@ -55,7 +55,7 @@ export default {
         const builtInCommandName = interaction.options.getString("parancs")?.toLowerCase().split(" ")[0];
         const permissionRole = interaction.options.getRole("rang");
 
-        if (subCommand === "átállítás") {
+        if (subCommand === "módosítás") {
             const builtInCommand = client.commands.get(builtInCommandName);
             const filteredCmds = client.commands.filter(x => x.directory == "information" || x.directory == "configuration").map(x => x.builtInCommandName);
 
@@ -112,9 +112,8 @@ export default {
             }
         }
 
-        if (subCommand === "visszaállítás") {
-            if (!permissionData) interaction.reply({ content: `\`${builtInCommandName}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
-            else {
+        if (subCommand === "törlés") {
+            if (permissionData) {
                 const cmdIndex = permissionData.Commands.findIndex(x => {
                     return x.Name === builtInCommandName;
                 });
@@ -123,10 +122,14 @@ export default {
                     permissionData.Commands.splice(cmdIndex, 1);
                     await permissionData.save();
 
-                    interaction.reply({ content: `\`${builtInCommandName}\` mostantól az alap jogosultságokkal használható!` });
+                    interaction.reply({ content: `\`${builtInCommandName}\` mostantól az alap jogosultságokkal használható` });
 
                     if (permissionData.Commands.length === 0) await permissionSchema.deleteOne({ Guild: interaction.guild.id });
-                } else interaction.reply({ content: `\`${builtInCommandName}\` már az alap jogosultságokkal használható!`, flags: MessageFlags.Ephemeral });
+                } else {
+                    interaction.reply({ content: `\`${builtInCommandName}\` nincs módosítva!`, flags: MessageFlags.Ephemeral });
+                }
+            } else {
+                interaction.reply({ content: "Nincs egy parancs sem ranghoz kötve!", flags: MessageFlags.Ephemeral });
             }
         }
 

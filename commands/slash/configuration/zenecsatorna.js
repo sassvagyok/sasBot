@@ -23,8 +23,8 @@ export default {
             ]
         },
         {
-            name: "kikapcsolás",
-            description: "Zene-csatorna követelmény kikapcsolása",
+            name: "törlés",
+            description: "Zene-csatorna követelmény kikapcsolása (csatorna törlése nélkül)",
             type: ApplicationCommandOptionType.Subcommand
         },
         {
@@ -52,7 +52,7 @@ export default {
             interaction.reply({ content: `Új zene-csatorna: ${musicChannel}` });
         }
 
-        if (subCommand === "kikapcsolás") {
+        if (subCommand === "törlés") {
             if (musicChannelData) {
                 await musicChannelSchema.findOneAndDelete({ Guild: interaction.guild.id });
                 

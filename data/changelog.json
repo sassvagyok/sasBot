@@ -58,5 +58,10 @@
         "version": "3.1.0",
         "date": 1777820047,
         "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Lockdown/Unlockdown`: mostantól megadható indok\n- A lejárt moderációk pontosabban vannak kezelve\n\n**🤖 Információs-parancsok**\n-# Javítás:\n- `Help részletes`: a paraméterek tördelésének hiánya javítva"
+    },
+    {
+        "version": "3.3.0",
+        "date": 1778985162,
+        "changelog": "**⌨️ Konfigurációs-parancsok**\n-# Változás:\n- `Farewell/Welcome`:\n   - az új `bekapcsolás` alparanccsal lehet be-/kikapcsolni az üzenet küldését\n  - `kikapcsolás` -> `törlés`: beállított üzenet törlése\n- `Saveroles bekapcsolás`: `átállítás` helyett egyértelműbb be-/kikapcsolás\n- `Membercounter/Permissions/Zenecsatorna`: az alparancsok egyértelműbben leírják, mit csinálnak"
     }
 ]

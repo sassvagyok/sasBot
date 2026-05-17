@@ -68,11 +68,11 @@ export default {
                     type: ApplicationCommandOptionType.Boolean,
                     required: false
                 }
-            ]  
+            ]
         },
         {
-            name: "kikapcsolás",
-            description: "Búcsúüzenet kikapcsolása",
+            name: "törlés",
+            description: "Beállított búcsúüzenet törlése",
             type: ApplicationCommandOptionType.Subcommand
         },
         {
@@ -84,7 +84,20 @@ export default {
             name: "súgó",
             description: "Segítség a paraméterek jelentéséhez",
             type: ApplicationCommandOptionType.Subcommand
-        }
+        },
+        {
+            name: "bekapcsolás",
+            description: "Beállított búcsúüzenet küldésének be-/kikapcsolása törlés nélkül",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "állapot",
+                    description: "Be legyen kapcsolva a búcsúüzenet küldése?",
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: true
+                }
+            ]
+        },
     ],
     run: async (client, interaction) => {
 
@@ -98,6 +111,7 @@ export default {
         const color = interaction.options.getString("szín");
         const icon = interaction.options.getBoolean("ikon");
         const timestamp = interaction.options.getBoolean("timestamp");
+        const enable = interaction.options.getBoolean("állapot");
 
         const createEmbed = (description, title, header, thumbnail, color, icon, timestamp) => {
             const replacedDescription = description?.replace("[tag]", interaction.user.username);
@@ -153,16 +167,25 @@ export default {
             }
         }
 
-        if (subCommand === "kikapcsolás") {
+        if (subCommand === "bekapcsolás") {
+            if (farewellData) {
+                farewellData.Enabled = enable;
+                await farewellData.save();
+
+                return interaction.reply({ content: `Búcsúüzenet küldése ${enable ? "bekapcsolva" : "kikapcsolva"}` });
+            } else return interaction.reply({ content: "Nincs beállítva búcsúüzenet!", flags: MessageFlags.Ephemeral });
+        }
+
+        if (subCommand === "törlés") {
             if (farewellData) {
                 await farewellSchema.findOneAndDelete({ Guild: interaction.guild.id });
 
-                return interaction.reply({ content: "Búcsúüzenet kikapcsolva" });
+                return interaction.reply({ content: "Búcsúüzenet törölve" });
             } else return interaction.reply({ content: "Nincs beállítva búcsúüzenet!", flags: MessageFlags.Ephemeral });
         }
 
         if (subCommand === "beállított") {
-            if (farewellData) return interaction.reply({ content: `Beállított búcsúüzenet itt: <#${farewellData.Channel}>:\n`, embeds: [createEmbed(farewellData.Description, farewellData.Title, farewellData.AuthorText, farewellData.Thumbnail, farewellData.Color, farewellData.Icon, farewellData.Timestamp)] });
+            if (farewellData) return interaction.reply({ content: `Beállított búcsúüzenet itt: <#${farewellData.Channel}> (küldés ${farewellData.Enabled ? "bekapcsolva" : "kikapcsolva"}):\n`, embeds: [createEmbed(farewellData.Description, farewellData.Title, farewellData.AuthorText, farewellData.Thumbnail, farewellData.Color, farewellData.Icon, farewellData.Timestamp)] });
             else return interaction.reply({ content: "Nincs beállítva búcsúüzenet!", flags: MessageFlags.Ephemeral });
         }
 

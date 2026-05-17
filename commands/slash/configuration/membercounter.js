@@ -23,8 +23,8 @@ export default {
             ]
         },
         {
-            name: "kikapcsolás",
-            description: "Tagok számlálásának kikapcsolása (csatorna törlése nélkül)",
+            name: "törlés",
+            description: "Beállított tagszámlálás törlése (csatorna törlése nélkül)",
             type: ApplicationCommandOptionType.Subcommand
         }
     ],
@@ -75,11 +75,11 @@ export default {
             }
         }
 
-        if (subCommand === "kikapcsolás") {
+        if (subCommand === "törlés") {
             if (membercounterData) {
                 await membercounterSchema.findOneAndDelete({ Guild: interaction.guild.id });
 
-                interaction.reply({ content: "Tagszámlálás kikapcsolva" });
+                interaction.reply({ content: "Tagszámlálás törölve" });
             } else interaction.reply({ content: "Nincs beállított tagszámláló csatorna!", flags: MessageFlags.Ephemeral });
         }
     }

@@ -49,6 +49,7 @@ export default {
         const sendWelcomeMessage = async () => {
             const welcomeData = await welcomeSchema.findOne({ Guild: guildMember.guild.id });
             if (!welcomeData) return;
+            if (!welcomeData.Enabled) return;
             const channel = guildMember.guild.channels.cache.get(welcomeData.Channel);
             if (!channel) return;
             if (!channel.permissionsFor(guildMember.guild.members.me).has(PermissionFlagsBits.ViewChannel && PermissionFlagsBits.SendMessages && PermissionFlagsBits.EmbedLinks)) return;
@@ -62,7 +63,7 @@ export default {
     
             if (welcomeData.Title) welcomeEmbed.setTitle(replacedTitle);
             welcomeEmbed.setThumbnail(welcomeData.Thumbnail ? welcomeData.Thumbnail : guildMember.displayAvatarURL({ extension: "png", size: 1024, dynamic: true }));
-            welcomeEmbed.setColor(welcomeData.Color ? welcomeData.Color : "#E2162E");
+            welcomeEmbed.setColor(welcomeData.Color ? welcomeData.Color : "#17BC0F");
             if (welcomeData.Timestamp) welcomeEmbed.setTimestamp();
             if (welcomeData.Icon) welcomeEmbed.setAuthor({ name: welcomeData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!`, iconURL: guildMember.user.displayAvatarURL() });
             else welcomeEmbed.setAuthor({ name: welcomeData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!` });

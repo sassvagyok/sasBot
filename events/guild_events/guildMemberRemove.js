@@ -32,6 +32,7 @@ export default {
         const sendFarewellMessage = async () => {
             const farewellData = await farewellSchema.findOne({ Guild: guildMember.guild.id });
             if (!farewellData) return;
+            if (!farewellData.Enabled) return;
             const channel = guildMember.guild.channels.cache.get(farewellData.Channel);
             if (!channel) return;
             if (!channel.permissionsFor(guildMember.guild.members.me).has(PermissionFlagsBits.ViewChannel && PermissionFlagsBits.SendMessages && PermissionFlagsBits.EmbedLinks)) return;
@@ -45,7 +46,7 @@ export default {
     
             if (farewellData.Title) farewellEmbed.setTitle(replacedTitle);
             farewellEmbed.setThumbnail(farewellData.Thumbnail ? farewellData.Thumbnail : guildMember.displayAvatarURL({ extension: "png", size: 1024, dynamic: true }));
-            farewellEmbed.setColor(farewellData.Color ? farewellData.Color : "#17BC0F");
+            farewellEmbed.setColor(farewellData.Color ? farewellData.Color : "#E2162E" );
             if (farewellData.Timestamp) farewellEmbed.setTimestamp();
             if (farewellData.Icon) farewellEmbed.setAuthor({ name: farewellData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!`, iconURL: guildMember.user.displayAvatarURL() });
             else farewellEmbed.setAuthor({ name: farewellData.AuthorText ? replacedHeader : `${guildMember.user.username} kilépett!` });

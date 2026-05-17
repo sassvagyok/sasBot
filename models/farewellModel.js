@@ -9,5 +9,6 @@ export default model('farewell-v2', new Schema({
     Color: String,
     Thumbnail: String,
     Icon: Boolean,
-    Timestamp: Boolean
+    Timestamp: Boolean,
+    Enabled: { type: Boolean, default: true }
 }));

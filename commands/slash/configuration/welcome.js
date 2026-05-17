@@ -71,8 +71,8 @@ export default {
             ]  
         },
         {
-            name: "kikapcsolás",
-            description: "Üdvözlő üzenet kikapcsolása",
+            name: "törlés",
+            description: "Beállított üdvözlő üzenet kikapcsolása",
             type: ApplicationCommandOptionType.Subcommand
         },
         {
@@ -84,7 +84,20 @@ export default {
             name: "súgó",
             description: "Segítség a paraméterek jelentéséhez",
             type: ApplicationCommandOptionType.Subcommand
-        }
+        },
+        {
+            name: "bekapcsolás",
+            description: "Beállított üdvözlő üzenet küldésének be-/kikapcsolása törlés nélkül",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "állapot",
+                    description: "Be legyen kapcsolva az üdvözlő üzenet küldése?",
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: true
+                }
+            ]
+        },
     ],
     run: async (client, interaction) => {
 
@@ -98,6 +111,7 @@ export default {
         const color = interaction.options.getString("szín");
         const icon = interaction.options.getBoolean("ikon");
         const timestamp = interaction.options.getBoolean("timestamp");
+        const enable = interaction.options.getBoolean("állapot");
 
         const createEmbed = (description, title, header, thumbnail, color, icon, timestamp) => {
             const replacedDescription = description?.replace("[tag]", interaction.user.username);
@@ -153,16 +167,25 @@ export default {
             }
         }
 
-        if (subCommand === "kikapcsolás") {
+        if (subCommand === "bekapcsolás") {
+            if (welcomeData) {
+                welcomeData.Enabled = enable;
+                await welcomeData.save();
+
+                return interaction.reply({ content: `Üdvözlő üzenet küldése ${enable ? "bekapcsolva" : "kikapcsolva"}` });
+            } else return interaction.reply({ content: "Nincs beállítva üdvözlő üznet!", flags: MessageFlags.Ephemeral });
+        }
+
+        if (subCommand === "törlés") {
             if (welcomeData) {
                 await welcomeSchema.findOneAndDelete({ Guild: interaction.guild.id });
 
-                return interaction.reply({ content: "Üdvözlő üzenet kikapcsolva" });
+                return interaction.reply({ content: "Üdvözlő üzenet törölve" });
             } else return interaction.reply({ content: "Nincs beállítva üdvözlő üzenet!", flags: MessageFlags.Ephemeral });
         }
 
         if (subCommand === "beállított") {
-            if (welcomeData) return interaction.reply({ content: `Beállított üdvözlő üzenet itt: <#${welcomeData.Channel}>:\n`, embeds: [createEmbed(welcomeData.Description, welcomeData.Title, welcomeData.AuthorText, welcomeData.Thumbnail, welcomeData.Color, welcomeData.Icon, welcomeData.Timestamp)] });
+            if (welcomeData) return interaction.reply({ content: `Beállított üdvözlő üzenet itt: <#${welcomeData.Channel}> (küldés ${welcomeData.Enabled ? "bekapcsolva" : "kikapcsolva"}):\n`, embeds: [createEmbed(welcomeData.Description, welcomeData.Title, welcomeData.AuthorText, welcomeData.Thumbnail, welcomeData.Color, welcomeData.Icon, welcomeData.Timestamp)] });
             else return interaction.reply({ content: "Nincs beállítva üdvözlő üzenet!", flags: MessageFlags.Ephemeral });
         }
 

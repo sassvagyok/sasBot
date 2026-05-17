@@ -1,4 +1,4 @@
-import { PermissionFlagsBits, ApplicationCommandOptionType } from "discord.js";
+import { PermissionFlagsBits, ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import saverolesSchema from "../../../models/saveroleModel.js";
 
 export default {
@@ -9,9 +9,17 @@ export default {
     permission: PermissionFlagsBits.Administrator,
     options: [
         {
-            name: "átállítás",
-            description: "Tagok rangjának megjegyzésének állítása",
-            type: ApplicationCommandOptionType.Subcommand
+            name: "bekapcsolás",
+            description: "Tagok rangjának megjegyzésének be-/kikapcsolása",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "állapot",
+                    description: "Be legyen kapcsolva a rangok megjegyzése?",
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: true
+                }
+            ]
         },
         {
             name: "állapot",
@@ -23,19 +31,27 @@ export default {
 
         const saveroleData = await saverolesSchema.findOne({ Guild: interaction.guild.id });
         const subCommand = interaction.options.getSubcommand();
+        const enable = interaction.options.getBoolean("állapot");
 
-        if (subCommand === "átállítás") {
-            if (!saveroleData) {
-                const newData = new saverolesSchema({
-                    Guild: interaction.guild.id
-                });
-                await newData.save();
-    
-                interaction.reply({ content: "Rangok megjegyzése bekapcsolva" });
+        if (subCommand === "bekapcsolás") {
+            if (enable) {
+                if (!saveroleData) {
+                    const newData = new saverolesSchema({
+                        Guild: interaction.guild.id
+                    });
+                    await newData.save();
+        
+                    interaction.reply({ content: "Rangok megjegyzése bekapcsolva" });
+                } else {
+                    interaction.reply({ content: "A rangok megjegyzése már be van kapcsolva!", flags: MessageFlags.Ephemeral });
+                }
             } else {
-                await saverolesSchema.findOneAndDelete({ Guild: interaction.guild.id });
-    
-                interaction.reply({ content: "Rangok megjegyzése kikapcsolva" });
+                if (!saveroleData) {
+                    interaction.reply({ content: "A rangok megjegyzése már ki van kapcsolva!", flags: MessageFlags.Ephemeral });
+                } else {
+                    await saverolesSchema.findOneAndDelete({ Guild: interaction.guild.id });
+                    interaction.reply({ content: "Rangok megjegyzése kikapcsolva" });
+                }
             }
         }
 

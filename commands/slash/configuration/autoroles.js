@@ -91,7 +91,7 @@ export default {
                     interaction.reply({ content: `\`${autoRoleName}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
                 }
             } else {
-                interaction.reply({ content: `\`${autoRoleName}\` nincs hozzáadva az automatikus rangokhoz!`, flags: MessageFlags.Ephemeral });
+                interaction.reply({ content: "Nincs egy rang sem automatikus rangként beállítva!", flags: MessageFlags.Ephemeral });
             }
         }
 
