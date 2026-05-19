@@ -67,31 +67,24 @@ export default {
                 await newData.save();
             }
 
+            const warnEntry = {
+                Number: count,
+                Target: target,
+                Type: "Warn",
+                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                Author: interaction.member,
+                Reason: reason
+            };
+
             if (!userModerationData) {
                 const newData = new userModerationSchema({
                     Guild: interaction.guild.id,
                     User: target.id,
-                    Warns: [
-                        {
-                            Number: count,
-                            Target: target,
-                            Type: "Warn",
-                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                            Author: interaction.member,
-                            Reason: reason
-                        }
-                    ]
+                    Warns: [warnEntry]
                 });
                 await newData.save();
             } else {
-                userModerationData.Warns.push({
-                    Number: count,
-                    Target: target,
-                    Type: "Warn",
-                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                    Author: interaction.member,
-                    Reason: reason
-                });
+                userModerationData.Warns.push(warnEntry);
                 await userModerationData.save();
             }
 

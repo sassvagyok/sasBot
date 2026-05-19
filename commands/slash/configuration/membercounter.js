@@ -46,7 +46,7 @@ export default {
                 await membercounterSchema.findOneAndUpdate({ Guild: interaction.guild.id }, { Name: channelName });
                 interaction.reply({ content: "Tagszámláló csatorna átnevezve" });
             } else {
-                if (membercounterData) await membercounterSchema.findOneAndDelete({ Guild: interaction.guild.id });
+                await membercounterSchema.findOneAndDelete({ Guild: interaction.guild.id });
     
                 const channel = await interaction.guild.channels.create({
                     name: formattedChannelName,

@@ -15,31 +15,60 @@ export default {
     permission: PermissionFlagsBits.ManageChannels,
     options: [
         {
-            name: "csatorna",
-            description: "Csatorna, amit le akarsz zárni (üres: jelenlegi csatorna)",
-            type: ApplicationCommandOptionType.Channel,
-            channelTypes: [ChannelType.GuildText],
-            required: false
+            name: "végleges",
+            description: "Tag kitiltása lejárat nélkül",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "csatorna",
+                    description: "Csatorna, amit le akarsz zárni (üres: jelenlegi csatorna)",
+                    type: ApplicationCommandOptionType.Channel,
+                    channelTypes: [ChannelType.GuildText],
+                    required: false
+                },
+                {
+                    name: "indok",
+                    description: "Lezárás indoka (üres: nincs indok)",
+                    type: ApplicationCommandOptionType.String,
+                    required: false,
+                    maxLength: 250
+                }
+            ]
         },
         {
-            name: "időtartam",
-            description: "Lezárás időtartama (m/h/d) (üres: nincs lejárat)",
-            type: ApplicationCommandOptionType.String,
-            required: false,
-            maxLength: 100
-        },
-        {
-            name: "indok",
-            description: "Lezárás indoka (üres: nincs indok)",
-            type: ApplicationCommandOptionType.String,
-            required: false,
-            maxLength: 250
+            name: "ideiglenes",
+            description: "Tag kitiltása megadott időre",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "időtartam",
+                    description: "Lezárás időtartama (m/h/d)",
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    maxLength: 100
+                },
+                {
+                    name: "csatorna",
+                    description: "Csatorna, amit le akarsz zárni (üres: jelenlegi csatorna)",
+                    type: ApplicationCommandOptionType.Channel,
+                    channelTypes: [ChannelType.GuildText],
+                    required: false
+                },
+                {
+                    name: "indok",
+                    description: "Lezárás indoka (üres: nincs indok)",
+                    type: ApplicationCommandOptionType.String,
+                    required: false,
+                    maxLength: 250
+                }
+            ]
         }
     ],
     run: async (client, interaction) => {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return interaction.reply({ content: "Nincs jogom ehhez: \`Manage Roles\`!", flags: MessageFlags.Ephemeral });
         
+        const subCommand = interaction.options.getSubcommand();
         const userAuthor = interaction.member;
         const lockdownDuration = interaction.options.getString("időtartam")?.split(" ")[0];
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;
@@ -75,39 +104,39 @@ export default {
             if (logChannel && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ViewChannel) && !logChannel?.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.SendMessages)) return;
             logChannel?.send({ components: [lockdownContainer], flags: MessageFlags.IsComponentsV2 });
         }
-        
-        if (!lockdownDuration) {
+
+        if (subCommand === "végleges") {
             if (reason) lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Indok:** \`${reason}\``));
 
             lockdownAndSend();
         }
-        else {
+
+        if (subCommand === "ideiglenes") {
             if (lockdownDuration === parseInt(lockdownDuration) + "m" || lockdownDuration === parseInt(lockdownDuration) + "h" || lockdownDuration === parseInt(lockdownDuration) + "d") {
                 if (lockdownDuration.match(/\d+/)[0] > 2592000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
                 if (parseInt(ms(lockdownDuration), 10) > 2592000000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
+            } else return interaction.reply({ content: "Megadható időtartamok: `m/h/d`", flags: MessageFlags.Ephemeral });
 
-                const lockdownData = lockdownSchema.findOne({ Guild: interaction.guild.id, Channel: textChannel });
-                if (lockdownData) await lockdownSchema.findOneAndDelete({ Guild: interaction.guild.id, Channel: textChannel });
+            await lockdownSchema.findOneAndDelete({ Guild: interaction.guild.id, Channel: textChannel });
 
-                let duration = moment.duration(ms(lockdownDuration));
-                let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {
-                    trim: "all"
-                });
-        
-                new lockdownSchema({
-                    Guild: interaction.guild.id,
-                    Channel: textChannel.id,
-                    Author: interaction.member.id,
-                    Length: formattedDuration,
-                    Start: new Date(),
-                    End: moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).toDate(),
-                    Reason: reason || null
-                }).save();
+            let duration = moment.duration(ms(lockdownDuration));
+            let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {
+                trim: "all"
+            });
+    
+            new lockdownSchema({
+                Guild: interaction.guild.id,
+                Channel: textChannel.id,
+                Author: interaction.member.id,
+                Length: formattedDuration,
+                Start: new Date(),
+                End: moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).toDate(),
+                Reason: reason || null
+            }).save();
 
-                lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`));
+            lockdownContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Lejárat:** \`${moment().add(parseInt(lockdownDuration.slice(0, -1)), lockdownDuration.slice(-1)).format("YYYY/MM/DD HH:mm")} (${formattedDuration})\`${reason ? `\n- **Indok:** \`${reason}\`` : ""}`));
 
-                lockdownAndSend();
-            } else return interaction.reply({ content: "Megadható időtartamok: `m/h/d`" });
+            lockdownAndSend();
         }
     }
 }

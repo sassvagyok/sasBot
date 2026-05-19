@@ -84,33 +84,25 @@ export default {
                 await newData.save();
             }
 
+            const timeoutEntry = {
+                Number: count,
+                Target: target,
+                Type: "Timeout",
+                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                Author: interaction.member,
+                Length: timeoutDuration,
+                Reason: reason || null
+            };
+
             if (!userModerationData) {
                 const newData = new userModerationSchema({
                     Guild: interaction.guild.id,
                     User: target.id,
-                    Timeouts: [
-                        {
-                            Number: count,
-                            Target: target,
-                            Type: "Timeout",
-                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                            Author: interaction.member,
-                            Length: timeoutDuration,
-                            Reason: reason ? reason : null
-                        }
-                    ]
+                    Timeouts: [timeoutEntry]
                 });
                 await newData.save();
             } else {
-                userModerationData.Timeouts.push({
-                    Number: count,
-                    Target: target,
-                    Type: "Timeout",
-                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                    Author: interaction.member,
-                    Length: timeoutDuration,
-                    Reason: reason ? reason : null
-                });
+                userModerationData.Timeouts.push(timeoutEntry);
                 await userModerationData.save();
             }
 
@@ -148,8 +140,7 @@ export default {
             trim: "all"
         });
 
-        const timeoutData = await timeoutSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-        if (timeoutData) await timeoutSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
+        await timeoutSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
 
         new timeoutSchema({
             Guild: interaction.guild.id,

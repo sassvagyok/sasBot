@@ -17,38 +17,74 @@ export default {
     permission: PermissionFlagsBits.BanMembers,
     options: [
         {
-            name: "tag",
-            description: "Tag, akit ki akarsz tiltani",
-            type: ApplicationCommandOptionType.User,
-            required: true
+            name: "végleges",
+            description: "Tag kitiltása lejárat nélkül",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "tag",
+                    description: "Tag, akit ki akarsz tiltani",
+                    type: ApplicationCommandOptionType.User,
+                    required: true
+                },
+                {
+                    name: "indok",
+                    description: "Kitiltás indoka (üres: nincs indok)",
+                    type: ApplicationCommandOptionType.String,
+                    required: false,
+                    maxLength: 250
+                },
+                {
+                    name: "törlés",
+                    description: "A tag üzeneteinek törlése ennyi órával visszamenőleg (üres: nincs törlés)",
+                    type: ApplicationCommandOptionType.Number,
+                    required: false,
+                    minValue: 1,
+                    maxValue: 168
+                }
+            ]
         },
         {
-            name: "indok",
-            description: "Kitiltás indoka (üres: nincs indok)",
-            type: ApplicationCommandOptionType.String,
-            required: false,
-            maxLength: 250
-        },
-        {
-            name: "időtartam",
-            description: "Kitiltás időtartama (m/h/d) (üres: nincs lejárat)",
-            type: ApplicationCommandOptionType.String,
-            required: false,
-            maxLength: 100
-        },
-        {
-            name: "törlés",
-            description: "A tag üzeneteinek törlése ennyi órával visszamenőleg (üres: nincs törlés)",
-            type: ApplicationCommandOptionType.Number,
-            required: false,
-            minValue: 1,
-            maxValue: 168
+            name: "ideiglenes",
+            description: "Tag kitiltása megadott időre",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "tag",
+                    description: "Tag, akit ki akarsz tiltani",
+                    type: ApplicationCommandOptionType.User,
+                    required: true
+                },
+                {
+                    name: "időtartam",
+                    description: "Kitiltás időtartama (m/h/d)",
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    maxLength: 100
+                },
+                {
+                    name: "indok",
+                    description: "Kitiltás indoka (üres: nincs indok)",
+                    type: ApplicationCommandOptionType.String,
+                    required: false,
+                    maxLength: 250
+                },
+                {
+                    name: "törlés",
+                    description: "A tag üzeneteinek törlése ennyi órával visszamenőleg (üres: nincs törlés)",
+                    type: ApplicationCommandOptionType.Number,
+                    required: false,
+                    minValue: 1,
+                    maxValue: 168
+                }
+            ]
         }
     ],
     run: async (client, interaction) => {
 
         if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: "Nincs jogom ehhez: \`Ban Members\`!", flags: MessageFlags.Ephemeral });
         
+        const subCommand = interaction.options.getSubcommand();
         const target = interaction.options.getUser("tag");
         const reason = interaction.options.getString("indok");
         const banDuration = interaction.options.getString("időtartam");
@@ -56,13 +92,6 @@ export default {
         const memberTarget = interaction.guild.members.cache.get(target.id) || await interaction.guild.members.fetch(target.id).catch(err => {});
 
         if (!memberTarget) return interaction.reply({ content: "A megadott tag nem található!", flags: MessageFlags.Ephemeral });
-
-        if (banDuration) {
-            if (banDuration === parseInt(banDuration) + "m" || banDuration === parseInt(banDuration) + "h" || banDuration === parseInt(banDuration) + "d") {
-                if (banDuration.match(/\d+/)[0] > 2592000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
-                if (parseInt(ms(banDuration), 10) > 2592000000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
-            } else return interaction.reply({ content: "Megadható időtartamok: `m/h/d`", flags: MessageFlags.Ephemeral });
-        }
 
         const userAuthor = interaction.member;
 
@@ -94,33 +123,25 @@ export default {
                 await newData.save();
             }
 
+            const banEntry = {
+                Number: count,
+                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                Target: target,
+                Author: interaction.member,
+                Type: "Ban",
+                Reason: reason || null,
+                Length: banDuration || null
+            };
+
             if (!userModerationData) {
                 const newData = new userModerationSchema({
                     Guild: interaction.guild.id,
                     User: target.id,
-                    Bans: [
-                        {
-                            Number: count,
-                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                            Target: target,
-                            Author: interaction.member,
-                            Type: "Ban",
-                            Reason: reason ? reason : null,
-                            Length: banDuration ? banDuration : null
-                        }
-                    ]
+                    Bans: [banEntry]
                 });
                 await newData.save();
             } else {
-                userModerationData.Bans.push({
-                    Number: count,
-                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                    Target: target,
-                    Author: interaction.member,
-                    Type: "Ban",
-                    Reason: reason ? reason : null,
-                    Length: banDuration ? banDuration : null
-                });
+                userModerationData.Bans.push(banEntry);
                 await userModerationData.save();
             }
 
@@ -152,7 +173,7 @@ export default {
             } catch(err){}
         }
 
-        if (!banDuration) {
+        if (subCommand === "végleges") {
             banContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`` : ""}${remove !== 0 ? `\n- Üzenetek törölve ${remove / 3600} órával visszamelőleg` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltása`));
             dmContainer.addTextDisplayComponents(new TextDisplayBuilder().setContent(`${reason ? `- **Indok:** \`${reason}\`` : ""}\n> Ez a(z) **${userModerationData.Bans.length}.** kitiltásod`));
 
@@ -162,9 +183,15 @@ export default {
                 reason: `${reason ? `Indok: ${reason} - `: ""}${userAuthor.user.username}`,
                 deleteMessageSeconds: remove
             });
-        } else {
-            const banData = await banLogSchema.findOne({ Guild: interaction.guild.id, User: target.id });
-            if (banData) await banLogSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
+        }
+
+        if (subCommand === "ideiglenes") {
+            if (banDuration === parseInt(banDuration) + "m" || banDuration === parseInt(banDuration) + "h" || banDuration === parseInt(banDuration) + "d") {
+                if (banDuration.match(/\d+/)[0] > 2592000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
+                if (parseInt(ms(banDuration), 10) > 2592000000) return interaction.reply({ content: "A maximum időtartam 30 nap!", flags: MessageFlags.Ephemeral });
+            } else return interaction.reply({ content: "Megadható időtartamok: `m/h/d`", flags: MessageFlags.Ephemeral });
+
+            await banLogSchema.findOneAndDelete({ Guild: interaction.guild.id, User: target.id });
 
             let duration = moment.duration(ms(banDuration));
             let formattedDuration = duration.format("M [hónap] W [hét] D [nap] H [óra] m [perc]", {

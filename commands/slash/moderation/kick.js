@@ -68,31 +68,24 @@ export default {
                 await newData.save();
             }
 
+            const kickEntry = {
+                Number: count,
+                Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
+                Target: target,
+                Author: interaction.member,
+                Type: "Kick",
+                Reason: reason || null
+            };
+
             if (!userModerationData) {
                 const newData = new userModerationSchema({
                     Guild: interaction.guild.id,
                     User: target.id,
-                    Kicks: [
-                        {
-                            Number: count,
-                            Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                            Target: target,
-                            Author: interaction.member,
-                            Type: "Kick",
-                            Reason: reason ? reason : null
-                        }
-                    ]
+                    Kicks: [kickEntry]
                 });
                 await newData.save();
             } else {
-                userModerationData.Kicks.push({
-                    Number: count,
-                    Date: moment().tz("Europe/Budapest").format("YYYY/MM/DD HH:mm"),
-                    Target: target,
-                    Author: interaction.member,
-                    Type: "Kick",
-                    Reason: reason ? reason : null
-                });
+                userModerationData.Kicks.push(kickEntry);
                 await userModerationData.save();
             }
 
