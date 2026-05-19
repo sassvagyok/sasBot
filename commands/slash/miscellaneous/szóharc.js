@@ -50,6 +50,10 @@ export default {
 
         const format = new Intl.NumberFormat("hu-HU", { useGrouping: true, minimumGroupingDigits: 1 });
         const multiplier = client.config.szoharcSaspontMultiplier || 5;
+        const recentWordsNotAllowedFor = client.config.szoharcRecentWordsNotAllowedFor || 10;
+        const scoreForRepeatingCharacters = client.config.szoharcScoreForRepeatingCharacters || 5;
+        const scoreForRareCharacters = client.config.szoharcScoreForRareCharacters || 10;
+        const multiplierForDailyWord = client.config.szoharcMultiplierForDailyWord || 2;
 
         if (subCommand === "súgó") {
             const ruleContainer = new ContainerBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent("### Játékmenet\n- Adj meg egy tetszőleges szót, majd sasBot is kiválaszt egyet\n- A szavakra pontok kaphatóak, az nyer, akinek több pontja lesz!\n### Pontozás\n- a szó karakterhosszával megegyező pont\n- `+5` pont ismétlődő betűnként\n- `+10` pont ritka karakter használatáért\n- `*2` a kitalált nap szava használatáért"));
@@ -60,10 +64,11 @@ export default {
         if (subCommand === "játék") {
             if (!allWords.includes(userWord)) return interaction.reply({ content: "Létező szót adj meg!", flags: MessageFlags.Ephemeral });
 
+            szoharcData.RecentWords = szoharcData.RecentWords.slice(-recentWordsNotAllowedFor);
             if (szoharcData.RecentWords.includes(userWord)) return interaction.reply({ content: "Ezzel a szóval nemrég játszottál! Játssz valami mással!", flags: MessageFlags.Ephemeral });
 
             szoharcData.RecentWords.push(userWord);
-            if (szoharcData.RecentWords.length > 10) szoharcData.RecentWords.shift();
+            szoharcData.RecentWords = szoharcData.RecentWords.slice(-recentWordsNotAllowedFor);
             await szoharcData.save();
 
             const sameCharacters = (str) => {
@@ -71,7 +76,7 @@ export default {
                 let sameCharScore = 0;
 
                 for (let char of str) {
-                    if (chars.includes(char)) sameCharScore += 5;
+                    if (chars.includes(char)) sameCharScore += scoreForRepeatingCharacters;
                     else chars.push(char);
                 }
 
@@ -83,14 +88,14 @@ export default {
                 let specCharScore = 0;
                 const hasSpecChar = specChars.some(elem => str.includes(elem));
 
-                hasSpecChar ? specCharScore = 10 : 0;
+                hasSpecChar ? specCharScore = scoreForRareCharacters : 0;
 
                 return specCharScore;
             }
 
             const isWordOfTheDay = (str) => {
                 if (!userOtbetuData) return 1;
-                if (dailyOtbetuData.Word === str && userOtbetuData.Today.Guessed) return 2;
+                if (dailyOtbetuData.Word === str && userOtbetuData.Today.Guessed) return multiplierForDailyWord;
 
                 return 1;
             }
