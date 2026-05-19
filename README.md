@@ -105,6 +105,10 @@ npm run dev
   - `otbetuSaspontBase`: Ötbetű sasPontok alapja
   - `commandSaspontGain`: kapott sasPontok parancs használata után
   - `maxCustomCommands`: maximum hozzáadható egyedi parancsok száma
+  - `szoharcRecentWordsNotAllowedFor`: hány játékig nem játszható ugyanaz a szó Szóharcban
+  - `szoharcScoreForRepeatingCharacters`: ismétlődő karakterekért kapott pont Szóharcban
+  - `szoharcScoreForRareCharacters`: ritka karakterekért kapott pont Szóharcban,
+  - `szoharcMultiplierForDailyWord`: kitalált szóért kapott szorzó Szóharcban
 
 <details>
 <summary>Alapértelmezett konfiguráció</summary>
@@ -120,7 +124,11 @@ npm run dev
     "szoharcSaspontMultiplier": 5,
     "otbetuSaspontBase": 500,
     "commandSaspontGain": 25,
-    "maxCustomCommands": 50
+    "maxCustomCommands": 50,
+    "szoharcRecentWordsNotAllowedFor": 10,
+    "szoharcScoreForRepeatingCharacters": 5,
+    "szoharcScoreForRareCharacters": 10,
+    "szoharcMultiplierForDailyWord": 2
 }
 ```
 
