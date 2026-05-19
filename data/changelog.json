@@ -63,5 +63,10 @@
         "version": "3.3.0",
         "date": 1778985162,
         "changelog": "**⌨️ Konfigurációs-parancsok**\n-# Változás:\n- `Farewell/Welcome`:\n   - az új `bekapcsolás` alparanccsal lehet be-/kikapcsolni az üzenet küldését\n  - `kikapcsolás` -> `törlés`: beállított üzenet törlése\n- `Saveroles bekapcsolás`: `átállítás` helyett egyértelműbb be-/kikapcsolás\n- `Membercounter/Permissions/Zenecsatorna`: az alparancsok egyértelműbben leírják, mit csinálnak"
+    },
+    {
+        "version": "3.4.0",
+        "date": 1779152072,
+        "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Lockdown`: könnyebb átláthatóság miatt `végleges` és `ideiglenes` alparancsokra bontás"
     }
 ]
