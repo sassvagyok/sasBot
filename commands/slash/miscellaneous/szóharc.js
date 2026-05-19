@@ -56,7 +56,7 @@ export default {
         const multiplierForDailyWord = client.config.szoharcMultiplierForDailyWord || 2;
 
         if (subCommand === "súgó") {
-            const ruleContainer = new ContainerBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent("### Játékmenet\n- Adj meg egy tetszőleges szót, majd sasBot is kiválaszt egyet\n- A szavakra pontok kaphatóak, az nyer, akinek több pontja lesz!\n### Pontozás\n- a szó karakterhosszával megegyező pont\n- `+5` pont ismétlődő betűnként\n- `+10` pont ritka karakter használatáért\n- `*2` a kitalált nap szava használatáért"));
+            const ruleContainer = new ContainerBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Játékmenet\n- Adj meg egy tetszőleges szót, majd sasBot is kiválaszt egyet\n- A szavakra pontok kaphatóak, az nyer, akinek több pontja lesz!\n### Pontozás\n- a szó karakterhosszával megegyező pont\n- \`+${scoreForRepeatingCharacters}\` pont ismétlődő betűnként\n- \`+${scoreForRareCharacters}\` pont ritka karakter használatáért\n- \`*${multiplierForDailyWord}\` a kitalált nap szava használatáért`));
 
             return interaction.reply({ components: [ruleContainer], flags: MessageFlags.IsComponentsV2 });
         }
