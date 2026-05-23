@@ -185,8 +185,10 @@ export default {
                 const djRoleData = await djRoleSchema.findOne({ Guild: i.guild.id });
                 const musicChannelData = await musicChannelSchema.findOne({ Guild: i.guild.id });
 
-                if (musicChannelData && musicChannelData.Channel !== i.channel.id) return i.reply({ content: `Ebben a csatornában nem használhatóak a zene parancsok! (<#${musicChannelData.Channel}>)`, flags: MessageFlags.Ephemeral });
-            
+                if (musicChannelData && musicChannelData.Channel !== i.channel.id && !i.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                    return i.reply({ content: `Ebben a csatornában nem használhatóak a zene parancsok!\nZenecsatorna: <#${musicChannelData.Channel}>`, flags: MessageFlags.Ephemeral });
+                }
+
                 if (djRoleData && !i.member.roles.cache.has(djRoleData.Role)) {
                     const rang = i.guild.roles.cache.get(djRoleData.Role);
                     return i.reply({ content: `A parancs használatához szükséged van DJ rangra (${rang.name})!`, flags: MessageFlags.Ephemeral });

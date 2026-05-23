@@ -9,7 +9,7 @@ export default {
 
         const errorContainer = new ContainerBuilder()
         .setAccentColor(0xe2162e)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Hiba történt!\n- Ha nem működik a YouTube lejátszás, használj másik forrást!\n- Más esetben keresd fel a [Support Szervert](https://discord.gg/s8XtzBasQF)!"));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Hiba történt!\n- Csak Soundcloud zene lejátszás elérhető!"));
 
         await queue.textChannel.send({ components: [errorContainer], flags: MessageFlags.IsComponentsV2 });
     }

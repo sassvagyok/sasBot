@@ -3,12 +3,12 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags } from 
 export default {
     name: "play",
     description: "Zenék indítása",
-    info: "Zene nevének, linkjének vagy lejátszási lista linkjének beírása után megadott zene lejátszása, több száz oldalról. (Szükséges hangcsatornához való csatlakozás)",
+    info: "Soundcloud zene vagy lejátszási lista linkjének beírása után annak lejátszása. (Szükséges hangcsatornához való csatlakozás)",
     dm_permission: false,
     options: [
         {
-            name: "zene",
-            description: "Zene neve, linkje vagy lejátszási lista linkje",
+            name: "link",
+            description: "Soundcloud zene vagy lejátszási lista linkje",
             type: ApplicationCommandOptionType.String,
             required: true,
             maxLength: 250
@@ -16,7 +16,7 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        const song = interaction.options.getString("zene");
+        const song = interaction.options.getString("link");
 
         if (!interaction.member.voice.channel) return interaction.reply({ content: "Lépj be egy hangcsatornába!", flags: MessageFlags.Ephemeral });
 
@@ -30,6 +30,19 @@ export default {
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        if (!isValidUrl(song)) {
+            return interaction.editReply("A megadott zene nem érvényes link!");
+        }
+
         try {
             await client.distube.play(interaction.member.voice.channel, song, {
                 voiceChannel: interaction.member.voice.channel,
@@ -39,6 +52,15 @@ export default {
         
             await interaction.editReply("`Hozzáadva!`");
         } catch (err) {
+            const queue = client.distube.getQueue(interaction.guild);
+            if (queue.songs.length === 0) {
+                client.distube.voices.leave(interaction.guild);
+            }
+
+            if (err.errorCode === "NOT_SUPPORTED_URL") {
+                return interaction.editReply("A megadott link nem játszható le!");
+            }
+
             return interaction.editReply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
         }
     }

@@ -1,9 +1,6 @@
 import { Client, Collection, GatewayIntentBits, Partials, ActivityType, MessageFlags, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 import { DisTube } from "distube";
-import { YouTubePlugin } from "@distube/youtube";
 import { SoundCloudPlugin } from "@distube/soundcloud";
-import { SpotifyPlugin } from "@distube/spotify";
-import { YtDlpPlugin } from "@distube/yt-dlp";
 import { readdirSync, statSync } from "fs";
 import { pathToFileURL } from "url";
 import config from "./config.json" with { type: "json" };
@@ -34,10 +31,7 @@ const client = new Client({
 
 const distube = new DisTube(client, {
     plugins: [
-        new YouTubePlugin(),
-        new SpotifyPlugin(),
-        new SoundCloudPlugin(),
-        new YtDlpPlugin()
+        new SoundCloudPlugin()
     ],
     emitNewSongOnly: false
 });

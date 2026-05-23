@@ -20,6 +20,19 @@ export default {
         if (!msg.content) return interaction.reply({ content: "A kijelölt üzenet nem tartalmaz zenét!", flags: MessageFlags.Ephemeral });
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        if (!isValidUrl(msg.content)) {
+            return interaction.editReply("A megadott zene nem érvényes link!");
+        }
         
         try {
             await client.distube.play(interaction.member.voice.channel, msg.content, {
@@ -29,6 +42,15 @@ export default {
         
             await interaction.editReply("`Hozzáadva!`");
         } catch (err) {
+            const queue = client.distube.getQueue(interaction.guild);
+            if (queue.songs.length === 0) {
+                client.distube.voices.leave(interaction.guild);
+            }
+
+            if (err.errorCode === "NOT_SUPPORTED_URL") {
+                return interaction.editReply("A megadott link nem játszható le!");
+            }
+            
             return interaction.editReply({ content: "Hiba történt!", flags: MessageFlags.Ephemeral });
         }
     }
