@@ -68,5 +68,10 @@
         "version": "3.4.0",
         "date": 1779152072,
         "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Ban/Lockdown`: könnyebb átláthatóság miatt `végleges` és `ideiglenes` alparancsokra bontás"
+    },
+    {
+        "version": "3.5.0",
+        "date": 1779563589,
+        "changelog": "\n**🔨 Moderációs-parancsok**\n-# Változás:\n- `Lockdown/Unlockdown`: mostantól ManageRoles jogosultsággal működik alapértelmezetten\n\n **🎵 Zene-parancsok**\n-# Változás:\n- Mostantól csak Soundcloudról lehet zenét lejátszani"
     }
 ]

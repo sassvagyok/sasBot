@@ -1,6 +1,6 @@
 {
     "name": "sasbot",
-    "version": "3.4.2",
+    "version": "3.5.0",
     "description": "Csodálatos bot!",
     "main": "start/main.js",
     "type": "module",
