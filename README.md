@@ -36,7 +36,7 @@
 - Egyedi üdvözlő és búcsúüzenet beállítása.
 
 ### Zenelejátszás
-- Zenehallgatás több száz oldalról, akár automatikus lejátszással.
+- Zenehallgatás Soundcloudról, akár automatikus lejátszással.
 - Lejátszott zene kezelése: megállítás, átugrás és visszalépés, előre ugrás és újraindítás, ismétlés, hangerő állítása, zeneszöveg kiírása és filterek alkalmazása.
 - Zenés-parancsok használata ranghoz vagy csatornához kötése.
 
