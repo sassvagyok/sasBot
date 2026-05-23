@@ -7,9 +7,9 @@ import "moment-timezone";
 export default {
     name: "unlockdown",
     description: "Csatornák megnyitása",
-    info: "Jelenlegi vagy megadott csatorna megnyitása.\n`Szükséges jogosultság: Csatornák kezelése`",
+    info: "Jelenlegi vagy megadott csatorna megnyitása.\n`Szükséges jogosultság: Rangok kezelése`",
     dm_permission: false,
-    permission: PermissionFlagsBits.ManageChannels,
+    permission: PermissionFlagsBits.ManageRoles,
     options: [
         {
             name: "csatorna",
@@ -28,7 +28,7 @@ export default {
     ],
     run: async (client, interaction) => {
 
-        if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles) && interaction.channel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ManageRoles)) return interaction.reply({ content: "Nincs jogom ehhez: \`Manage Roles\`!", flags: MessageFlags.Ephemeral });
+        if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return interaction.reply({ content: "Nincs jogom ehhez: \`Manage Roles\`!", flags: MessageFlags.Ephemeral });
 
         const userAuthor = interaction.member;
         const textChannel = interaction.options.getChannel("csatorna") || interaction.channel;

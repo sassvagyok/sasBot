@@ -10,9 +10,9 @@ import "moment-timezone";
 export default {
     name: "lockdown",
     description: "Csatornák lezárása",
-    info: "Jelenlegi vagy megadott csatorna lezárása, akár megadott időre.\n`Szükséges jogosultság: Csatornák kezelése`",
+    info: "Jelenlegi vagy megadott csatorna lezárása, akár megadott időre.\n`Szükséges jogosultság: Rangok kezelése`",
     dm_permission: false,
-    permission: PermissionFlagsBits.ManageChannels,
+    permission: PermissionFlagsBits.ManageRoles,
     options: [
         {
             name: "végleges",
