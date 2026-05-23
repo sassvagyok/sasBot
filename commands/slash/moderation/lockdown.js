@@ -16,7 +16,7 @@ export default {
     options: [
         {
             name: "végleges",
-            description: "Tag kitiltása lejárat nélkül",
+            description: "Csatorna lezárása lejárat nélkül",
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -37,7 +37,7 @@ export default {
         },
         {
             name: "ideiglenes",
-            description: "Tag kitiltása megadott időre",
+            description: "Csatorna lezárása megadott időre",
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
