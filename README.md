@@ -52,13 +52,13 @@
 **Ez csak a parancsok egy töredéke, minden parancs részletes leírása elérhető a [Dokumentációban](https://sasbot.mattexyz.com).**
 
 ## Futtatás
-### Szükséges függőségek
-- Node.js 22.x<=
-- MongoDB
-- FFMPEG
+### 1. Szükséges függőségek
+- [Node.js](https://nodejs.org/en) (>=24.16.0)
+- [MongoDB](https://www.mongodb.com/)
+- [FFMPEG](https://ffmpeg.org/)
 
-### Projekt klónolása
-- **Stabil verzió:**
+### 2. Projekt klónolása
+- **Stabil verzió (ajánlott):**
 ```bash
 git clone -b main https://github.com/sassvagyok/sasBot.git
 ```
@@ -67,23 +67,25 @@ git clone -b main https://github.com/sassvagyok/sasBot.git
 git clone -b dev https://github.com/sassvagyok/sasBot.git
 ```
 
-### Első konfiguráció
-1. Nevezd át a `.env.example` fájlt `.env`-re és töltsd fel adatokkal:
+### 3. Első indítás előtt
+1. Nevezd át a `.env.example` fájlt a gyökérmappában `.env`-re és töltsd fel adatokkal:
 ```
 mainToken=[Fő Discord token]
-testToken=[Másodlagos Discord token, ha tesztelnél (elhagyható)]
-mongooseConnectionString=[Mongoose connection string, adatbázist használó funkciókhoz]
-geniusToken=[Genius lyrics API key, enélkül a zeneszöveg lekérdezés megbízhathatlanul működhet]
+testToken=[Másodlagos Discord token, ha tesztelnél]
+mongooseConnectionString=[Mongoose connection string]
+geniusToken=[Genius lyrics API kulcs]
 devServerId=[Szerver, ahová a bot logol]
 errorChannelId=[Csatorna a devServer-en, ahová a hibaüzenetek érkezzenek]
 feedbackChannelId=[Csatorna a devServer-en, ahová a visszajelzések érkezzenek]
 ```
-2. Futtasd az alábbi parancsot:
+> [!WARNING]
+> A `testToken`-en kívűl bármelyik mező üresen hagyása megbízhatatlan működést eredményezhet!
+2. Telepítsd a szükséges könyvtárakat:
 ```
 npm install
 ```
 
-### Indítás
+### 4. Indítás
 - Ha a fő Discord tokennel akarod futtatni:
 ```
 npm start
@@ -93,7 +95,7 @@ npm start
 npm run dev
 ```
 
-### További konfiguráció
+### 5. Opcionális konfiguráció
 - A `config.json` módosításával az alábbiak konfigurálhatóak:
   - `status`: a bot státusz üzenete
   - `globallyDisabledCommands`: globálisan kikapcsolt parancsok listája

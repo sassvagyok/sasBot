@@ -1,11 +1,11 @@
 {
     "name": "sasbot",
-    "version": "3.5.1",
+    "version": "3.5.2",
     "description": "Csodálatos bot!",
     "main": "start/main.js",
     "type": "module",
     "engines": {
-        "node": "22.x"
+        "node": ">=24.16.0"
     },
     "scripts": {
         "start": "node start/main.js",
