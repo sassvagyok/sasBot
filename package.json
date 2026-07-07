@@ -1,6 +1,6 @@
 {
     "name": "sasbot",
-    "version": "3.5.2",
+    "version": "3.5.3",
     "description": "Csodálatos bot!",
     "main": "start/main.js",
     "type": "module",
@@ -31,7 +31,7 @@
         "moment-timezone": "^0.5.45",
         "mongoose": "^8.12.1",
         "ms": "^2.1.3",
-        "nekos-best.js": "^6.3.0",
+        "nekos-best.js": "^6.5.3",
         "nekosia.js": "^0.2.4",
         "node-cron": "^4.2.0",
         "node-fetch": "^2.7.0",

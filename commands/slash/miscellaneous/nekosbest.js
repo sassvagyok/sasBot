@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonBuilder, SectionBuilder } from "discord.js";
-import { fetchRandom } from "nekos-best.js";
+import { Client, fetchRandom } from "nekos-best.js";
 import fetch from "node-fetch";
 
 export default {
@@ -9,7 +9,7 @@ export default {
     options: [
         {
             name: "kategória",
-            description: "Kép kategóriája (üres: kategóriák kilistázása)",
+            description: "Kép kategóriája. Kategóriákhoz: help (üres: random)",
             type: ApplicationCommandOptionType.String,
             required: false
         }
@@ -17,8 +17,10 @@ export default {
     run: async (client, interaction) => {
 
         const nekoCategory = interaction.options.getString("kategória");
+        const nekosBest = new Client();
+        const nekosBestStrict = new Client({ ratelimitHandleMode: "throw" });
 
-        const fetchCategories = await fetch("https://nekos.best/api/v2/endpoints");
+        const fetchCategories = await fetch("https://nekos.best/api/v2/endpoints", { headers: { "User-Agent": "sasBot" } });
         const fetchedCategoriesJson = await fetchCategories.json();
 
         const gifNekos = Object.entries(fetchedCategoriesJson).filter(([name, value]) => value.format === "gif").map(([name]) => name);
@@ -26,7 +28,7 @@ export default {
 
         let neko;
         try {
-            neko = await fetchRandom(nekoCategory?.toLowerCase());
+            neko = await nekosBest.fetch(nekoCategory?.toLowerCase(), 1);
         } catch(error) {
            const tagsContainer = new ContainerBuilder()
             .addTextDisplayComponents(new TextDisplayBuilder().setContent(`### Nekosbest kategóriák`))
