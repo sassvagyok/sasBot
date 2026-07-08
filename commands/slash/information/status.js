@@ -15,12 +15,18 @@ export default {
         const msg = await interaction.fetchReply();
         const duration = moment.duration(client.uptime).format("M[h], D[n], H[ó], m[p], s[mp]", { trim: "all" });
 
-        // const divergence = await fetch("http://divergence.nyarchlinux.moe/api/divergence")
-        // const fetchedDivergence = await divergence.json();
+        let currentDivergence = "1.048596";
+        try {
+            const divergence = await fetch("http://divergence.nyarchlinux.moe/api/divergence");
+            if (divergence.ok) {
+                const fetchedDivergence = await divergence.json();
+                currentDivergence = fetchedDivergence.divergence.toString().substring(0, 8);
+            }
+        } catch {}
 
         const statusContainer = new ContainerBuilder()
         .setAccentColor(0x1d88ec)
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- 🛠️ Verzió: \`${packageJson.version}\`\n- 💢 Válaszidő: \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n- ⌛ Uptime: \`${duration}\`\n- 🔌 Szerverek: \`${client.guilds.cache.size}\`\n- 🧶 Divergencia: \`1.048596\``));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- 🛠️ Verzió: \`${packageJson.version}\`\n- 💢 Válaszidő: \`${msg.createdTimestamp - interaction.createdTimestamp}ms\`\n- ⌛ Uptime: \`${duration}\`\n- 🔌 Szerverek: \`${client.guilds.cache.size}\`\n- 🧶 Divergencia: \`${currentDivergence}%\``));
 
         interaction.editReply({ components: [statusContainer], flags: MessageFlags.IsComponentsV2 });
     }
