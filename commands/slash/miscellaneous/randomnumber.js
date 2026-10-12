@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits } from "discord.js";
 import { registerFont, createCanvas }  from "canvas";
 
 export default {
-    name: "randomszám",
+    name: "randomnumber",
     description: "Véletlenszerű szám választása",
     info: "Intervallum megadása után véletlenszerű szám választása az értékek között.",
     options: [

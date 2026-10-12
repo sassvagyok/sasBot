@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, Contai
 import disabledCommandSchema from "../../../models/localdisableModel.js";
 
 export default {
-    name: "toggle",
+    name: "togglecommand",
     description: "Parancsok ki- és bekapcsolása",
     info: "sasBot parancsainak ki- és bekapcsolása (kivéve Konfigurációs és Információs parancsok), vagy kikapcsolt parancsok megjelenítése.\n`Szükséges jogosultság: Adminisztrátor`",
     dm_permission: false,

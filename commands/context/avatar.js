@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ApplicationCommandType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
 
 export default {
-    name: "Avatár",
+    name: "Avatar",
     type: ApplicationCommandType.User,
     dm_permission: false,
     run: async (client, interaction) => {

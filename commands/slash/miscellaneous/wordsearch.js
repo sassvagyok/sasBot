@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import allWords from "../../../data/words.json" with { type: "json" };
 
 export default {
-    name: "szókeresés",
+    name: "wordsearch",
     description: "Szavak keresése",
     info: "Magyar szavak keresése néhány kezdőbetű megadásával.",
     options: [

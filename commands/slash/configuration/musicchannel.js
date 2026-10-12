@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, Message
 import musicChannelSchema from "../../../models/musicchannelModel.js";
 
 export default {
-    name: "zenecsatorna",
+    name: "musicchannel",
     description: "Zene-csatorna kezelése",
     info: "Csatorna kezelése, ahol használható a zenelejátszás a szerveren (alapértelmezetten mindenhol).\n`Szükséges permission: Adminisztrátor`",
     dm_permission: false,

@@ -72,6 +72,11 @@
     {
         "version": "3.5.0",
         "date": 1779563589,
-        "changelog": "\n**🔨 Moderációs-parancsok**\n-# Változás:\n- `Lockdown/Unlockdown`: mostantól ManageRoles jogosultsággal működik alapértelmezetten\n\n **🎵 Zene-parancsok**\n-# Változás:\n- Mostantól csak Soundcloudról lehet zenét lejátszani"
+        "changelog": "**🔨 Moderációs-parancsok**\n-# Változás:\n- `Lockdown/Unlockdown`: mostantól ManageRoles jogosultsággal működik alapértelmezetten\n\n **🎵 Zene-parancsok**\n-# Változás:\n- Mostantól csak Soundcloudról lehet zenét lejátszani"
+    },
+    {
+        "version": "3.6.0",
+        "date": 1791763083,
+        "changelog": "**🔹Rendszerszintű**\n-# Változás:\n- Az alábbi parancsoknak mostantól angol a neve:\n   - `Avatár` -> `Avatar`\n  - `Kőpapírolló` -> `Rps`\n  - `Most` -> `Nowplaying`\n  - `Nem` -> `No`\n  - `Randomszám` -> `Randomnumber`\n  - `Szóharc` -> `Wordfight`\n  - `Szókeresés` -> `Wordsearch`\n  - `Ötbetű` -> `Hungle`\n\n**⌨️ Konfigurációs-parancsok**\n- `Toggle` -> `Togglecommand`\n\n**🍥 Sokszínű-parancsok**\n- `Miatyánk` parancs törölve"
     }
 ]

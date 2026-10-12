@@ -7,7 +7,7 @@ import userOtbetuSchema from "../../../models/userOtbetuModel.js";
 import saspontSchema from "../../../models/saspontModel.js";
 
 export default {
-    name: "ötbetű",
+    name: "hungle",
     description: "Találd ki a szót!",
     info: "Találd ki a naponta változó 5 betűs szót legfeljebb 6 próbából.",
     options: [

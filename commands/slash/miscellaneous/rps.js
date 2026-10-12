@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder } from "discord.js";
 
 export default {
-    name: "kőpapírolló",
+    name: "rps",
     description: "Kő-Papír-Olló",
     info: "Hagyományos kő-papír-olló sasBot ellen.",
     options: [

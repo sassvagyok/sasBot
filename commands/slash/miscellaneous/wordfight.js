@@ -8,7 +8,7 @@ import saspontSchema from "../../../models/saspontModel.js";
 import szoharcSchema from "../../../models/szóharcModel.js";
 
 export default {
-    name: "szóharc",
+    name: "wordfight",
     description: "Epikus szóharc",
     info: "Állítsd csatába legerősebb szavadat, és derüljön ki, kinek erősebb a szava!",
     options: [

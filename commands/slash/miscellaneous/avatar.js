@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, MessageFlags, ContainerBuilder, TextDisplayBuilder, MediaGalleryBuilder, SeparatorBuilder, ButtonStyle } from "discord.js";
 
 export default {
-    name: "avatár",
+    name: "avatar",
     description: "Profilképek megjelenítése",
     info: "Saját, vagy megadott tag profilképének megjelenítése kiválasztható formátumban és felbontásban.",
     options: [

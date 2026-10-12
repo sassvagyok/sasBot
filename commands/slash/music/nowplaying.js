@@ -1,7 +1,7 @@
 import { MessageFlags, SectionBuilder, ThumbnailBuilder, ContainerBuilder, TextDisplayBuilder } from "discord.js";
 
 export default {
-    name: "most",
+    name: "nowplaying",
     description: "Információk a jelenlegi zenéről",
     info: "Különböző információk a jelenleg lejátszott zenéről.",
     dm_permission: false,
