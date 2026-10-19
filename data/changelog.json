@@ -81,7 +81,7 @@
     },
     {
         "version": "3.6.1",
-        "date": 1791763083,
+        "date": 1792441500,
         "changelog": "**⌨️ Konfigurációs-parancsok**\n- `Serversettings`: az automatikus rangokat kiírja, nem csak a számukat\n- `Farewell` -> `Farewellmessage`\n- `Welcome` -> `Welcomemessage`\n- `Permissions` -> `Restrictcommands`\n\n**🍥 Sokszínű-parancsok**\n- `No` -> `Didntask`"
     }
 ]
