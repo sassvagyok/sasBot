@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBu
 import farewellSchema from "../../../models/farewellModel.js";
 
 export default {
-    name: "farewell",
+    name: "farewellmessage",
     description: "Búcsúüzenet kezelése",
     info: "Egyedi búcsúüzenet beállítása, törlése vagy megtekintése, ami a tagok kilépésekor a megadott csatornában lesz megjelenítve.\n`Szükséges jogosultság: Adminisztrátor`",
     has_embed: true,

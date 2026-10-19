@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, MessageFlags, Contai
 import permissionSchema from "../../../models/permissionModel.js";
 
 export default {
-    name: "permissions",
+    name: "restrictcommand",
     description: "Parancsok használatának ranghoz kötése",
     info: "Parancsok egyedi ranghoz való kötése az alapértelmezett jogosultság helyett (max. 5 rang) (kivéve Konfigurációs és Információs parancsok).\n`Szükséges jogosultság: Adminisztrátor`",
     dm_permission: false,

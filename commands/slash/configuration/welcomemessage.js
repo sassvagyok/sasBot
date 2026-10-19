@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, PermissionFlagsBits, ChannelType, EmbedBu
 import welcomeSchema from "../../../models/welcomeModel.js";
 
 export default {
-    name: "welcome",
+    name: "welcomemessage",
     description: "Üdvözlő üzenet kezelése",
     info: "Egyedi üdvözlő üzenet beállítása, törlése vagy megtekintése, ami a tagok csatlakozásakor a megadott csatornában lesz megjelenítve.\n`Szükséges jogosultság: Adminisztrátor`",
     has_embed: true,

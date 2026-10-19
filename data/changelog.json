@@ -78,5 +78,10 @@
         "version": "3.6.0",
         "date": 1791763083,
         "changelog": "**🔹Rendszerszintű**\n-# Változás:\n- Az alábbi parancsoknak mostantól angol a neve:\n   - `Avatár` -> `Avatar`\n  - `Kőpapírolló` -> `Rps`\n  - `Most` -> `Nowplaying`\n  - `Nem` -> `No`\n  - `Randomszám` -> `Randomnumber`\n  - `Szóharc` -> `Wordfight`\n  - `Szókeresés` -> `Wordsearch`\n  - `Ötbetű` -> `Hungle`\n\n**⌨️ Konfigurációs-parancsok**\n- `Toggle` -> `Togglecommand`\n\n**🍥 Sokszínű-parancsok**\n- `Miatyánk` parancs törölve"
+    },
+    {
+        "version": "3.6.1",
+        "date": 1791763083,
+        "changelog": "**⌨️ Konfigurációs-parancsok**\n- `Serversettings`: az automatikus rangokat kiírja, nem csak a számukat\n- `Farewell` -> `Farewellmessage`\n- `Welcome` -> `Welcomemessage`\n- `Permissions` -> `Restrictcommands`\n\n**🍥 Sokszínű-parancsok**\n- `No` -> `Didntask`"
     }
 ]

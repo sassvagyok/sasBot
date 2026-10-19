@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 
 export default {
-    name: "no",
+    name: "didntask",
     description: "Nem kérdeztem",
     info: "Ha úgy érzed, valakit nem kérdeztek. Címezhető.",
     dm_permission: false,

@@ -25,10 +25,12 @@ export default {
         const musicChannelData = await musicChannelSchema.findOne({ Guild: interaction.guild.id });
         const djRole = interaction.guild.roles.cache.get(djRoleData?.Role);
 
+        const formattedAutoRoles = autoRoleData?.Roles.map(x => `<@&${x}>`);
+
         const serversettingsContainer = new ContainerBuilder()
         .addTextDisplayComponents(new TextDisplayBuilder().setContent("### Szerver konfigurációja"))
         .addSeparatorComponents(new SeparatorBuilder())
-        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Automatikus rangok:** \`${autoRoleData ? autoRoleData.Roles.length : "0"}\`\n- **Rangok elmentése:** \`${saveroleData ? "Bekapcsolva" : "Kikapcsolva"}\`\n- **DJ Rang:** ${djRole ? djRole : "`Nincs beállítva`"}\n- **Zenecsatorna:** ${musicChannelData ? `<#${musicChannelData.Channel}>` : "`Nincs beállítva`"}\n- **Tagszámláló csatorna:** ${membercounterData ? `<#${membercounterData.Channel}>` : "`Nincs beállítva`"}\n- **Búcsúüzenet csatornája:** ${farewellData ? `<#${farewellData.Channel}>` : "`Nincs beállítva`"}\n- **Üdvözlő üzenet csatornája:** ${welcomeData ? `<#${welcomeData.Channel}>` : "`Nincs beállítva`"}`));
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent(`- **Automatikus rangok:** ${formattedAutoRoles ? `\`${autoRoleData.Roles.length}\` (${formattedAutoRoles.join(" ")})` : "0"}\n- **Rangok elmentése:** \`${saveroleData ? "Bekapcsolva" : "Kikapcsolva"}\`\n- **DJ Rang:** ${djRole ? djRole : "`Nincs beállítva`"}\n- **Zenecsatorna:** ${musicChannelData ? `<#${musicChannelData.Channel}>` : "`Nincs beállítva`"}\n- **Tagszámláló csatorna:** ${membercounterData ? `<#${membercounterData.Channel}>` : "`Nincs beállítva`"}\n- **Búcsúüzenet csatornája:** ${farewellData ? `<#${farewellData.Channel}>` : "`Nincs beállítva`"}\n- **Üdvözlő üzenet csatornája:** ${welcomeData ? `<#${welcomeData.Channel}>` : "`Nincs beállítva`"}`));
         
         interaction.reply({ components: [serversettingsContainer], flags: MessageFlags.IsComponentsV2, allowedMentions: {} });
     }
